@@ -3,6 +3,7 @@ package ar.edu.uade.rpg.modelo.partida;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.uade.rpg.modelo.combate.Combate;
 import ar.edu.uade.rpg.modelo.combate.ResultadoCombate;
 import ar.edu.uade.rpg.modelo.combatientes.Arquero;
 import ar.edu.uade.rpg.modelo.combatientes.Asesino;
@@ -12,6 +13,11 @@ import ar.edu.uade.rpg.modelo.combatientes.Guerrero;
 import ar.edu.uade.rpg.modelo.combatientes.Mago;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
+import ar.edu.uade.rpg.modelo.items.Consumible;
+import ar.edu.uade.rpg.modelo.items.Equipable;
+import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
+import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
+import ar.edu.uade.rpg.modelo.tienda.Tienda;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidas;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
 
@@ -101,6 +107,137 @@ public class Juego {
 
     public Etapa getEtapaActual() {
         return etapaActual;
+    }
+
+    // --------------------------------------------------------------- combate
+
+    /** Arma la pelea de la etapa actual con los miembros vivos de la party. */
+    public Combate iniciarCombate() {
+        Combate combate = getEtapaDeCombate().crearCombate(partida.getParty());
+        combate.iniciar();
+        return combate;
+    }
+
+    // ------------------------------------------------- tienda y maquina
+
+    /*
+     * La Tienda y la MaquinaDeSlots no manejan oro: dicen cuanto cuesta y
+     * entregan. La cuenta la lleva la Party. Juego es quien junta las dos
+     * cosas, como Controller: cobra, entrega y deja todo consistente en un paso.
+     */
+
+    /** La pantalla lo usa para habilitar el boton de comprar. */
+    public boolean puedeComprarEquipable(int indiceSlot, Personaje destinatario) {
+        Equipable equipable = getTienda().getSlot(indiceSlot);
+        return equipable != null
+                && equipable.puedeEquiparlo(destinatario)
+                && partida.getParty().puedePagar(equipable.getPrecio());
+    }
+
+    /**
+     * Cobra el equipable, lo saca del slot y se lo pone al destinatario.
+     * Devuelve lo que tenia puesto en ese lugar (se descarta), o null.
+     */
+    public Equipable comprarEquipable(int indiceSlot, Personaje destinatario) {
+        if (!puedeComprarEquipable(indiceSlot, destinatario)) {
+            throw new IllegalStateException("No se puede comprar el slot " + indiceSlot
+                    + " para " + destinatario.getNombre());
+        }
+        Tienda tienda = getTienda();
+        partida.getParty().gastarOro(tienda.getSlot(indiceSlot).getPrecio());
+        return destinatario.equipar(tienda.comprarSlot(indiceSlot));
+    }
+
+    /**
+     * Compra una unidad del consumible que esta en esa posicion del catalogo.
+     * Devuelve false si no alcanza el oro o si ya se llego al tope.
+     */
+    public boolean comprarConsumible(int indiceEnElCatalogo) {
+        Consumible consumible = getTienda().getConsumiblesALaVenta().get(indiceEnElCatalogo);
+        Party party = partida.getParty();
+        if (!party.puedePagar(consumible.getPrecio()) || party.getInventario().estaLleno(consumible)) {
+            return false;
+        }
+        party.gastarOro(consumible.getPrecio());
+        party.getInventario().agregar(consumible);
+        return true;
+    }
+
+    /** Vuelve a sortear los 3 slots, si alcanza el oro y quedan rerolls. */
+    public boolean rerollearTienda() {
+        Tienda tienda = getTienda();
+        Party party = partida.getParty();
+        if (!tienda.puedeRerollear(party.getOro())) {
+            return false;
+        }
+        party.gastarOro(tienda.getCostoDelProximoReroll());
+        tienda.rerollear();
+        return true;
+    }
+
+    /** Cobra la tirada (la primera es gratis), tira y paga el premio. */
+    public ResultadoTirada tirarEnLaMaquina() {
+        MaquinaDeSlots maquina = getEtapaDeTienda().getMaquinaDeSlots();
+        Party party = partida.getParty();
+        if (maquina == null || !maquina.puedeTirar(party.getOro())) {
+            throw new IllegalStateException("No se puede tirar en la maquina");
+        }
+        party.gastarOro(maquina.getCostoDeLaProximaTirada());
+        ResultadoTirada resultado = maquina.tirar();
+        party.agregarOro(resultado.getOroGanado());
+        return resultado;
+    }
+
+    /** Deja la maquina y pasa a la tienda. No hay vuelta atras. */
+    public void pasarALaTienda() {
+        getEtapaDeTienda().pasarALaTienda();
+    }
+
+    // ------------------------------------------------------------- inventario
+
+    /**
+     * Usar un consumible entre etapas (en combate se usa con una Accion, porque
+     * gasta el turno). Devuelve false si no se puede usar sobre ese personaje.
+     */
+    public boolean usarConsumibleFueraDeCombate(Consumible consumible, Personaje objetivo) {
+        if (!consumible.puedeUsarseSobre(objetivo)) {
+            return false;
+        }
+        consumible.usarSobre(objetivo);
+        partida.getParty().getInventario().quitar(consumible);
+        return true;
+    }
+
+    // ----------------------------------------------------------- tipo de etapa
+
+    /*
+     * Los dos unicos casts del modelo, y los dos despues de preguntar. La etapa
+     * se pide por su tipo porque combate y tienda tienen operaciones distintas;
+     * mejor que el cast viva aca, en un solo lugar, que en cada pantalla.
+     */
+
+    private EtapaDeCombate getEtapaDeCombate() {
+        if (!etapaActual.esDeCombate()) {
+            throw new IllegalStateException("La etapa " + etapaActual.getNumero() + " no es de combate");
+        }
+        return (EtapaDeCombate) etapaActual;
+    }
+
+    private EtapaDeTienda getEtapaDeTienda() {
+        if (etapaActual.esDeCombate()) {
+            throw new IllegalStateException("La etapa " + etapaActual.getNumero() + " no es de tienda");
+        }
+        return (EtapaDeTienda) etapaActual;
+    }
+
+    /** La tienda de la etapa actual, para que la pantalla la muestre. */
+    public Tienda getTienda() {
+        return getEtapaDeTienda().getTienda();
+    }
+
+    /** null en las tiendas de las etapas 4 y 14, que no tienen maquina. */
+    public MaquinaDeSlots getMaquinaDeSlots() {
+        return getEtapaDeTienda().getMaquinaDeSlots();
     }
 
     // --------------------------------------------------------- cerrar etapa

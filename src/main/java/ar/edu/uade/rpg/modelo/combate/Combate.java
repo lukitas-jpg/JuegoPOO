@@ -7,7 +7,10 @@ import java.util.Random;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
+import ar.edu.uade.rpg.modelo.items.Consumible;
 import ar.edu.uade.rpg.modelo.movimientos.Accion;
+import ar.edu.uade.rpg.modelo.movimientos.AccionDefender;
+import ar.edu.uade.rpg.modelo.movimientos.AccionUsarConsumible;
 import ar.edu.uade.rpg.modelo.movimientos.AccionUsarMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
@@ -165,6 +168,39 @@ public class Combate {
     public ResultadoAccion ejecutarMovimiento(Movimiento movimiento, List<Combatiente> objetivos) {
         Combatiente actor = getSiguienteEnActuar();
         return ejecutarAccion(new AccionUsarMovimiento(actor, movimiento, objetivos, calculador));
+    }
+
+    /** El que tiene el turno se pone en guardia. */
+    public ResultadoAccion defender() {
+        return ejecutarAccion(new AccionDefender(getSiguienteEnActuar()));
+    }
+
+    /**
+     * El que tiene el turno usa un consumible del inventario de la party sobre
+     * un aliado. Gasta el turno igual que atacar.
+     */
+    public ResultadoAccion usarConsumible(Consumible consumible, Combatiente objetivo) {
+        Combatiente actor = getSiguienteEnActuar();
+        boolean estabaCaido = !objetivo.estaVivo();
+        ResultadoAccion resultado = ejecutarAccion(
+                new AccionUsarConsumible(actor, consumible, objetivo, party.getInventario()));
+        if (estabaCaido && objetivo.estaVivo()) {
+            // Un revivido vuelve a la pelea: actua desde la ronda siguiente.
+            agregarCombatiente(objetivo);
+            registro.add(objetivo.getNombre() + " vuelve al combate.");
+        }
+        return resultado;
+    }
+
+    /** Sobre quien se puede usar: el Polvo de Renacer solo sobre caidos, el resto sobre vivos. */
+    public List<Combatiente> getObjetivosDeConsumible(Consumible consumible) {
+        List<Combatiente> objetivos = new ArrayList<>();
+        for (Personaje miembro : party.getMiembros()) {
+            if (consumible.puedeUsarseSobre(miembro)) {
+                objetivos.add(miembro);
+            }
+        }
+        return objetivos;
     }
 
     /** El unico camino por el que pasa todo lo que se hace en un turno. */
