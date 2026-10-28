@@ -1,0 +1,415 @@
+@startuml 1_combatientes
+title TPO POO - RPG por turnos\nDiagrama 1: Combatientes — Personajes y Enemigos
+
+skinparam classAttributeIconSize 0
+skinparam nodesep 24
+skinparam ranksep 48
+hide empty members
+
+' ================= RAIZ =================
+abstract class Combatiente {
+  # nombre : String
+  # vidaMaxima : int
+  # vidaActual : int
+  # manaMaximo : int
+  # manaActual : int
+  # ataqueFisico : int
+  # defensaFisica : int
+  # ataqueMagico : int
+  # defensaMagica : int
+  # velocidad : int
+  # suerte : int
+  # resistenciaAEstados : int
+  # defendiendo : boolean
+  --
+  + recibirDaño(daño : int, tipo : TipoDaño) : int
+  + recibirDañoDirecto(daño : int) : int
+  + curar(cantidad : int) : int
+  + revivir(porcentajeVida : int) : void
+  + estaVivo() : boolean
+  + consumirMana(costo : int) : void
+  + recuperarMana(cantidad : int) : void
+  + tieneManaSuficiente(costo : int) : boolean
+  + defender() : void
+  + estaDefendiendo() : boolean
+  + getPorcentajeDeDañoRecibido() : int
+  + aplicarEfecto(efecto : EfectoEstado) : EfectoEstado
+  + procesarEfectosDeTurno() : void
+  + puedeActuar() : boolean
+  + quitarEfecto(nombre : String) : boolean
+  + limpiarEfectosTemporales() : void
+  + getEfectosActivos() : List<EfectoEstado>
+  + alIniciarCombate() : List<Combatiente>
+  + reducirCooldowns() : void
+  + reiniciarCooldowns() : void
+  + getMovimientos() : List<Movimiento>
+  # {final} agregarMovimiento(movimiento : Movimiento) : void
+  + getAtaqueFisicoEfectivo() : int
+  + getDefensaFisicaEfectiva() : int
+  + getAtaqueMagicoEfectivo() : int
+  + getDefensaMagicaEfectiva() : int
+  + getVelocidadEfectiva() : int
+  + getSuerteEfectiva() : int
+  - conModificadores(valorBase : int, estadistica : Estadistica) : int
+  + sumarAEstadistica(estadistica : Estadistica, cantidad : int) : void
+  # subirVidaMaxima(cantidad : int) : void
+  # subirManaMaximo(cantidad : int) : void
+}
+
+enum TipoDaño {
+  FISICO
+  MAGICO
+}
+
+enum ClaseDePersonaje {
+  GUERRERO
+  MAGO
+  ARQUERO
+  CURADOR
+  ASESINO
+  TANQUE
+}
+class Movimiento <<(A,#d4a0a0) abstracta>>
+class EfectoEstado <<(A,#d4a0a0) abstracta>>
+class Arma
+class Armadura
+
+' ================= RAMA JUGABLE =================
+abstract class Personaje {
+  + {static} EXPERIENCIA_BASE_POR_NIVEL : int = 30
+  + {static} NIVEL_MAXIMO : int = 20
+  + {static} NIVEL_INICIAL : int = 1
+  + {static} NIVEL_TERCER_MOVIMIENTO : int = 4
+  + {static} NIVEL_DEFINITIVA : int = 8
+  # nivel : int
+  # experienciaActual : int
+  # experienciaParaSubir : int
+  --
+  + ganarExperiencia(cantidad : int) : int
+  - subirNivel() : void
+  # {abstract} aplicarCrecimientoPorNivel() : void
+  + {abstract} getDescripcionClase() : String
+  + {abstract} getClaseDePersonaje() : ClaseDePersonaje
+  + getMovimientosDisponibles() : List<Movimiento>
+  + getMovimientoBasico() : Movimiento
+  + getMovimientoDefinitivo() : Movimiento
+  + equipar(equipable : Equipable) : Equipable
+  + desequipar(slot : SlotEquipo) : Equipable
+  + getEquipadoEn(slot : SlotEquipo) : Equipable
+  + getNivel() : int
+}
+
+class Guerrero
+class Mago
+class Arquero
+class Curador
+class Asesino
+class Tanque
+
+hide Guerrero members
+hide Mago members
+hide Arquero members
+hide Curador members
+hide Asesino members
+hide Tanque members
+
+' ================= RAMA ENEMIGA =================
+abstract class Enemigo {
+  + {static} CRECIMIENTO_AGUANTE : int = 14
+  + {static} CRECIMIENTO_ATAQUE : int = 10
+  # random : Random
+  --
+  + {abstract} elegirAccion(party : List<Combatiente>, aliados : List<Enemigo>, calculador : CalculadorDeDaño) : Accion
+  + escalarParaEtapa(numeroEtapa : int) : void
+  + getRandom() : Random
+  # filtrarVivos(candidatos : List<Combatiente>) : List<Combatiente>
+  # usar(movimiento : Movimiento, objetivos : List<Combatiente>, calculador : CalculadorDeDaño) : Accion
+}
+
+class Bruto {
+  + elegirAccion(party, aliados, calculador) : Accion
+}
+class Acolito {
+  + elegirAccion(party, aliados, calculador) : Accion
+}
+class Berserker {
+  + elegirAccion(party, aliados, calculador) : Accion
+  + getAtaqueFisicoEfectivo() : int
+}
+class Verdugo {
+  + {static} RESISTENCIA_DE_JEFE : int = 50
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+  + escalarParaEtapa(numeroEtapa : int) : void
+}
+class Hechicero {
+  + elegirAccion(party, aliados, calculador) : Accion
+}
+class Guardian {
+  - reduccionOtorgada : int = 30
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+  - protegerAliados(aliados : List<Enemigo>) : void
+  + getReduccionOtorgada() : int
+}
+class Acechador {
+  - cantidadGolpes : int
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+}
+class Nigromante {
+  - rondasEntreInvocaciones : int
+  - rondasDesdeUltimaInvocacion : int
+  - maximoEsqueletosVivos : int
+  --
+  + alIniciarCombate() : List<Combatiente>
+  + elegirAccion(party, aliados, calculador) : Accion
+  - tocaInvocar() : boolean
+  - invocarHastaElTope() : List<Esqueleto>
+  - contarEsqueletosVivos() : int
+}
+class Esqueleto {
+  - invocador : Nigromante
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+  + alMorirElInvocador() : void
+  + escalarParaEtapa(numeroEtapa : int) : void
+}
+class Emponzoñador {
+  - efectoBuscado : String
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+  + getEfectoBuscado() : String
+  + elegirDeRespaldo(vivos : List<Combatiente>) : Combatiente
+}
+class SeñorDeLasSombras {
+  + {static} RESISTENCIA_DE_JEFE : int = 50
+  - fase : int
+  --
+  + elegirAccion(party, aliados, calculador) : Accion
+  + escalarParaEtapa(numeroEtapa : int) : void
+  + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
+  - debeCambiarDeFase() : boolean
+  - cambiarDeFase() : void
+}
+
+' ================= INTERFACES DE APUNTADO =================
+interface ObjetivoMasDebil {
+  + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
+}
+interface ObjetivoMasPeligroso {
+  + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
+}
+interface ObjetivoAleatorio {
+  + {abstract} getRandom() : Random
+  + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
+}
+interface ObjetivoSinEfecto {
+  + {abstract} getEfectoBuscado() : String
+  + {abstract} elegirDeRespaldo(vivos : List<Combatiente>) : Combatiente
+  + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
+}
+
+' ================= HERENCIA =================
+Combatiente <|-- Personaje
+Combatiente <|-- Enemigo
+
+Personaje <|-- Guerrero
+Personaje <|-- Mago
+Personaje <|-- Arquero
+Personaje <|-- Curador
+Personaje <|-- Asesino
+Personaje <|-- Tanque
+
+Enemigo <|-- Bruto
+Enemigo <|-- Acolito
+Enemigo <|-- Berserker
+Enemigo <|-- Verdugo
+Enemigo <|-- Hechicero
+Enemigo <|-- Guardian
+Enemigo <|-- Acechador
+Enemigo <|-- Nigromante
+Enemigo <|-- Esqueleto
+Enemigo <|-- Emponzoñador
+Enemigo <|-- SeñorDeLasSombras
+
+' ================= REALIZACION =================
+Bruto              ..|> ObjetivoMasDebil
+Acolito            ..|> ObjetivoMasDebil
+SeñorDeLasSombras  ..|> ObjetivoMasDebil
+Berserker          ..|> ObjetivoMasPeligroso
+Verdugo            ..|> ObjetivoMasPeligroso
+SeñorDeLasSombras  ..|> ObjetivoMasPeligroso
+Guardian           ..|> ObjetivoAleatorio
+Acechador          ..|> ObjetivoAleatorio
+Nigromante         ..|> ObjetivoAleatorio
+Esqueleto          ..|> ObjetivoAleatorio
+Emponzoñador       ..|> ObjetivoSinEfecto
+
+' ================= COMPOSICION Y ASOCIACION =================
+Combatiente "1" *--> "1..*" Movimiento : movimientos
+Combatiente "1" *--> "0..*" EfectoEstado : efectosActivos
+Combatiente ..> TipoDaño : usa
+Personaje --> ClaseDePersonaje
+Personaje "1" --> "0..1" Arma : arma
+Personaje "1" --> "0..1" Armadura : armadura
+Nigromante "1" o-- "0..5" Esqueleto : invoca
+
+' ================= DISPOSICION =================
+Movimiento   -[hidden]right- EfectoEstado
+EfectoEstado -[hidden]right- Arma
+Arma         -[hidden]right- Armadura
+Armadura     -[hidden]right- TipoDaño
+
+Personaje -[hidden]right- Enemigo
+
+Guerrero -[hidden]right- Mago
+Mago     -[hidden]right- Arquero
+Curador  -[hidden]right- Asesino
+Asesino  -[hidden]right- Tanque
+Guerrero -[hidden]down- Curador
+
+' enemigos en tres filas de cuatro, para que el diagrama no se corte
+Bruto     -[hidden]right- Acolito
+Acolito   -[hidden]right- Berserker
+Berserker -[hidden]right- Verdugo
+
+Hechicero -[hidden]right- Guardian
+Guardian  -[hidden]right- Acechador
+Acechador -[hidden]right- Nigromante
+
+Esqueleto    -[hidden]right- Emponzoñador
+Emponzoñador -[hidden]right- SeñorDeLasSombras
+
+Bruto     -[hidden]down- Hechicero
+Hechicero -[hidden]down- Esqueleto
+
+Tanque -[hidden]down- Bruto
+
+ObjetivoMasDebil     -[hidden]right- ObjetivoMasPeligroso
+ObjetivoMasPeligroso -[hidden]right- ObjetivoAleatorio
+ObjetivoAleatorio    -[hidden]right- ObjetivoSinEfecto
+
+note bottom of Enemigo
+  Enemigo ya NO tiene experienciaOtorgada ni
+  oroOtorgado: las recompensas las define la
+  EtapaDeCombate completa. Si vinieran por enemigo,
+  el Nigromante seria una granja infinita de
+  experiencia, porque repone esqueletos cada 3 rondas.
+
+  alIniciarCombate() devuelve los combatientes que
+  hay que incorporar al combate. Casi todos devuelven
+  la lista vacia; el Nigromante devuelve sus 5
+  esqueletos. Asi el Nigromante no necesita conocer a
+  Combate, y no hay dependencia circular.
+end note
+
+note right of Combatiente
+  Los getters "efectivos" devuelven el valor base más
+  el equipamiento más los efectos activos. Nadie fuera
+  del combatiente calcula sus estadísticas
+  (Information Expert).
+
+  Los atributos son protected y no private porque las
+  subclases los modifican directamente: al crecer de
+  nivel y en los constructores de cada enemigo.
+
+  resistenciaAEstados vale 0 para casi todos. El
+  Verdugo y el SeñorDeLasSombras lo ponen en 50 en su
+  constructor, y eso les baja a la mitad la
+  probabilidad de que les entre un aturdimiento.
+
+  Los 4 movimientos de cada clase son instancias
+  propias, configuradas en su constructor: por eso la
+  relación con Movimiento es de composición.
+
+  Movimiento, EfectoEstado, Arma y Armadura se
+  detallan en los Diagramas 2 y 3.
+
+  recibirDaño() NO calcula el daño: lo recibe ya
+  calculado de CalculadorDeDaño, lo pasa por los
+  escudos activos y devuelve lo que realmente entro.
+  recibirDañoDirecto() es el del veneno y la
+  quemadura, que no pasan por defensas ni escudos.
+
+  sumarAEstadistica() existe porque Arma y Armadura
+  viven en otro paquete y no alcanzan los atributos
+  protected. Es el unico camino de entrada a las
+  estadisticas base desde afuera.
+
+  getPorcentajeDeDañoRecibido() devuelve 50 si esta
+  defendiendo y 100 si no. CalculadorDeDaño consulta
+  ese numero en vez de preguntar por el booleano y
+  decidir la reduccion por su cuenta.
+
+  Por legibilidad se omiten los getters simples de los
+  atributos que ya figuran arriba (getNombre,
+  getVidaActual, getVidaMaxima, getManaActual,
+  getManaMaximo, getResistenciaAEstados).
+end note
+
+note bottom of Personaje
+  Las 6 clases jugables se muestran sin miembros
+  porque las seis implementan exactamente los mismos
+  dos métodos abstractos: aplicarCrecimientoPorNivel()
+  y getDescripcionClase(). Lo que cambia entre ellas
+  son sus estadísticas base, su curva de crecimiento y
+  sus 4 movimientos, todo definido en el constructor.
+
+  Las 6 son final: son hojas del árbol y nada debería
+  extenderlas. Además las necesita el compilador: al
+  llamar a agregarMovimiento() desde el constructor,
+  una clase abierta dispara el aviso this-escape.
+
+  aplicarEfecto() devuelve la COPIA que quedó activa,
+  no la plantilla, para que el ResultadoAccion informe
+  el efecto real con su duración.
+
+  Los 4 slots se desbloquean a nivel 1, 1, 4 y 8. No
+  se guarda en ningún lado: lo resuelve
+  Movimiento.estaDesbloqueado() contra el nivel.
+end note
+
+note bottom of ObjetivoAleatorio
+  Los criterios de apuntado son INTERFACES con métodos
+  default: traen la implementación, así que la lógica
+  no se duplica y cada enemigo declara en su firma a
+  quién apunta. No existe una clase SelectorDeObjetivo.
+
+  Como las interfaces no pueden tener atributos,
+  ObjetivoAleatorio PIDE el Random con getRandom(),
+  que provee Enemigo. ObjetivoSinEfecto pide igual el
+  nombre del efecto y el criterio de respaldo.
+
+  El Hechicero no implementa ninguno: ataca en área.
+  El SeñorDeLasSombras implementa dos y desambigua
+  según su fase.
+end note
+
+
+note as N_ESCALADO
+  El escalado por etapa tiene DOS ritmos: la vida, el
+  mana y las defensas crecen 14% por etapa y los
+  ataques 10%. La velocidad y la suerte no escalan.
+
+  El motivo es que la party tampoco crece pareja: de
+  nivel 1 a 11 el ataque del Guerrero se multiplica por
+  2.67 y su vida solo por 2. Con un unico numero, o los
+  enemigos se vuelven de papel sobre el final o pegan
+  demasiado. Con dos ritmos, las curvas quedan
+  paralelas. Los numeros salieron de simular 2000
+  partidas completas.
+
+  Los dos jefes y los esqueletos invocados sobrescriben
+  escalarParaEtapa() para no hacer nada: los jefes
+  porque sus valores ya son los finales, y los
+  esqueletos porque si escalaran, el Nigromante de la
+  etapa 15 entraria con cinco enemigos de pleno nivel.
+
+  elegirAccion() recibe List<Combatiente> y no Party
+  para que el diagrama 1 no dependa del 4: el enemigo
+  no necesita la API de Party, solo a quienes puede
+  atacar.
+end note
+
+@enduml

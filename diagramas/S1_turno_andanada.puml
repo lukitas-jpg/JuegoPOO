@@ -1,0 +1,160 @@
+@startuml S1_turno_andanada
+title TPO POO - RPG por turnos\nSecuencia 1: Turno del jugador usando la definitiva del Arquero (Andanada Cegadora)\n(solo clases del modelo: la interfaz y su capa de control son alcance de la Fase B)
+
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 220
+skinparam ParticipantPadding 12
+skinparam BoxPadding 12
+
+actor Jugador as J
+participant "combate : Combate" as CO
+participant "gestor : GestorDeTurnos" as G
+participant "arquero : Arquero" as A
+participant "andanada : HabilidadDeEstado" as H
+participant "e1 : Esqueleto" as E1
+participant "e2 : Esqueleto" as E2
+
+== 1. El jugador consulta su turno ==
+
+note over A
+  tieneManaSuficiente() y consumirMana() están
+  definidos en Combatiente (Diagrama 1), de donde
+  Arquero los hereda. En el diagrama de clases las
+  6 clases jugables se muestran sin miembros porque
+  no agregan ninguno propio.
+end note
+
+note over CO
+  POR QUÉ EL ACTOR ENTRA POR COMBATE Y NO POR
+  JUEGO: Combate es el experto de la
+  interacción turno a turno, así que recibe
+  los eventos de TURNO. Juego recibe los de
+  SESIÓN (iniciar una run, cerrar una etapa,
+  guardar), como se ve en la Secuencia 2.
+  Hacer pasar cada acción de cada turno por
+  Juego lo convertiría en un god-object.
+end note
+
+J -> CO : getMovimientosDelTurno()
+activate CO
+CO -> G : getSiguienteEnActuar()
+activate G
+G --> CO : arquero
+deactivate G
+
+CO -> A : getMovimientosDisponibles()
+activate A
+loop para cada uno de los 4 movimientos
+  A -> H : estaDisponible(usuario : Combatiente)
+  activate H
+  H -> H : estaDesbloqueado(personaje : Personaje)
+  H -> H : estaEnCooldown()
+  H -> A : tieneManaSuficiente(costo : int)
+  H --> A : true
+  deactivate H
+end
+A --> CO : listaDeMovimientos
+deactivate A
+CO --> J : listaDeMovimientos
+deactivate CO
+
+== 2. El jugador elige Andanada Cegadora ==
+
+J -> CO : getObjetivosPosibles(movimiento : Movimiento)
+activate CO
+CO -> H : getObjetivosPosibles(aliados : List<Combatiente>, enemigos : List<Combatiente>)
+activate H
+note right of H
+  alcance = TODOS_LOS_ENEMIGOS,
+  por eso devuelve la lista completa
+  de enemigos vivos sin pedir selección.
+end note
+H --> CO : [e1, e2]
+deactivate H
+CO --> J : [e1, e2]
+deactivate CO
+
+== 3. Ejecución del movimiento ==
+
+J -> CO : ejecutarMovimiento(movimiento : Movimiento, objetivos : List<Combatiente>)
+activate CO
+
+create participant "accion : AccionUsarMovimiento" as AC
+CO -> AC : <<create>> (autor, movimiento, objetivos)
+note right of CO
+  Creator + Command: Combate tiene los datos
+  para inicializar la Acción, así que la crea
+  y le delega la ejecución. La acción es un
+  objeto, no un switch por tipo de movimiento.
+end note
+
+CO -> AC : ejecutar()
+activate AC
+
+AC -> A : consumirMana(costo : int)
+activate A
+deactivate A
+
+AC -> H : aplicar(usuario : Combatiente, objetivos : List<Combatiente>)
+activate H
+
+loop para cada objetivo de la lista
+
+  H -> H : aplicarSobre(objetivo : Combatiente)
+  activate H
+  H -> H : acierta()
+
+  alt acierta la tirada
+    H -> H : plantillaEfecto.copiar()
+    note right of H
+      copiar() es método de EfectoEstado, no de la
+      habilidad. Se dibuja como autollamada porque
+      la plantilla no tiene línea de vida propia.
+    end note
+    create participant "aturdimiento : Aturdimiento" as AT
+    H -> AT : <<create>>
+    H -> E1 : aplicarEfecto(aturdimiento : EfectoEstado)
+    activate E1
+    E1 -> AT : alAplicarse(objetivo : Combatiente)
+    activate AT
+    deactivate AT
+    E1 --> H : ok
+    deactivate E1
+
+  else falla la tirada
+    H -> H : registrarFallo(objetivo : Combatiente)
+  end
+  deactivate H
+end
+
+note over H
+  La tirada de acierto es INDIVIDUAL por objetivo:
+  el alt se resuelve de nuevo en cada vuelta del
+  loop. Con 2 enemigos puede acertar en uno y
+  fallar en el otro.
+end note
+
+create participant "resultado : ResultadoAccion" as R
+H -> R : <<create>> (afectados, fallados, efectos)
+H --> AC : resultado
+deactivate H
+
+AC -> H : iniciarCooldown()
+activate H
+note right of H
+  Andanada Cegadora es la definitiva del Arquero,
+  así que al usarla arranca su cooldown de 4 turnos.
+end note
+deactivate H
+
+AC --> CO : resultado
+deactivate AC
+
+CO -> G : consumirTurno()
+activate G
+deactivate G
+
+CO --> J : resultado
+deactivate CO
+
+@enduml

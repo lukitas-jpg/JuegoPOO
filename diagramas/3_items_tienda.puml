@@ -1,0 +1,278 @@
+@startuml 3_items_tienda
+title TPO POO - RPG por turnos\nDiagrama 3: Ítems, Inventario, Tienda y Máquina de Slots
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
+hide empty members
+
+enum Rareza {
+  COMUN
+  RARO
+  EPICO
+  LEGENDARIO
+}
+
+enum ClaseDePersonaje {
+  GUERRERO
+  MAGO
+  ARQUERO
+  CURADOR
+  ASESINO
+  TANQUE
+}
+
+enum SlotEquipo {
+  ARMA
+  ARMADURA
+}
+
+enum Simbolo {
+  MONEDA
+  ESPADA
+  ESCUDO
+  POCION
+  CORONA
+  CALAVERA
+}
+
+abstract class Item {
+  # nombre : String
+  # descripcion : String
+  # precio : int
+  # rareza : Rareza
+  --
+  + getNombre() : String
+  + getDescripcion() : String
+  + getPrecio() : int
+  + getRareza() : Rareza
+}
+
+class Consumible {
+  - topeEnInventario : int
+  --
+  + usarSobre(objetivo : Combatiente) : void
+  + puedeUsarseSobre(objetivo : Combatiente) : boolean
+  + getTopeEnInventario() : int
+}
+
+interface EfectoConsumible <<interface>> {
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+  + getDescripcion() : String
+}
+
+class EfectoCuracion {
+  - cantidad : int
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+}
+class EfectoRestaurarMana {
+  - cantidad : int
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+}
+class EfectoBuffTemporal {
+  - estadistica : Estadistica
+  - porcentaje : int
+  - duracion : int
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+}
+class EfectoCurarEstado {
+  - nombreEstado : String
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+}
+class EfectoRevivir {
+  - porcentajeVidaRestaurada : int
+  + aplicar(objetivo : Combatiente) : void
+  + puedeAplicarseA(objetivo : Combatiente) : boolean
+}
+
+abstract class Equipable {
+  # slot : SlotEquipo
+  # claseRequerida : ClaseDePersonaje
+  # bonificaciones : Map<Estadistica, Integer>
+  --
+  + puedeEquiparlo(personaje : Personaje) : boolean
+  + aplicarBonificaciones(personaje : Personaje) : void
+  + quitarBonificaciones(personaje : Personaje) : void
+  + getBonificaciones() : Map<Estadistica, Integer>
+  + getClaseRequerida() : ClaseDePersonaje
+}
+
+class Arma {
+  - tipoDañoQueMejora : TipoDaño
+  --
+  + getTipoDañoQueMejora() : TipoDaño
+}
+class Armadura {
+}
+
+class Inventario {
+  + agregar(consumible : Consumible) : boolean
+  + quitar(consumible : Consumible) : boolean
+  + contar(nombre : String) : int
+  + tiene(nombre : String) : boolean
+  + estaLleno(consumible : Consumible) : boolean
+  + getResumen() : Map<String, Integer>
+  + getConsumibles() : List<Consumible>
+  + estaVacio() : boolean
+}
+
+class Tienda {
+  + {static} CANTIDAD_DE_SLOTS : int = 3
+  + {static} MAXIMO_DE_REROLLS : int = 6
+  - numeroDeTienda : int
+  - clasesDeLaParty : List<ClaseDePersonaje>
+  - rerollsHechos : int
+  --
+  + getConsumiblesALaVenta() : List<Consumible>
+  + getSlots() : List<Equipable>
+  + getSlot(indice : int) : Equipable
+  + comprarSlot(indice : int) : Equipable
+  + quedaAlgoEnLosSlots() : boolean
+  + getCostoDelProximoReroll() : int
+  + puedeRerollear(oroDisponible : int) : boolean
+  + rerollear() : void
+}
+
+class GeneradorDeStock {
+  - {static} PESOS_POR_TIENDA : int[][]
+  - random : Random
+  --
+  + sortearEquipable(numeroDeTienda : int, clases : List<ClaseDePersonaje>) : Equipable
+  + sortearStock(numeroDeTienda : int, clases : List<ClaseDePersonaje>, cantidad : int) : List<Equipable>
+  + sortearRareza(numeroDeTienda : int) : Rareza
+  + {static} getPesos(numeroDeTienda : int) : int[]
+}
+
+class CatalogoDeEquipables <<(U,#b0c4de) utilitaria>> {
+  + {static} catalogoCompleto() : List<Equipable>
+  + {static} filtrar(clases : List<ClaseDePersonaje>, rareza : Rareza) : List<Equipable>
+}
+
+class CatalogoDeConsumibles <<(U,#b0c4de) utilitaria>> {
+  + {static} pocionDeVida() : Consumible
+  + {static} elixirDeMana() : Consumible
+  + {static} antidoto() : Consumible
+  + {static} polvoDeRenacer() : Consumible
+  + {static} piedraDeAfilar() : Consumible
+  + {static} catalogoCompleto() : List<Consumible>
+}
+
+class MaquinaDeSlots {
+  + {static} APUESTA : int = 50
+  - quedaTiradaGratis : boolean
+  - abandonada : boolean
+  - random : Random
+  --
+  + tirar() : ResultadoTirada
+  + {static} calcularMultiplicador(salieron : List<Simbolo>) : int
+  + getCostoDeLaProximaTirada() : int
+  + puedeTirar(oroDisponible : int) : boolean
+  + abandonar() : void
+  + estaAbandonada() : boolean
+  + quedaTiradaGratis() : boolean
+}
+
+class ResultadoTirada {
+  - simbolos : List<Simbolo>
+  - multiplicador : int
+  - oroGanado : int
+  - fueGratis : boolean
+  --
+  + fuePremio() : boolean
+  + getSimbolos() : List<Simbolo>
+  + getMultiplicador() : int
+  + getOroGanado() : int
+  + fueGratis() : boolean
+}
+
+Item <|-- Consumible
+Item <|-- Equipable
+Item --> Rareza
+
+Equipable <|-- Arma
+Equipable <|-- Armadura
+Equipable --> SlotEquipo
+
+Consumible "1" *-- "1" EfectoConsumible : efecto
+EfectoConsumible <|.. EfectoCuracion
+EfectoConsumible <|.. EfectoRestaurarMana
+EfectoConsumible <|.. EfectoBuffTemporal
+EfectoConsumible <|.. EfectoCurarEstado
+EfectoConsumible <|.. EfectoRevivir
+
+Inventario "1" o-- "0..*" Consumible : consumibles
+
+Tienda "1" o-- "3" Equipable : slots
+Tienda "1" --> "1" GeneradorDeStock : generador
+Tienda ..> CatalogoDeConsumibles : pide el catalogo fijo
+GeneradorDeStock ..> Rareza : sortea
+GeneradorDeStock ..> CatalogoDeEquipables : filtra
+CatalogoDeEquipables ..> Equipable : construye
+CatalogoDeConsumibles ..> Consumible : construye
+Equipable --> ClaseDePersonaje
+
+MaquinaDeSlots ..> ResultadoTirada : produce
+MaquinaDeSlots ..> Simbolo : gira
+ResultadoTirada "1" o-- "1..*" Simbolo : simbolosObtenidos
+
+note bottom of Inventario
+  El inventario guarda SOLO consumibles.
+  Los equipables no se almacenan: al equipar
+  uno nuevo, el anterior se descarta (previa
+  alerta de confirmación al jugador).
+end note
+
+note bottom of EfectoConsumible
+  puedeAplicarseA() existe porque los efectos
+  tienen reglas opuestas: EfectoRevivir solo
+  se aplica sobre un personaje MUERTO,
+  EfectoCuracion solo sobre uno VIVO.
+end note
+
+note right of MaquinaDeSlots
+  Aparece solo en las etapas 9 y 19, y
+  siempre ANTES de la tienda. Si el jugador
+  decide pasar a la tienda, abandonar() la
+  cierra y no puede volver en esa etapa.
+  Paga únicamente oro. La estadística SUERTE
+  de los personajes NO influye.
+end note
+
+
+note as N_TIENDA
+  La Tienda y la MaquinaDeSlots NO manejan oro. Dicen
+  cuanto cuesta cada cosa y entregan el objeto; la resta
+  la hace quien lleva la cuenta (Partida, diagrama 4).
+  Asi ninguna de las dos necesita conocer a la partida y
+  se las puede probar sin armar media partida alrededor.
+
+  Los 3 slots NO se refrescan al comprar: el slot
+  comprado queda vacio y la unica forma de ver objetos
+  nuevos es pagar un reroll, que vuelve a sortear los
+  tres a la vez. El precio sube dentro de la misma
+  visita (20 x nº de tienda x nº de reroll) y se
+  reinicia en la tienda siguiente. Eso es lo que impide
+  farmear la tienda hasta que salga lo que uno quiere.
+
+  Los equipables son EXCLUSIVOS de su clase, y
+  GeneradorDeStock sortea solo entre las clases que
+  estan en la party. Sin ese filtro, con 3 slots y 12
+  objetos posibles, la mitad de lo que ofrece la tienda
+  no lo podria usar nadie.
+
+  COMUN quedo reservada para los consumibles: los
+  equipables van de RARO para arriba, y LEGENDARIO
+  recien aparece en la tienda 3.
+
+  El tope de cuantas unidades se pueden llevar vive en
+  el Consumible y no en el Inventario, que no tendria
+  por que conocer los topes de cinco objetos distintos.
+end note
+
+@enduml

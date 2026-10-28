@@ -1,0 +1,320 @@
+@startuml 2_movimientos
+title TPO POO - RPG por turnos\nDiagrama 2: Acciones, Movimientos y Efectos de Estado
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
+hide empty members
+
+enum AlcanceMovimiento {
+  OBJETIVO_UNICO
+  TODOS_LOS_ENEMIGOS
+  ALIADO
+  UNO_MISMO
+  TODA_LA_PARTY
+}
+
+enum Estadistica {
+  VIDA
+  MANA
+  ATAQUE_FISICO
+  DEFENSA_FISICA
+  ATAQUE_MAGICO
+  DEFENSA_MAGICA
+  VELOCIDAD
+  SUERTE
+}
+
+enum TipoDaño {
+  FISICO
+  MAGICO
+}
+
+interface Accion <<interface>> {
+  + ejecutar() : ResultadoAccion
+  + getDescripcion() : String
+}
+
+class AccionUsarMovimiento {
+  - autor : Combatiente
+  - movimiento : Movimiento
+  - objetivos : List<Combatiente>
+  + ejecutar() : ResultadoAccion
+  + getDescripcion() : String
+}
+class AccionDefender {
+  - autor : Combatiente
+  + ejecutar() : ResultadoAccion
+  + getDescripcion() : String
+}
+class AccionInvocar {
+  - autor : Enemigo
+  - cantidad : int
+  + ejecutar() : ResultadoAccion
+  + getDescripcion() : String
+}
+class AccionUsarConsumible {
+  - autor : Combatiente
+  - consumible : Consumible
+  - objetivo : Combatiente
+  + ejecutar() : ResultadoAccion
+  + getDescripcion() : String
+}
+
+class ResultadoAccion {
+  - descripcion : String
+  - dañoTotal : int
+  - fueCritico : boolean
+  - objetivosAfectados : List<Combatiente>
+  - objetivosFallados : List<Combatiente>
+  - efectosAplicados : List<EfectoEstado>
+  - combatientesInvocados : List<Combatiente>
+  --
+  + getDescripcion() : String
+  + getDañoTotal() : int
+  + fueCritico() : boolean
+  + getObjetivosAfectados() : List<Combatiente>
+  + getObjetivosFallados() : List<Combatiente>
+  + huboAlgunFallo() : boolean
+  + getEfectosAplicados() : List<EfectoEstado>
+  + getCombatientesInvocados() : List<Combatiente>
+}
+
+abstract class Movimiento {
+  # nombre : String
+  # descripcion : String
+  # costoMana : int
+  # alcance : AlcanceMovimiento
+  # nivelDesbloqueo : int
+  # esDefinitivo : boolean
+  # cooldownMaximo : int
+  # cooldownRestante : int
+  --
+  + {abstract} aplicar(usuario : Combatiente, objetivos : List<Combatiente>, calculador : CalculadorDeDaño) : ResultadoAccion
+  + estaDesbloqueado(personaje : Personaje) : boolean
+  + estaDisponible(usuario : Combatiente) : boolean
+  + estaEnCooldown() : boolean
+  + iniciarCooldown() : void
+  + reducirCooldown() : void
+  + reiniciarCooldown() : void
+  + getObjetivosPosibles(aliados : List<Combatiente>, enemigos : List<Combatiente>) : List<Combatiente>
+  # resolverObjetivos(usuario : Combatiente, objetivos : List<Combatiente>) : List<Combatiente>
+}
+
+abstract class Ataque {
+  # potencia : int
+  # tipoDaño : TipoDaño
+  + aplicar(usuario, objetivos, calculador : CalculadorDeDaño) : ResultadoAccion
+  + getPotencia() : int
+  + getTipoDaño() : TipoDaño
+}
+class AtaqueFisico {
+}
+class AtaqueMagico {
+}
+
+abstract class Habilidad {
+}
+
+class HabilidadDeCuracion {
+  - cantidadBase : int
+  + aplicar(usuario, objetivos, calculador : CalculadorDeDaño) : ResultadoAccion
+  - calcularCuracion(usuario : Combatiente) : int
+}
+
+class HabilidadDeEstado {
+  - plantillaEfecto : EfectoEstado
+  - probabilidadDeAcierto : int
+  - random : Random
+  --
+  + aplicar(usuario, objetivos, calculador : CalculadorDeDaño) : ResultadoAccion
+  - acierta(objetivo : Combatiente) : boolean
+  + getProbabilidadDeAcierto() : int
+}
+
+abstract class EfectoEstado {
+  # nombre : String
+  # duracionEnTurnos : int
+  --
+  + {abstract} alAplicarse(objetivo : Combatiente) : void
+  + {abstract} alIniciarTurno(objetivo : Combatiente) : void
+  + {abstract} alExpirar(objetivo : Combatiente) : void
+  + {abstract} persisteFueraDeCombate() : boolean
+  + {abstract} copiar() : EfectoEstado
+  + getModificadorPorcentual(estadistica : Estadistica) : int
+  + absorber(daño : int, tipo : TipoDaño) : int
+  + impideActuar() : boolean
+  + reducirDuracion() : void
+  + haExpirado() : boolean
+}
+
+class Veneno {
+  + {static} GOLPE_MINIMO : int = 2
+  + {static} GOLPE_MAXIMO : int = 25
+  - porcentajePorTurno : int
+  + alIniciarTurno(objetivo : Combatiente) : void
+  - calcularDaño(objetivo : Combatiente) : int
+  + persisteFueraDeCombate() : boolean
+}
+class Quemadura {
+  + {static} GOLPE_MAXIMO : int = 25
+  - porcentajePorTurno : int
+  + alIniciarTurno(objetivo : Combatiente) : void
+  + persisteFueraDeCombate() : boolean
+}
+class Aturdimiento {
+  + impideActuar() : boolean
+  + persisteFueraDeCombate() : boolean
+}
+class Escudo {
+  - absorcionRestante : int
+  + absorber(daño : int, tipo : TipoDaño) : int
+  + persisteFueraDeCombate() : boolean
+}
+class BuffEstadistica {
+  - estadistica : Estadistica
+  - porcentaje : int
+  + getModificadorPorcentual(estadistica : Estadistica) : int
+  + persisteFueraDeCombate() : boolean
+}
+class DebuffEstadistica {
+  - estadistica : Estadistica
+  - porcentaje : int
+  + getModificadorPorcentual(estadistica : Estadistica) : int
+  + persisteFueraDeCombate() : boolean
+}
+class Proteccion {
+  - reduccion : int
+  + absorber(daño : int, tipo : TipoDaño) : int
+  + persisteFueraDeCombate() : boolean
+}
+class Regeneracion {
+  - curacionPorTurno : int
+  + alIniciarTurno(objetivo : Combatiente) : void
+  + persisteFueraDeCombate() : boolean
+}
+
+Accion <|.. AccionUsarMovimiento
+Accion <|.. AccionDefender
+Accion <|.. AccionInvocar
+Accion <|.. AccionUsarConsumible
+Accion ..> ResultadoAccion : produce
+
+Movimiento <|-- Ataque
+Movimiento <|-- Habilidad
+Ataque <|-- AtaqueFisico
+Ataque <|-- AtaqueMagico
+Habilidad <|-- HabilidadDeCuracion
+Habilidad <|-- HabilidadDeEstado
+
+Movimiento --> AlcanceMovimiento
+Movimiento ..> ResultadoAccion : produce
+Ataque --> TipoDaño
+HabilidadDeEstado "1" *-- "1" EfectoEstado : plantilla
+AccionUsarMovimiento --> Movimiento
+
+EfectoEstado <|-- Veneno
+EfectoEstado <|-- Quemadura
+EfectoEstado <|-- Aturdimiento
+EfectoEstado <|-- Escudo
+EfectoEstado <|-- BuffEstadistica
+EfectoEstado <|-- DebuffEstadistica
+EfectoEstado <|-- Regeneracion
+EfectoEstado <|-- Proteccion
+
+BuffEstadistica --> Estadistica
+DebuffEstadistica --> Estadistica
+
+note bottom of AccionInvocar
+  Invocar no es un Movimiento: no es ni un Ataque ni
+  una Habilidad, asi que entra como Accion, al mismo
+  nivel que defender.
+
+  Su ResultadoAccion viaja con los combatientes
+  invocados, y es Combate quien los incorpora. El
+  Nigromante nunca toca al Combate directamente.
+end note
+
+note right of Veneno
+  El daño por turno es un PORCENTAJE de la vida
+  maxima del envenenado, no un numero fijo: por eso
+  el atributo es porcentajePorTurno y el valor se
+  calcula recien al pegar, cuando ya se sabe sobre
+  quien.
+
+  Sobre la maxima y no sobre la actual: si fuera
+  sobre la actual, el veneno pegaria cada vez menos
+  y nunca remataria a nadie.
+
+  El tope de 25 es de balance: el 6% de un jefe de
+  800 de vida serian 48 por turno sin defensa que
+  valga, mas que la definitiva mas fuerte del juego
+  y por una cuarta parte del mana.
+end note
+
+note right of Movimiento
+  El ataque básico NO es una clase aparte:
+  es un AtaqueFisico o AtaqueMagico con
+  costoMana = 0 y nivelDesbloqueo = 1.
+
+  La definitiva TAMPOCO: es cualquier
+  Movimiento con esDefinitivo = true y
+  cooldownMaximo = 4.
+
+  Los 24 movimientos del juego se resuelven
+  con solo 4 clases concretas.
+end note
+
+note right of EfectoEstado
+  Los tres primeros metodos son los momentos del
+  ciclo de vida del efecto y son abstractos: cada
+  subclase los implementa, aunque la mayoria deja
+  vacios los que no usa. Por legibilidad, en las
+  subclases de abajo solo se listan los metodos en
+  los que hacen algo.
+
+  Los tres ultimos tienen implementacion por defecto
+  en la clase abstracta y solo los sobrescribe quien
+  los necesita:
+
+  getModificadorPorcentual() devuelve 0 salvo en
+  BuffEstadistica y DebuffEstadistica. Los buffos y
+  debuffos NO escriben las estadisticas del
+  combatiente: las informan, y los getters efectivos
+  suman los porcentajes. Asi al expirar el efecto no
+  hay nada que revertir.
+
+  absorber() devuelve el daño intacto salvo en
+  Escudo, que descuenta de absorcionRestante y
+  devuelve el resto.
+
+  impideActuar() devuelve false salvo en
+  Aturdimiento. Se consulta asi, y no comparando el
+  nombre del efecto con el texto "Aturdimiento",
+  para que el dia que haya otro efecto que paralice
+  no haya que tocar a Combatiente.
+end note
+
+note bottom of HabilidadDeEstado
+  Guarda el efecto como PLANTILLA y lo clona
+  en cada aplicación (EfectoEstado.copiar()).
+  Si aplicara siempre la misma instancia, dos
+  enemigos envenenados compartirían el mismo
+  Veneno.
+
+  La tirada de probabilidad es INDIVIDUAL por
+  objetivo: aplicarSobre() se llama una vez
+  por cada uno.
+
+  acierta(objetivo) descuenta la resistencia
+  del objetivo:
+    probabilidad x (100 - resistencia) / 100
+  Como el Verdugo y el SeñorDeLasSombras
+  tienen resistencia 50, un aturdimiento del
+  40% les entra al 20%. Sin instanceof ni
+  metodo esJefe(): cada combatiente sabe
+  cuanto resiste.
+end note
+
+@enduml

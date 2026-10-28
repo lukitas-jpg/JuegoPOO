@@ -1,0 +1,398 @@
+@startuml 4_combate_partida
+title TPO POO - RPG por turnos\nDiagrama 4: Motor de combate, Partida, Etapas y Persistencia
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
+hide empty members
+
+enum TipoEtapa {
+  NORMAL
+  MINIJEFE
+  JEFE_FINAL
+}
+
+enum EstadoPartida {
+  EN_CURSO
+  GANADA
+  PERDIDA
+}
+
+class Juego {
+  + hayPartidaGuardada() : boolean
+  + iniciarNuevaRun(clasesElegidas : List<ClaseDePersonaje>) : Partida
+  + cargarPartida() : Partida
+  + getEtapaActual() : Etapa
+  + finalizarEtapaDeCombate(resultado : ResultadoCombate) : void
+  + finalizarEtapaDeTienda() : void
+  - avanzarYGuardar() : void
+  + guardarAutomaticamente() : void
+  + finalizarPorDerrota() : void
+  + getEstadoPartida() : EstadoPartida
+  + getPartida() : Partida
+  - generarEtapaActual() : void
+  - getClasesDeLaParty() : List<ClaseDePersonaje>
+  - {static} crearPersonaje(clase : ClaseDePersonaje) : Personaje
+}
+
+class Party <<Serializable>> {
+  - oro : int
+  --
+  + getMiembros() : List<Personaje>
+  + getInventario() : Inventario
+  + getOro() : int
+  + puedePagar(cantidad : int) : boolean
+  + estaDerrotada() : boolean
+  + getMiembrosVivos() : List<Personaje>
+  + getMiembrosCaidos() : List<Personaje>
+  + tieneCaidos() : boolean
+  + repartirExperiencia(cantidad : int) : void
+  + agregarOro(cantidad : int) : void
+  + gastarOro(cantidad : int) : boolean
+  + limpiarEfectosTemporales() : void
+  + tieneAlgunEfectoPersistente() : boolean
+}
+
+class Partida <<Serializable>> {
+  + {static} CANTIDAD_DE_ETAPAS : int = 20
+  - numeroEtapaActual : int
+  - etapasCompletadas : int
+  - estado : EstadoPartida
+  --
+  + avanzarEtapa() : void
+  + terminarPorDerrota() : void
+  + estaEnCurso() : boolean
+  + fueGanada() : boolean
+  + fuePerdida() : boolean
+  + getEstado() : EstadoPartida
+  + getEtapaActual() : int
+  + getEtapasCompletadas() : int
+  + getParty() : Party
+}
+
+abstract class Etapa {
+  # numero : int
+  # completada : boolean
+  --
+  + getNumero() : int
+  + estaCompletada() : boolean
+  + marcarCompletada() : void
+  + {abstract} getDescripcion() : String
+  + {abstract} otorgaExperiencia() : boolean
+  + {abstract} esDeCombate() : boolean
+}
+
+class EtapaDeCombate {
+  - tipo : TipoEtapa
+  - oroBase : int
+  - experienciaBase : int
+  --
+  + getEnemigos() : List<Enemigo>
+  + getTipo() : TipoEtapa
+  + getExperienciaBase() : int
+  + getOroBase() : int
+  + esJefe() : boolean
+  - {static} calcularRecompensa(numero : int, tipo : TipoEtapa) : int
+  + crearCombate(party : Party) : Combate
+  + getDescripcion() : String
+  + otorgaExperiencia() : boolean
+  + esDeCombate() : boolean
+}
+
+class EtapaDeTienda {
+  + pasarALaTienda() : void
+  + tieneMaquinaDeSlots() : boolean
+  + getTienda() : Tienda
+  + getMaquinaDeSlots() : MaquinaDeSlots
+  + getDescripcion() : String
+  + otorgaExperiencia() : boolean
+  + esDeCombate() : boolean
+}
+
+class GeneradorDeEtapas {
+  - random : Random
+  --
+  + crearEtapa(numero : int, clasesDeLaParty : List<ClaseDePersonaje>) : Etapa
+  + {static} esEtapaDeTienda(numero : int) : boolean
+  + {static} llevaMaquinaDeSlots(numero : int) : boolean
+  + {static} determinarTipo(numero : int) : TipoEtapa
+  + {static} getNumeroDeTienda(numeroDeEtapa : int) : int
+  - crearEtapaDeCombate(numero : int) : EtapaDeCombate
+  - crearEtapaDeTienda(numero : int, clases : List<ClaseDePersonaje>) : EtapaDeTienda
+  - elegirEnemigos(numero : int, tipo : TipoEtapa) : List<Enemigo>
+  - getPool(numero : int) : List<Supplier<Enemigo>>
+  - getCantidadDeEnemigos(numero : int) : int
+  - escalarEstadisticas(enemigo : Enemigo, numero : int) : void
+}
+
+class Combate {
+  - finalizado : boolean
+  --
+  + iniciar() : void
+  + getSiguienteEnActuar() : Combatiente
+  + esTurnoDelJugador() : boolean
+  + getMovimientosDelTurno() : List<Movimiento>
+  + getObjetivosPosibles(movimiento : Movimiento) : List<Combatiente>
+  + ejecutarMovimiento(movimiento : Movimiento, objetivos : List<Combatiente>) : ResultadoAccion
+  + ejecutarAccion(accion : Accion) : ResultadoAccion
+  + ejecutarTurnoDeEnemigo() : ResultadoAccion
+  - avanzarTurno() : void
+  + getEnemigosVivos() : List<Combatiente>
+  - getAliadosVivosDe(enemigo : Enemigo) : List<Enemigo>
+  + getNumeroRonda() : int
+  + estaFinalizado() : boolean
+  + getParty() : Party
+  + hayGanador() : boolean
+  + calcularResultado() : ResultadoCombate
+  + agregarCombatiente(combatiente : Combatiente) : void
+  - incorporarInvocados(resultado : ResultadoAccion) : void
+  + retirarCaidos() : void
+  + getRegistro() : List<String>
+  - notificarInicioDeCombate() : void
+}
+
+class GestorDeTurnos {
+  - numeroRonda : int
+  - indiceActual : int
+  - random : Random
+  --
+  + iniciarNuevaRonda() : void
+  + getSiguienteEnActuar() : Combatiente
+  + consumirTurno() : void
+  + rondaTerminada() : boolean
+  + getNumeroRonda() : int
+  + retirar(combatiente : Combatiente) : void
+  + incorporar(combatiente : Combatiente) : void
+  + getOrdenPrevisto() : List<Combatiente>
+  + getParticipantes() : List<Combatiente>
+  - ordenarPorVelocidad() : List<Combatiente>
+}
+
+class CalculadorDeDaño {
+  + {static} DIVISOR_DE_POTENCIA : int = 10
+  + {static} CONSTANTE_DE_DEFENSA : int = 50
+  + {static} VARIACION_MINIMA : int = 90
+  + {static} VARIACION_MAXIMA : int = 110
+  + {static} PROBABILIDAD_CRITICA_MAXIMA : int = 50
+  + {static} MULTIPLICADOR_CRITICO : int = 150
+  + {static} GOLPE_MINIMO : int = 1
+  - random : Random
+  --
+  + calcular(atacante : Combatiente, objetivo : Combatiente, potencia : int, tipo : TipoDaño) : ResultadoDaño
+  - getAtaqueSegunTipo(atacante : Combatiente, tipo : TipoDaño) : int
+  - aplicarDefensa(daño : int, objetivo : Combatiente, tipo : TipoDaño) : int
+  - aplicarVariacion(daño : int) : int
+  - esCritico(atacante : Combatiente) : boolean
+}
+
+note bottom of CalculadorDeDaño
+  Los cinco pasos, siempre en este orden:
+    1. base      = potencia x ataque efectivo / 10
+    2. defensa   = base x 50 / (50 + defensa efectiva)
+    3. defender  = x 50% si el objetivo esta defendiendo
+    4. variacion = x un valor al azar entre 90% y 110%
+    5. critico   = x 150% si sale la tirada de suerte
+  Despues de todo eso, nunca baja de 1.
+
+  El paso 2 usa una curva y no una resta: con resta,
+  una defensa alta dejaria el daño en cero y la pelea
+  se trabaria. Con la curva cada punto de defensa vale
+  un poco menos que el anterior y siempre pasa algo.
+
+  El ESCUDO no esta aca: absorbe despues, dentro de
+  Combatiente.recibirDaño(), porque es un efecto de
+  estado del objetivo y no parte de la formula.
+
+  La probabilidad de critico ES la suerte efectiva
+  leida como porcentaje, con tope de 50.
+
+  El Random entra por constructor para poder fijarle
+  la semilla desde los tests.
+end note
+
+class ResultadoDaño {
+  - daño : int
+  - fueCritico : boolean
+  + getDaño() : int
+  + fueCritico() : boolean
+}
+
+class ResultadoCombate {
+  - victoria : boolean
+  - experienciaGanada : int
+  - oroGanado : int
+  --
+  + fueVictoria() : boolean
+  + getExperienciaGanada() : int
+  + getOroGanado() : int
+  + getRegistroCompleto() : List<String>
+}
+
+interface RepositorioPartidas <<interface>> {
+  + guardar(partida : Partida) : void
+  + cargar() : Partida
+  + existePartidaGuardada() : boolean
+  + borrar() : void
+}
+
+class RepositorioPartidasArchivo {
+  - rutaArchivo : String
+  + guardar(partida : Partida) : void
+  + cargar() : Partida
+  + existePartidaGuardada() : boolean
+  + borrar() : void
+}
+
+Juego "1" *-- "1" Partida : partida
+Juego "1" --> "1" GeneradorDeEtapas
+Juego "1" --> "1" RepositorioPartidas
+Juego "1" --> "1" Etapa : etapaActual
+Partida --> EstadoPartida
+Partida "1" *-- "1" Party : party
+Party "1" *-- "3" Personaje : miembros
+Party "1" *-- "1" Inventario : inventario
+
+Etapa <|-- EtapaDeCombate
+Etapa <|-- EtapaDeTienda
+EtapaDeCombate "1" *-- "1..*" Enemigo : enemigos
+EtapaDeCombate --> TipoEtapa
+EtapaDeTienda "1" *-- "1" Tienda
+EtapaDeTienda "1" *-- "0..1" MaquinaDeSlots
+EtapaDeCombate ..> Combate : crea
+GeneradorDeEtapas ..> Etapa : crea
+GeneradorDeEtapas ..> Enemigo : crea
+
+Combate "1" --> "1" Party
+Combate "1" --> "1" EtapaDeCombate : etapa que se esta jugando
+Combate "1" o-- "1..*" Combatiente : participantes
+Combate "1" *-- "1" GestorDeTurnos
+Combate "1" *-- "1" CalculadorDeDaño
+Combate ..> Accion : ejecuta
+Combate ..> ResultadoCombate : produce
+
+GestorDeTurnos "1" o-- "1..*" Combatiente
+CalculadorDeDaño ..> Combatiente : consulta
+CalculadorDeDaño ..> ResultadoDaño : produce
+
+RepositorioPartidas <|.. RepositorioPartidasArchivo
+RepositorioPartidas ..> Partida : persiste
+
+note bottom of Juego
+  Juego administra los DOS tipos de etapa, y por eso
+  tiene un método de cierre para cada uno:
+   - finalizarEtapaDeCombate(resultado) reparte
+     recompensas y limpia efectos.
+   - finalizarEtapaDeTienda() no reparte nada: la
+     etapa de tienda no da experiencia ni oro.
+  Los dos terminan llamando al privado
+  avanzarYGuardar(), que marca la etapa como
+  completada, avanza la Partida y guarda.
+
+  La etapa en curso la conoce Juego, con el tipo
+  general Etapa. La asociación de Combate es con
+  EtapaDeCombate y no con Etapa para que sea
+  imposible por construcción armar una pelea en una
+  etapa de tienda: no existe una Partida atada solo
+  a etapas de combate.
+end note
+
+note bottom of Party
+  Composición con Personaje: las instancias se
+  crean al confirmar la party y dejan de existir
+  cuando termina la run. No viven fuera de ella.
+end note
+
+note right of Partida
+  El estado es un enum y no un booleano
+  porque hay que distinguir POR QUÉ terminó
+  la run: GANADA (se pasó la etapa 20) o
+  PERDIDA (la party quedó sin nadie en pie).
+  Son dos pantallas distintas y dos señales
+  de origen distinto: la derrota la informa
+  el ResultadoCombate, la victoria la detecta
+  avanzarEtapa().
+end note
+
+note right of Juego
+  GRASP Controller: recibe los eventos del
+  sistema (nueva run, terminar etapa, guardar)
+  y coordina delegando. No resuelve la lógica
+  el mismo. Vive en el MODELO: no conoce
+  ninguna pantalla ni nada de la interfaz.
+end note
+
+note bottom of Combate
+  Dos momentos incorporan combatientes nuevos, y en
+  los dos el dato viaja hacia arriba en vez de que el
+  enemigo empuje hacia abajo:
+
+   - Al iniciar: notificarInicioDeCombate() recorre a
+     todos y agrega lo que devuelva alIniciarCombate().
+   - En un turno: ejecutarAccion() llama al privado
+     incorporarInvocados(), que agrega lo que traiga
+     el ResultadoAccion.
+
+  En ambos casos la mayoria devuelve lista vacia, asi
+  que no hace falta ningun if por tipo de enemigo.
+end note
+
+note bottom of GestorDeTurnos
+  Orden por rondas: al inicio de cada ronda
+  se ordena por getVelocidadEfectiva() de
+  mayor a menor. Los empates se resuelven
+  al azar. Los combatientes incorporados a
+  mitad de ronda (esqueletos del Nigromante)
+  entran recién en la ronda siguiente.
+end note
+
+note bottom of Etapa
+  Etapas 4, 9, 14 y 19 son EtapaDeTienda.
+  La 10 es minijefe y la 20 jefe final.
+  otorgaExperiencia() y esDeCombate() son
+  abstractos: cada subclase responde por si
+  misma. Así Juego no necesita ningún
+  instanceof ni cast para saber qué tipo de
+  etapa tiene.
+
+  El Combate lo crea EtapaDeCombate, que es
+  quien tiene los enemigos (Creator).
+end note
+
+note right of RepositorioPartidas
+  Protected Variations: ninguna clase del
+  juego sabe que se guarda en archivo.
+  Cambiar a JSON o base de datos es agregar
+  otra implementación de esta interfaz.
+end note
+
+
+note as N_MOTOR
+  Lo que se GUARDA es solo la Partida. De ahi cuelgan la
+  Party, los tres personajes con su nivel, su equipo y
+  sus efectos, y el inventario. La etapa NO se guarda:
+  al cargar se vuelve a generar a partir del numero, asi
+  el archivo queda chico y no arrastra enemigos ni
+  tiendas, que son descartables.
+
+  El serialVersionUID esta en las siete raices del
+  grafo: Combatiente, Movimiento, EfectoEstado, Item,
+  Inventario, Party y Partida. Las subclases lo heredan.
+
+  El orden de la ronda se recalcula al INICIO DE CADA
+  RONDA, no una vez por combate. Por eso un buffo de
+  velocidad como Sombra Agil se nota recien en la ronda
+  siguiente.
+
+  Los empates de velocidad se resuelven barajando la
+  lista antes de ordenarla: como el sort de Java es
+  estable, los que empatan quedan en el orden al azar
+  que dejo el barajado. Por eso no hace falta un metodo
+  desempatar() aparte.
+
+  Los que entran a mitad de ronda (los esqueletos del
+  Nigromante) se suman a los participantes pero no al
+  orden ya armado: actuan recien en la ronda siguiente.
+end note
+
+@enduml
