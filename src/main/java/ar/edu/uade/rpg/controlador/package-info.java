@@ -1,7 +1,11 @@
 /**
  * CONTROLADOR (la C de MVC): conecta las pantallas con el modelo.
  *
- * Recibe los eventos de la vista, le habla a Juego y arma los DTOs que la
- * vista muestra. Todavía sin hacer (diagrama 5, pendiente).
+ * ControladorJuego (inicio, seleccion, party entre etapas), ControladorCombate
+ * (batalla) y ControladorTienda (maquina de slots y tienda). Reciben los clicks
+ * de la vista con indices, le hablan a Juego y le devuelven DTOs.
+ *
+ * VistaDelJuego es la interfaz que implementa la ventana: los controladores no
+ * importan nada de Swing ni del paquete vista. ConversorDTO arma los DTOs.
  */
 package ar.edu.uade.rpg.controlador;

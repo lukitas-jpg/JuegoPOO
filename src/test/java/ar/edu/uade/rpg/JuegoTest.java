@@ -234,16 +234,21 @@ class JuegoTest {
         party(juego).getInventario().agregar(polvo);
 
         while (!combate.esTurnoDelJugador()) {
-            combate.ejecutarTurnoDeEnemigo();
+            combate.defender();
         }
         assertEquals(List.of(caido), combate.getObjetivosDeConsumible(polvo));
         combate.usarConsumible(polvo, caido);
         assertTrue(caido.estaVivo());
 
+        // Todos se defienden, asi nadie cae y se ve si el revivido recupera su turno.
         boolean actuo = false;
-        for (int i = 0; i < 30 && !combate.hayGanador() && !actuo; i++) {
+        for (int i = 0; i < 30 && !actuo; i++) {
             actuo = combate.getSiguienteEnActuar() == caido;
-            jugarUnTurno(combate);
+            if (combate.puedeActuarElSiguiente()) {
+                combate.defender();
+            } else {
+                combate.perderTurno();
+            }
         }
         assertTrue(actuo, "el revivido tiene que volver a tener turno");
     }

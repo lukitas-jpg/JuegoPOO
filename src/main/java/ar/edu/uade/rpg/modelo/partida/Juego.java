@@ -70,7 +70,13 @@ public class Juego {
         return partida;
     }
 
-    private static Personaje crearPersonaje(ClaseDePersonaje clase) {
+    /**
+     * Creator de los personajes. Es publico porque la pantalla de seleccion
+     * tambien lo usa: muestra cada clase a partir de un personaje recien creado,
+     * asi la descripcion y las estadisticas salen de la misma clase y no se
+     * repiten en ningun otro lado.
+     */
+    public static Personaje crearPersonaje(ClaseDePersonaje clase) {
         return switch (clase) {
             case GUERRERO -> new Guerrero("Guerrero");
             case MAGO -> new Mago("Mago");
