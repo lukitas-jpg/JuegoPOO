@@ -5,13 +5,12 @@ import java.util.List;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
 /**
- * Saca efectos de estado por nombre. El Antidoto lo usa para quitar el Veneno
- * y la Quemadura, que son justamente los dos unicos que se arrastran de una
- * etapa a la siguiente.
+ * Saca efectos de estado por nombre. El Antidoto lo usa para quitar el Veneno,
+ * que es el unico que se arrastra de una etapa a la siguiente.
  *
  * Guarda los nombres en una lista en vez de tener un metodo por efecto: el dia
- * que haya un tercer estado que se arrastre, se agrega a la lista del item y no
- * hay codigo nuevo.
+ * que haya otro estado que se arrastre, se agrega a la lista del item y no hay
+ * codigo nuevo.
  */
 public class EfectoCurarEstado implements EfectoConsumible {
 

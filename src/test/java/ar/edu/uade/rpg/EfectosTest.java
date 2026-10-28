@@ -13,7 +13,6 @@ import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
 import ar.edu.uade.rpg.modelo.efectos.Aturdimiento;
 import ar.edu.uade.rpg.modelo.efectos.BuffEstadistica;
-import ar.edu.uade.rpg.modelo.efectos.DebuffEstadistica;
 import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
 import ar.edu.uade.rpg.modelo.efectos.Escudo;
 import ar.edu.uade.rpg.modelo.efectos.Veneno;
@@ -161,23 +160,6 @@ class EfectosTest {
         for (int turno = 0; turno < 3; turno++) {
             guerrero.procesarEfectosDeTurno();
         }
-        assertEquals(18, guerrero.getAtaqueFisicoEfectivo());
-    }
-
-    @Test
-    void elDebuffoRestaEnVezDeSumar() {
-        Guerrero guerrero = new Guerrero("Lucas");
-        guerrero.aplicarEfecto(new DebuffEstadistica(Estadistica.ATAQUE_FISICO, 25, 3));
-
-        assertEquals(13, guerrero.getAtaqueFisicoEfectivo()); // 18 x 0.75
-    }
-
-    @Test
-    void unBuffoYUnDebuffoDeLaMismaEstadisticaSeCancelan() {
-        Guerrero guerrero = new Guerrero("Lucas");
-        guerrero.aplicarEfecto(new BuffEstadistica(Estadistica.ATAQUE_FISICO, 25, 3));
-        guerrero.aplicarEfecto(new DebuffEstadistica(Estadistica.ATAQUE_FISICO, 25, 3));
-
         assertEquals(18, guerrero.getAtaqueFisicoEfectivo());
     }
 

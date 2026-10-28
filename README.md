@@ -102,5 +102,5 @@ Antes de programar, leer [CONVENCIONES.md](CONVENCIONES.md).
 Todo CC0. Personajes, enemigos y fondos: *16x16 DungeonTileset II* de 0x72 (el Asesino
 y el Curador, con los colores cambiados). Íconos: *496 pixel art icons for medieval/fantasy
 RPG* de Henrique Lazarini (7Soul1), en OpenGameArt. Los 36 dibujos propios
-de los equipables y el ícono de Protección son dibujos propios. Detalle, links y licencias en
+de los equipables son dibujos propios. Detalle, links y licencias en
 [LICENCIAS.md](LICENCIAS.md).

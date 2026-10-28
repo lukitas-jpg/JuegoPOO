@@ -8,7 +8,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
 
 /**
  * Condicion temporal que afecta a un Combatiente durante una cantidad de
- * turnos: veneno, quemadura, aturdimiento, escudo, mejoras y debilitamientos.
+ * turnos: veneno, aturdimiento, escudo y mejoras de estadisticas.
  *
  * La duracion se cuenta en TURNOS PROPIOS del afectado. Como cada uno actua
  * una vez por ronda, en la practica un turno equivale a una ronda.
@@ -42,9 +42,9 @@ public abstract class EfectoEstado implements Serializable {
     public abstract void alExpirar(Combatiente objetivo);
 
     /**
-     * true solo para Veneno y Quemadura: son los unicos que se arrastran a la
-     * etapa siguiente. Las mejoras, los debilitamientos, los escudos y el
-     * aturdimiento se limpian al cerrar la etapa.
+     * true solo para el Veneno: es el unico que se arrastra a la etapa
+     * siguiente. Las mejoras, los escudos y el aturdimiento se limpian al
+     * cerrar la etapa.
      */
     public abstract boolean persisteFueraDeCombate();
 
@@ -58,8 +58,8 @@ public abstract class EfectoEstado implements Serializable {
     // ------------------------------------- hooks con valor por defecto
 
     /**
-     * Porcentaje que este efecto suma o resta a una estadistica. Devuelve 0
-     * salvo en BuffEstadistica y DebuffEstadistica, que lo sobrescriben.
+     * Porcentaje que este efecto suma a una estadistica. Devuelve 0 salvo en
+     * BuffEstadistica, que lo sobrescribe.
      */
     public int getModificadorPorcentual(Estadistica estadistica) {
         return 0;

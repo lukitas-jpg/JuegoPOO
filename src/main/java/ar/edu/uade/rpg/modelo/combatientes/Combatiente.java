@@ -99,8 +99,8 @@ public abstract class Combatiente implements Serializable {
     }
 
     /**
-     * Daño que no pasa por defensas ni por escudos: el del veneno y el de la
-     * quemadura. Lo usan esos efectos desde su alTerminarTurno.
+     * Daño que no pasa por defensas ni por escudos: el del veneno. Lo usa el
+     * Veneno desde su alTerminarTurno.
      */
     public int recibirDañoDirecto(int daño) {
         int dañoAplicado = Math.min(daño, vidaActual);
@@ -234,9 +234,9 @@ public abstract class Combatiente implements Serializable {
     }
 
     /**
-     * Al cerrar la etapa se limpian las mejoras, los debilitamientos, los
-     * escudos y el aturdimiento. El veneno y la quemadura se quedan, porque son
-     * los unicos que responden true a persisteFueraDeCombate().
+     * Al cerrar la etapa se limpian las mejoras, los escudos y el aturdimiento.
+     * El veneno se queda, porque es el unico que responde true a
+     * persisteFueraDeCombate().
      */
     public void limpiarEfectosTemporales() {
         efectosActivos.removeIf(efecto -> !efecto.persisteFueraDeCombate());
@@ -244,7 +244,7 @@ public abstract class Combatiente implements Serializable {
 
     /**
      * Saca un efecto por nombre y avisa si habia alguno. Lo usa el Antidoto,
-     * que quita el Veneno y la Quemadura.
+     * que quita el Veneno.
      */
     public boolean quitarEfecto(String nombre) {
         boolean habia = false;
@@ -281,7 +281,7 @@ public abstract class Combatiente implements Serializable {
 
     /**
      * Las estadisticas "efectivas" son las que valen en el combate: la base mas
-     * lo que sumen o resten las mejoras y los debilitamientos activos. Los
+     * lo que sumen las mejoras activas. Los
      * movimientos y CalculadorDeDaño usan siempre estas, nunca las base.
      */
     public int getAtaqueFisicoEfectivo() {
@@ -312,7 +312,7 @@ public abstract class Combatiente implements Serializable {
      * Suma los porcentajes de todos los efectos activos y los aplica sobre el
      * valor base. Se suman entre ellos y se aplican una sola vez, no uno sobre
      * el resultado del otro: dos mejoras de +20% dan +40%, no +44%. Nunca baja
-     * de 1 para que un debilitamiento no deje una estadistica en cero.
+     * de 1, por las dudas.
      */
     private int conModificadores(int valorBase, Estadistica estadistica) {
         int porcentaje = 0;

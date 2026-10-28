@@ -10,8 +10,7 @@ import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
  *
  * Absorbe tanto daño fisico como magico, y se gasta: cuando absorcionRestante
  * llega a cero deja pasar todo, aunque le queden turnos de duracion. No frena
- * al veneno ni a la quemadura, porque esos usan recibirDañoDirecto() y no
- * pasan por aca.
+ * al veneno, porque usa recibirDañoDirecto() y no pasa por aca.
  */
 public class Escudo extends EfectoEstado {
 

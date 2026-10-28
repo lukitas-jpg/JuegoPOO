@@ -320,4 +320,16 @@ class MovimientosTest {
         assertTrue(tres.getVidaActual() < 500);
         assertTrue(resultado.getDañoTotal() > 0);
     }
+
+    @Test
+    void posturaFirmeLeSubeLaDefensaFisicaAlTanque() {
+        Tanque tanque = new Tanque("Maximo");
+        Movimiento postura = tanque.getMovimientos().get(2);
+        int antes = tanque.getDefensaFisicaEfectiva();
+
+        postura.aplicar(tanque, List.of(), calculador);
+
+        assertEquals("Postura Firme", postura.getNombre());
+        assertEquals(antes * 125 / 100, tanque.getDefensaFisicaEfectiva());
+    }
 }

@@ -15,9 +15,7 @@ import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
  * ordenamiento, que no es de ninguno de los dos.
  *
  * El orden se calcula AL INICIO DE CADA RONDA, no una vez por combate. Por eso
- * un buffo de velocidad como Sombra Agil se nota recien en la ronda siguiente,
- * y por eso tambien un debuffo puede hacer que alguien pase de actuar primero a
- * actuar ultimo.
+ * un buffo de velocidad como Sombra Agil se nota recien en la ronda siguiente.
  *
  * Los empates se resuelven al azar, no por orden de llegada: si no, el que
  * estuviera primero en la lista ganaria siempre todos los empates.

@@ -107,7 +107,7 @@ de vista del jugador, así que cuando lo usa un enemigo significa *toda la party
 | **Verdugo** | Mirada Petrificante | HabilidadDeEstado | — | objetivo único | Aturdimiento 1 turno, 50% de acierto, cooldown de 4 turnos |
 | **Señor** fase 1 | Garra de Sombra | AtaqueFisico | 17 | objetivo único | apunta al más débil |
 | **Señor** fase 2 | Marea de Sombras | AtaqueMagico | 12 | toda la party | apunta al más peligroso |
-| **Señor** fase 2 | Llamas Sombrías | HabilidadDeEstado | — | toda la party | Quemadura 10% × 2 turnos, 40% de acierto por objetivo |
+| **Señor** fase 2 | Bruma Sombría | HabilidadDeEstado | — | toda la party | Veneno 10% × 2 turnos, 40% de acierto por objetivo (antes era una Quemadura) |
 
 El Berserker sobrescribe `getAtaqueFisicoEfectivo()`: su ataque sube de forma lineal
 a medida que baja su vida, hasta el doble cuando está por caer.

@@ -12,6 +12,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeEstado;
 import ar.edu.uade.rpg.modelo.combate.CalculadorDeDaño;
 import ar.edu.uade.rpg.modelo.combatientes.Acechador;
 import ar.edu.uade.rpg.modelo.combatientes.Berserker;
@@ -148,8 +149,8 @@ class EnemigosTest {
         ResultadoAccion enFase2 = jefe.elegirAccion(party(), calculador).ejecutar();
 
         assertEquals(2, jefe.getFase());
-        // En fase 2 apunta a los tres, con Marea de Sombras o con Llamas Sombrias.
-        // Con las Llamas, los que zafan del 40% cuentan como fallados, no como afectados.
+        // En fase 2 apunta a los tres, con Marea de Sombras o con Bruma Sombria.
+        // Con la Bruma, los que zafan del 40% cuentan como fallados, no como afectados.
         int alcanzados = enFase2.getObjetivosAfectados().size() + enFase2.getObjetivosFallados().size();
         assertEquals(3, alcanzados, "en fase 2 apunta a los tres");
     }
@@ -248,5 +249,14 @@ class EnemigosTest {
         // Enemigo no extiende Personaje: no tiene ganarExperiencia ni equipo.
         assertFalse(Personaje.class.isAssignableFrom(Bruto.class));
         assertTrue(Enemigo.class.isAssignableFrom(Bruto.class));
+    }
+
+    @Test
+    void laBrumaSombriaDelJefeEnvenenaEnVezDeQuemar() {
+        SeñorDeLasSombras jefe = new SeñorDeLasSombras();
+        HabilidadDeEstado bruma = (HabilidadDeEstado) jefe.getMovimientos().get(2);
+
+        assertEquals("Bruma Sombria", bruma.getNombre());
+        assertEquals("Veneno", bruma.getPlantillaEfecto().getNombre());
     }
 }

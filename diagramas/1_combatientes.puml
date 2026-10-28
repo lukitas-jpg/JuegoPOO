@@ -277,8 +277,8 @@ note right of Combatiente
   recibirDaño() NO calcula el daño: lo recibe ya
   calculado de CalculadorDeDaño, lo pasa por los
   escudos activos y devuelve lo que realmente entro.
-  recibirDañoDirecto() es el del veneno y la
-  quemadura, que no pasan por defensas ni escudos.
+  recibirDañoDirecto() es el del veneno, que no
+  pasa por defensas ni escudos.
 
   sumarAEstadistica() existe porque Arma y Armadura
   viven en otro paquete y no alcanzan los atributos

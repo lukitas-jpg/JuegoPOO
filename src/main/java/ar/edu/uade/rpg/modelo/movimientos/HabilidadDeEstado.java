@@ -9,7 +9,7 @@ import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
 
 /**
  * Aplica un efecto de estado sobre uno o varios objetivos: veneno, mejora,
- * debilitamiento, escudo o aturdimiento.
+ * escudo o aturdimiento.
  *
  * Guarda el efecto como PLANTILLA y es Combatiente.aplicarEfecto() quien lo
  * clona en cada aplicacion. Si se aplicara siempre la misma instancia, dos

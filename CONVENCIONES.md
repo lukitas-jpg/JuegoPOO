@@ -153,7 +153,7 @@ Hoy hay **128 tests en seis archivos**:
 | Archivo | Qué cubre |
 |---|---|
 | `PersonajeTest` | estadísticas base, daño, curación, niveles y equipo |
-| `EfectosTest` | los 8 efectos de estado, el tope del veneno, los buffos que no se multiplican |
+| `EfectosTest` | los 4 efectos de estado, el tope del veneno, los buffos que no se multiplican |
 | `MovimientosTest` | los 24 movimientos, la fórmula de daño, el tope del crítico |
 | `EnemigosTest` | los 6 enemigos, las 4 interfaces de apuntado y el escalado por etapa |
 | `TiendaTest` | catálogos, inventario, tienda y reroll |

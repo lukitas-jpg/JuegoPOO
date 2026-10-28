@@ -157,12 +157,6 @@ class Veneno {
   - calcularDaño(objetivo : Combatiente) : int
   + persisteFueraDeCombate() : boolean
 }
-class Quemadura {
-  + {static} GOLPE_MAXIMO : int = 25
-  - porcentajePorTurno : int
-  + alTerminarTurno(objetivo : Combatiente) : void
-  + persisteFueraDeCombate() : boolean
-}
 class Aturdimiento {
   + impideActuar() : boolean
   + persisteFueraDeCombate() : boolean
@@ -176,22 +170,6 @@ class BuffEstadistica {
   - estadistica : Estadistica
   - porcentaje : int
   + getModificadorPorcentual(estadistica : Estadistica) : int
-  + persisteFueraDeCombate() : boolean
-}
-class DebuffEstadistica {
-  - estadistica : Estadistica
-  - porcentaje : int
-  + getModificadorPorcentual(estadistica : Estadistica) : int
-  + persisteFueraDeCombate() : boolean
-}
-class Proteccion {
-  - reduccion : int
-  + absorber(daño : int, tipo : TipoDaño) : int
-  + persisteFueraDeCombate() : boolean
-}
-class Regeneracion {
-  - curacionPorTurno : int
-  + alTerminarTurno(objetivo : Combatiente) : void
   + persisteFueraDeCombate() : boolean
 }
 
@@ -214,16 +192,11 @@ HabilidadDeEstado "1" *-- "1" EfectoEstado : plantilla
 AccionUsarMovimiento --> Movimiento
 
 EfectoEstado <|-- Veneno
-EfectoEstado <|-- Quemadura
 EfectoEstado <|-- Aturdimiento
 EfectoEstado <|-- Escudo
 EfectoEstado <|-- BuffEstadistica
-EfectoEstado <|-- DebuffEstadistica
-EfectoEstado <|-- Regeneracion
-EfectoEstado <|-- Proteccion
 
 BuffEstadistica --> Estadistica
-DebuffEstadistica --> Estadistica
 
 note right of Veneno
   El daño por turno es un PORCENTAJE de la vida
@@ -268,8 +241,8 @@ note right of EfectoEstado
   los necesita:
 
   getModificadorPorcentual() devuelve 0 salvo en
-  BuffEstadistica y DebuffEstadistica. Los buffos y
-  debuffos NO escriben las estadisticas del
+  BuffEstadistica. Los buffos NO escriben las
+  estadisticas del
   combatiente: las informan, y los getters efectivos
   suman los porcentajes. Asi al expirar el efecto no
   hay nada que revertir.

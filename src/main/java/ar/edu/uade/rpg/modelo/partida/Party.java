@@ -111,9 +111,8 @@ public class Party implements Serializable {
     // ------------------------------------------------------------- efectos
 
     /**
-     * Al cerrar una etapa se limpian las mejoras, los debilitamientos, los
-     * escudos y el aturdimiento. El veneno y la quemadura se quedan: son los
-     * dos unicos que se arrastran.
+     * Al cerrar una etapa se limpian las mejoras, los escudos y el
+     * aturdimiento. El veneno se queda: es el unico que se arrastra.
      */
     public void limpiarEfectosTemporales() {
         for (Personaje miembro : miembros) {

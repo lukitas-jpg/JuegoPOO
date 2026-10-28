@@ -37,8 +37,8 @@ public final class CatalogoDeConsumibles {
     /** Quita los dos unicos efectos que se arrastran de una etapa a la otra. */
     public static Consumible antidoto() {
         return new Consumible("Antidoto",
-                "Quita el Veneno y la Quemadura.",
-                15, Rareza.COMUN, new EfectoCurarEstado(List.of("Veneno", "Quemadura")), 6);
+                "Quita el Veneno.",
+                15, Rareza.COMUN, new EfectoCurarEstado(List.of("Veneno")), 6);
     }
 
     /** Lo mas caro del catalogo: es la unica forma de deshacer una muerte. */

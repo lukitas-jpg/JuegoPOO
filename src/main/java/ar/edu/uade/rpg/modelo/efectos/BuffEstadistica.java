@@ -5,7 +5,8 @@ import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
 
 /**
  * Sube una estadistica un porcentaje durante unos turnos. Lo usan Grito de
- * Guerra (ataque fisico), Bendicion (defensa fisica) y Sombra Agil (velocidad).
+ * Guerra (ataque fisico), Bendicion (defensa fisica), Sombra Agil (velocidad),
+ * Postura Firme (defensa fisica) y la Piedra de Afilar.
  *
  * No escribe las estadisticas del combatiente: las INFORMA por
  * getModificadorPorcentual(), y los getters efectivos de Combatiente suman

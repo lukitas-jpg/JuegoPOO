@@ -8,7 +8,7 @@ para ellos ahora que los equipables usan solo RARO, EPICO y LEGENDARIO.
 |---|---|---|---|
 | Poción de Vida | Cura el **55% de la vida máxima** del objetivo | 25 | 12 |
 | Elixir de Maná | Restaura el 50% del maná máximo | 20 | 8 |
-| Antídoto | Quita Veneno y Quemadura | 15 | 6 |
+| Antídoto | Quita el Veneno | 15 | 6 |
 | Polvo de Renacer | Revive a un caído con el 50% de su vida | 120 | 3 |
 | Piedra de Afilar | +30% de ataque durante 3 turnos | 40 | 6 |
 
@@ -99,10 +99,9 @@ intercambio real y bastante elegante: o curás con una clase, o curás con oro.
 solo sirve dentro de una pelea larga. Lo usa el Curador cuando se queda seco a mitad
 del jefe, y el Mago para tirar un Meteoro de más.
 
-**Antídoto (15).** El Veneno y la Quemadura son los únicos dos efectos que se
-arrastran de una etapa a la siguiente, así que sin antídoto entrás envenenado a la
-pelea que viene. Importa contra el Emponzoñador y contra la fase 2 del Señor de las
-Sombras.
+**Antídoto (15).** El Veneno es el único efecto que se arrastra de una etapa a la
+siguiente, así que sin antídoto entrás envenenado a la pelea que viene. Importa contra
+el Emponzoñador y contra la Bruma Sombría de la fase 2 del Señor de las Sombras.
 
 **Polvo de Renacer (120).** Caro a propósito: es la única forma de deshacer una
 muerte, y la muerte es permanente. A 120 cuesta casi lo mismo que equipar a un

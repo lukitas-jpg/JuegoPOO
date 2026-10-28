@@ -5,7 +5,7 @@ import java.util.List;
 import ar.edu.uade.rpg.modelo.combate.CalculadorDeDaño;
 import ar.edu.uade.rpg.modelo.combatientes.objetivos.ObjetivoMasDebil;
 import ar.edu.uade.rpg.modelo.combatientes.objetivos.ObjetivoMasPeligroso;
-import ar.edu.uade.rpg.modelo.efectos.Quemadura;
+import ar.edu.uade.rpg.modelo.efectos.Veneno;
 import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
@@ -17,7 +17,8 @@ import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeEstado;
  * cambia de movimientos y de forma de apuntar.
  *
  * Fase 1: fisico a objetivo unico, apunta al mas debil para ir sacando gente.
- * Fase 2: magia en area sobre los tres y quemaduras, apunta al mas peligroso.
+ * Fase 2: magia en area sobre los tres o los envenena a todos; apunta al mas
+ * peligroso.
  *
  * Es el unico que implementa DOS interfaces de apuntado, y Java obliga a
  * desambiguar porque las dos traen un elegirObjetivo() con implementacion. Se
@@ -47,9 +48,9 @@ public final class SeñorDeLasSombras extends Enemigo
                 0, AlcanceMovimiento.OBJETIVO_UNICO, 1, false, 17));
         agregarMovimiento(new AtaqueMagico("Marea de Sombras", "La oscuridad cubre el campo entero.",
                 0, AlcanceMovimiento.TODOS_LOS_ENEMIGOS, 1, false, 12));
-        agregarMovimiento(new HabilidadDeEstado("Llamas Sombrias",
-                "Prende fuego a toda la party: 10% de su vida maxima por turno, 2 turnos.",
-                0, AlcanceMovimiento.TODOS_LOS_ENEMIGOS, 1, false, new Quemadura(10, 2), 40));
+        agregarMovimiento(new HabilidadDeEstado("Bruma Sombria",
+                "Una niebla toxica envuelve a la party: veneno del 10% de la vida maxima por turno, 2 turnos.",
+                0, AlcanceMovimiento.TODOS_LOS_ENEMIGOS, 1, false, new Veneno(10, 2), 40));
     }
 
     @Override

@@ -1,11 +1,11 @@
-"""Dibuja los 36 equipables y el icono de Proteccion como pixel art de 34x34 (se guardan a 68x68).
+"""Dibuja los 36 equipables como pixel art de 34x34 (se guardan a 68x68).
 
 No hace falta para compilar ni para jugar: los PNG ya estan en src/main/resources/imagenes/.
 Sirve para cambiar o rehacer alguno. Necesita Python 3 y Pillow (pip install pillow):
 
     python3 herramientas/dibujar_equipables.py salida/
 
-Deja salida/equipables/<objeto>.png y salida/estados/proteccion.png. Cada dibujo es
+Deja salida/equipables/<objeto>.png. Cada dibujo es
 una funcion corta registrada con @dibujo("<nombre_del_archivo>"). El color del detalle
 marca la rareza: azul = raro, violeta = epico, dorado con destellos = legendario.
 
@@ -517,23 +517,11 @@ def _(L):
     L.linea(L.color(LEGEND), 11, 28, 23, 28, 2)
     L.destello(30, 3)
 
-# --- Efecto Proteccion: cupula sobre una figura
-@dibujo("proteccion")
-def _(L):
-    c = L.color(ramp(80, 190, 170))
-    L.arco(c, 17, 22, 14, 16, 180, 360, 3)
-    L.linea(c, 2, 22, 32, 22, 2)
-    f = L.color(ramp(225, 215, 190))
-    L.disco(f, 17, 12, 3)
-    L.poligono(f, [(12, 21), (14, 16), (20, 16), (22, 21)])
-
 # ------------------------------------------------------------ salida
 os.makedirs(os.path.join(SALIDA, "equipables"), exist_ok=True)
-os.makedirs(os.path.join(SALIDA, "estados"), exist_ok=True)
 for nombre, f in DIBUJOS.items():
     L = Lienzo()
     f(L)
     img = L.render().resize((68, 68), Image.NEAREST)
-    carpeta = "estados" if nombre == "proteccion" else "equipables"
-    img.save(os.path.join(SALIDA, carpeta, nombre + ".png"))
+    img.save(os.path.join(SALIDA, "equipables", nombre + ".png"))
 print(len(DIBUJOS), "dibujos")

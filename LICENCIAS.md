@@ -22,9 +22,8 @@ Cambios que hicimos sobre esos recursos:
 | Qué | Dónde está | Licencia |
 |---|---|---|
 | Dibujo propio de cada uno de los 36 equipables (`arco_corto_de_tejo.png`, etc.) | `imagenes/equipables/` | CC0 1.0 |
-| Ícono de Protección (`proteccion.png`) | `imagenes/estados/` | CC0 1.0 |
 
-Los equipables y el ícono de Protección se dibujaron desde cero en el estilo de los íconos
+Los equipables se dibujaron desde cero en el estilo de los íconos
 de 7Soul1; no copian ninguno de sus íconos. Se generan con `herramientas/dibujar_equipables.py`.
 Los liberamos como CC0 para que todas las imágenes del juego tengan la misma licencia.
 
