@@ -334,19 +334,19 @@ class TiendaTest {
     @Test
     void laTablaDePremiosDaLosNumerosQueDiceElDocumento() {
         assertEquals(15, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CORONA, Simbolo.CORONA, Simbolo.CORONA)));
+                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.DIAMANTE)));
         assertEquals(10, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.ESPADA, Simbolo.ESPADA, Simbolo.ESPADA)));
+                List.of(Simbolo.CEREZA, Simbolo.CEREZA, Simbolo.CEREZA)));
         assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CALAVERA, Simbolo.CALAVERA, Simbolo.CALAVERA)));
+                List.of(Simbolo.LIMON, Simbolo.LIMON, Simbolo.LIMON)));
         assertEquals(4, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CORONA, Simbolo.CORONA, Simbolo.MONEDA)));
+                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.MONEDA)));
         assertEquals(2, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.ESPADA, Simbolo.MONEDA)));
+                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.MONEDA)));
         assertEquals(1, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.ESCUDO, Simbolo.ESCUDO, Simbolo.CORONA)));
+                List.of(Simbolo.TREBOL, Simbolo.TREBOL, Simbolo.DIAMANTE)));
         assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.ESPADA, Simbolo.CORONA)));
+                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.DIAMANTE)));
     }
 
     @Test

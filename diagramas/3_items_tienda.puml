@@ -30,11 +30,11 @@ enum SlotEquipo {
 
 enum Simbolo {
   MONEDA
-  ESPADA
-  ESCUDO
-  POCION
-  CORONA
-  CALAVERA
+  CEREZA
+  TREBOL
+  RUBI
+  DIAMANTE
+  LIMON
 }
 
 abstract class Item {
