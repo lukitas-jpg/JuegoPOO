@@ -1,0 +1,25 @@
+# Compilado de Maven
+target/
+
+# Partidas guardadas (cada uno tiene las suyas)
+saves/*
+!saves/.gitkeep
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
