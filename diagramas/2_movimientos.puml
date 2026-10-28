@@ -71,6 +71,13 @@ class ResultadoAccion {
   - efectosAplicados : List<EfectoEstado>
   - combatientesInvocados : List<Combatiente>
   --
+  + setDescripcion(descripcion : String) : void
+  + sumarDaño(daño : int) : void
+  + marcarCritico() : void
+  + agregarObjetivoAfectado(objetivo : Combatiente) : void
+  + agregarObjetivoFallado(objetivo : Combatiente) : void
+  + agregarEfectoAplicado(efecto : EfectoEstado) : void
+  + agregarCombatienteInvocado(invocado : Combatiente) : void
   + getDescripcion() : String
   + getDañoTotal() : int
   + fueCritico() : boolean
@@ -96,9 +103,11 @@ abstract class Movimiento {
   + estaDisponible(usuario : Combatiente) : boolean
   + estaEnCooldown() : boolean
   + iniciarCooldown() : void
+  + esDefinitivo() : boolean
   + reducirCooldown() : void
   + reiniciarCooldown() : void
   + getObjetivosPosibles(aliados : List<Combatiente>, enemigos : List<Combatiente>) : List<Combatiente>
+  + requiereElegirObjetivo() : boolean
   # resolverObjetivos(usuario : Combatiente, objetivos : List<Combatiente>) : List<Combatiente>
 }
 

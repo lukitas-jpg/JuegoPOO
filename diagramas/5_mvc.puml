@@ -1,0 +1,304 @@
+@startuml 5_mvc
+title TPO POO - RPG por turnos\nDiagrama 5: Vista, controladores y DTOs (MVC)
+
+set separator none
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 50
+
+class App {
+  + {static} main(args : String[]) : void
+  - {static} iniciar() : void
+}
+
+package "ar.edu.uade.rpg.vista" {
+
+  class VentanaPrincipal <<JFrame>> {
+    - cartas : CardLayout
+    --
+    + VentanaPrincipal(controlador : ControladorJuego)
+    + mostrarInicio(hayPartidaGuardada : boolean) : void
+    + mostrarSeleccionDeParty(clases : List<ClaseDTO>, tamañoDeLaParty : int) : void
+    + mostrarBatalla(estado : EstadoCombateDTO) : void
+    + mostrarResultado(datos : ResultadoDTO) : void
+    + mostrarEstadoDeLaParty(party : PartyDTO) : void
+    + mostrarTienda(datos : TiendaDTO) : void
+    + mostrarMaquina(maquina : MaquinaDTO) : void
+    + mostrarTirada(tirada : TiradaDTO, maquina : MaquinaDTO) : void
+    + avisar(mensaje : String) : void
+  }
+
+  class PanelConFondo <<JPanel>> {
+    - fondo : BufferedImage
+    - oscuridad : int
+    --
+    ~ cambiarFondo(claveDeFondo : String) : void
+    # paintComponent(g : Graphics) : void
+  }
+
+  class PantallaInicio {
+    ~ mostrar(hayPartidaGuardada : boolean) : void
+  }
+  class PantallaSeleccionParty {
+    - elegidas : List<Integer>
+    ~ mostrar(clases : List<ClaseDTO>, tamaño : int) : void
+    - tocar(indice : int) : void
+  }
+  class PantallaBatalla {
+    - {static} PAUSA_MS : int = 800
+    - turnoAutomatico : Timer
+    - estado : EstadoCombateDTO
+    --
+    ~ mostrar(nuevo : EstadoCombateDTO) : void
+    - mostrarMenuPrincipal() : void
+    - elegirMovimiento(indice : int, movimiento : MovimientoDTO) : void
+    - mostrarInventario() : void
+    - elegirConsumible(indice : int, item : ItemDTO) : void
+  }
+  class PantallaResultado {
+    ~ mostrar(resultado : ResultadoDTO) : void
+  }
+  class PantallaEstadoParty {
+    ~ mostrar(nuevo : PartyDTO) : void
+    - mostrarInventario() : void
+  }
+  class PantallaTienda {
+    ~ mostrar(tienda : TiendaDTO) : void
+  }
+  class PantallaTragamonedas {
+    - animacion : Timer
+    --
+    ~ mostrar(datos : MaquinaDTO) : void
+    ~ animar(tirada : TiradaDTO, despues : MaquinaDTO) : void
+    - siguienteCuadro() : void
+  }
+
+  class TarjetaCombatiente {
+    ~ TarjetaCombatiente(combatiente : CombatienteDTO, formato : Formato)
+  }
+
+  class CargadorDeImagenes <<(U,#b0c4de) utilitaria>> {
+    ~ {static} imagen(clave : String) : BufferedImage
+    ~ {static} escalada(clave : String, factor : double) : BufferedImage
+    ~ {static} redimensionar(original : BufferedImage, ancho : int, alto : int) : BufferedImage
+    - {static} cargar(clave : String) : BufferedImage
+    - {static} reemplazo(clave : String) : BufferedImage
+  }
+  class Fondos <<(U,#b0c4de) utilitaria>> {
+    ~ {static} paraEtapa(numero : int) : String
+  }
+  class "Estilo, Boton, Barra,\nFranjaOscura, Aviso" as Piezas <<piezas visuales>>
+  hide Piezas members
+}
+
+package "ar.edu.uade.rpg.controlador" {
+
+  interface VistaDelJuego {
+    + mostrarInicio(hayPartidaGuardada : boolean) : void
+    + mostrarSeleccionDeParty(clases : List<ClaseDTO>, tamañoDeLaParty : int) : void
+    + mostrarBatalla(estado : EstadoCombateDTO) : void
+    + mostrarResultado(resultado : ResultadoDTO) : void
+    + mostrarEstadoDeLaParty(party : PartyDTO) : void
+    + mostrarTienda(tienda : TiendaDTO) : void
+    + mostrarMaquina(maquina : MaquinaDTO) : void
+    + mostrarTirada(tirada : TiradaDTO, maquina : MaquinaDTO) : void
+    + avisar(mensaje : String) : void
+  }
+
+  class ControladorJuego {
+    + {static} TAMAÑO_DE_LA_PARTY : int = 3
+    --
+    + ControladorJuego(juego : Juego)
+    + setVista(vista : VistaDelJuego) : void
+    + getControladorCombate() : ControladorCombate
+    + getControladorTienda() : ControladorTienda
+    + iniciar() : void
+    + nuevaPartida() : void
+    + confirmarParty(indicesDeClases : List<Integer>) : void
+    + cargarPartida() : void
+    + continuar() : void
+    + siguienteEtapa() : void
+    + volverAlInicio() : void
+    + getObjetivosDeConsumible(indiceEnElInventario : int) : List<CombatienteDTO>
+    + usarConsumible(indiceEnElInventario : int, indiceDeObjetivo : int) : void
+    ~ mostrarEstadoDeLaParty() : void
+    - jugarEtapaActual() : void
+  }
+
+  class ControladorCombate {
+    - objetivosOfrecidos : List<Combatiente>
+    - consumiblesOfrecidos : List<Consumible>
+    --
+    ~ setVista(vista : VistaDelJuego) : void
+    ~ iniciar() : void
+    + avanzarTurnoAutomatico() : void
+    + getObjetivosDeMovimiento(indiceMovimiento : int) : List<CombatienteDTO>
+    + usarMovimiento(indiceMovimiento : int, indiceObjetivo : int) : void
+    + usarMovimiento(indiceMovimiento : int) : void
+    + defender() : void
+    + getObjetivosDeConsumible(indiceEnElInventario : int) : List<CombatienteDTO>
+    + usarConsumible(indiceEnElInventario : int, indiceObjetivo : int) : void
+    - despuesDeActuar() : void
+    - terminar() : void
+    - movimientoDelTurno(indice : int) : Movimiento
+    - armarEstado() : EstadoCombateDTO
+  }
+
+  class ControladorTienda {
+    ~ setVista(vista : VistaDelJuego) : void
+    ~ iniciar() : void
+    + tirar() : void
+    + pasarALaTienda() : void
+    + comprarConsumible(indice : int) : void
+    + comprarEquipable(indiceSlot : int) : void
+    + rerollear() : void
+    + salir() : void
+    - armarMaquina() : MaquinaDTO
+    - armarTienda() : TiendaDTO
+    - armarSlot(equipable : Equipable, party : Party) : EquipableEnVentaDTO
+    - destinatarioDe(equipable : Equipable) : Personaje
+  }
+
+  class ConversorDTO <<(U,#b0c4de) utilitaria>> {
+    ~ {static} personaje(personaje : Personaje, tieneElTurno : boolean) : CombatienteDTO
+    ~ {static} enemigo(enemigo : Combatiente, tieneElTurno : boolean) : CombatienteDTO
+    ~ {static} miembros(party : Party) : List<CombatienteDTO>
+    ~ {static} movimiento(movimiento : Movimiento, usuario : Combatiente, disponible : boolean) : MovimientoDTO
+    ~ {static} consumible(consumible : Consumible, cantidad : int, disponible : boolean) : ItemDTO
+    ~ {static} equipable(equipable : Equipable, disponible : boolean) : ItemDTO
+    ~ {static} bonificaciones(equipable : Equipable) : String
+    ~ {static} inventario(inventario : Inventario) : List<ItemDTO>
+    ~ {static} distintosDelInventario(inventario : Inventario) : List<Consumible>
+    ~ {static} party(juego : Juego) : PartyDTO
+    ~ {static} nombreDeArchivo(nombre : String) : String
+  }
+}
+
+package "ar.edu.uade.rpg.dto" <<records>> {
+  class ClaseDTO <<record>>
+  class CombatienteDTO <<record>>
+  class EfectoDTO <<record>>
+  class MovimientoDTO <<record>>
+  class ItemDTO <<record>>
+  class EquipableEnVentaDTO <<record>>
+  class EstadoCombateDTO <<record>>
+  class PartyDTO <<record>>
+  class ResultadoDTO <<record>>
+  class TiendaDTO <<record>>
+  class MaquinaDTO <<record>>
+  class TiradaDTO <<record>>
+  hide <<record>> members
+}
+
+package "ar.edu.uade.rpg.modelo (diagramas 1 a 4)" {
+  class Juego
+  class Combate
+  hide Juego members
+  hide Combate members
+}
+
+' ---------------------------------------------------------------- relaciones
+
+App ..> Juego : crea
+App ..> ControladorJuego : crea
+App ..> VentanaPrincipal : crea
+
+VistaDelJuego <|.. VentanaPrincipal
+VentanaPrincipal *-- PantallaInicio
+VentanaPrincipal *-- PantallaSeleccionParty
+VentanaPrincipal *-- PantallaBatalla
+VentanaPrincipal *-- PantallaResultado
+VentanaPrincipal *-- PantallaEstadoParty
+VentanaPrincipal *-- PantallaTienda
+VentanaPrincipal *-- PantallaTragamonedas
+
+PanelConFondo <|-- PantallaInicio
+PanelConFondo <|-- PantallaSeleccionParty
+PanelConFondo <|-- PantallaBatalla
+PanelConFondo <|-- PantallaResultado
+PanelConFondo <|-- PantallaEstadoParty
+PanelConFondo <|-- PantallaTienda
+PanelConFondo <|-- PantallaTragamonedas
+
+PantallaBatalla ..> TarjetaCombatiente
+PantallaResultado ..> TarjetaCombatiente
+PantallaEstadoParty ..> TarjetaCombatiente
+PanelConFondo ..> CargadorDeImagenes
+TarjetaCombatiente ..> CargadorDeImagenes
+PantallaBatalla ..> Fondos
+
+PantallaInicio --> ControladorJuego
+PantallaSeleccionParty --> ControladorJuego
+PantallaResultado --> ControladorJuego
+PantallaEstadoParty --> ControladorJuego
+PantallaBatalla --> ControladorCombate
+PantallaTienda --> ControladorTienda
+PantallaTragamonedas --> ControladorTienda
+
+ControladorJuego "1" *-- "1" ControladorCombate
+ControladorJuego "1" *-- "1" ControladorTienda
+ControladorTienda --> ControladorJuego : vuelve a la party
+ControladorJuego --> VistaDelJuego
+ControladorCombate --> VistaDelJuego
+ControladorTienda --> VistaDelJuego
+ControladorJuego ..> ConversorDTO
+ControladorCombate ..> ConversorDTO
+ControladorTienda ..> ConversorDTO
+
+ControladorJuego --> Juego
+ControladorCombate --> Juego
+ControladorTienda --> Juego
+ControladorCombate --> "0..1" Combate : pelea en curso
+
+ConversorDTO ..> CombatienteDTO : arma
+ConversorDTO ..> ItemDTO : arma
+ControladorCombate ..> EstadoCombateDTO : arma
+ControladorTienda ..> TiendaDTO : arma
+VistaDelJuego ..> EstadoCombateDTO
+
+' ---------------------------------------------------------------- notas
+
+note top of VistaDelJuego
+  Dependencias en UNA direccion:
+  vista -> controlador -> modelo.
+  La vista no importa nada del modelo: recibe
+  DTOs y llama al controlador con indices.
+  Los controladores no importan nada de Swing:
+  le hablan a esta interfaz, que implementa la
+  ventana (la D de SOLID). Por eso se prueban
+  con una vista falsa (ControladoresTest).
+end note
+
+note bottom of ControladorJuego
+  Controladores del MVC. No confundir con Juego,
+  que es el Controller de GRASP dentro del modelo:
+  estos traducen clicks en llamadas a Juego y el
+  resultado en DTOs.
+end note
+
+note right of PantallaBatalla
+  Turnos enemigos con pausa: si el estado dice
+  turnoDelJugador = false, la pantalla espera
+  PAUSA_MS con un javax.swing.Timer y llama a
+  avanzarTurnoAutomatico(). La pausa es cuestion
+  de como se ve, por eso vive en la vista.
+end note
+
+note bottom of Fondos
+  Fondo por etapa, puramente visual:
+   1-3 y 5      mazmorra
+   6-8 y 10     cripta
+   11-13 y 15   cloaca
+   16-18        infierno
+   20           jefe
+   4, 9, 14, 19 tienda
+end note
+
+note bottom of PanelConFondo
+  Los metodos privados que arman cada
+  pantalla (paneles, botones) no se muestran.
+end note
+
+@enduml

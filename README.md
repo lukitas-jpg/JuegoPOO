@@ -23,10 +23,8 @@ El proyecto usa **Maven** para compilar. Los tres IDEs lo reconocen solos, no ha
    - **IntelliJ:** *File → Open* y elegir la carpeta (detecta el `pom.xml`).
    - **Eclipse:** *File → Import → Maven → Existing Maven Projects*.
    - **VS Code:** *File → Open Folder*.
-3. Ejecutar `mvn test`. Tienen que pasar los 128.
-
-Mientras no exista la vista, `ar.edu.uade.rpg.App` abre una ventana que dice
-"Proyecto configurado correctamente": sirve para confirmar que Swing arranca.
+3. Ejecutar `mvn test`. Tienen que pasar todos.
+4. Para jugar, ejecutar `ar.edu.uade.rpg.App`.
 
 Desde la terminal, con Maven instalado:
 ```
@@ -48,8 +46,9 @@ src/main/java/ar/edu/uade/rpg/
 │   ├── tienda/           Diagrama 3: Tienda, GeneradorDeStock, MaquinaDeSlots
 │   ├── combate/          Diagrama 4: Combate, GestorDeTurnos, CalculadorDeDaño
 │   └── partida/          Diagrama 4: Juego, Partida, Party, Etapas
-├── vista/                V de MVC: pantallas Swing (todavía sin hacer)
-├── controlador/          C de MVC: conecta vistas con el modelo (todavía sin hacer)
+├── controlador/          Diagrama 5: los controladores del MVC y la interfaz VistaDelJuego
+├── dto/                  Diagrama 5: los datos que viajan a la vista (records)
+├── vista/                Diagrama 5: la ventana Swing y sus 7 pantallas
 └── persistencia/         RepositorioPartidas y su implementación en archivo
 
 src/main/resources/imagenes/   Las 52 imágenes del juego (ver su LEEME.md)
@@ -63,21 +62,16 @@ Las partidas guardadas van a la carpeta `saves/`, que git ignora.
 
 ## Estado
 
-El **modelo está completo**: las cuatro capas de los diagramas 1 a 4, unas 90 clases,
-con **128 tests de JUnit 5** que pasan. Uno de esos tests juega una partida entera de
-la etapa 1 a la 20.
+**El juego se puede jugar de punta a punta.** Modelo completo (diagramas 1 a 4),
+vista Swing y controladores (diagrama 5), con tests de JUnit 5 que pasan. Hay tests
+que juegan runs enteras con peleas de verdad, tanto contra el modelo como a través
+de los controladores con una vista falsa.
 
-**Este repo es la base del proyecto.** La versión "jugable" que se armó aparte tenía
-otro modelo (sin tienda, sin máquina, con 3 enemigos y otros números) y no se usa.
-De esa versión se aprovecha la capa visual (controladores, DTOs y pantallas),
-que se va pasando a este modelo.
+Pantallas: inicio, selección de la party, batalla, resultado, estado de la party (con
+inventario), máquina de slots y tienda. Ver `diagramas/S3_mapa_de_pantallas`.
 
-Lo que falta, en orden:
-
-1. Pasar `controlador/`, `dto/` y `vista/` de la versión jugable a este modelo.
-2. Diagrama 5 (MVC: controladores, DTOs y vistas).
-3. Corregir los diagramas 1, S1 y S2, que nombran métodos que no existen.
-4. Renombrar los símbolos de la máquina a los de las imágenes (cereza, limón, etc.).
+La vista de esta versión salió de la versión "jugable" que se armó aparte, pasada a
+este modelo. El modelo de aquella versión no se usa.
 
 ## Documentación
 
