@@ -147,7 +147,7 @@ abstract class EfectoEstado {
   # duracionEnTurnos : int
   --
   + {abstract} alAplicarse(objetivo : Combatiente) : void
-  + {abstract} alIniciarTurno(objetivo : Combatiente) : void
+  + {abstract} alTerminarTurno(objetivo : Combatiente) : void
   + {abstract} alExpirar(objetivo : Combatiente) : void
   + {abstract} persisteFueraDeCombate() : boolean
   + {abstract} copiar() : EfectoEstado
@@ -162,14 +162,14 @@ class Veneno {
   + {static} GOLPE_MINIMO : int = 2
   + {static} GOLPE_MAXIMO : int = 25
   - porcentajePorTurno : int
-  + alIniciarTurno(objetivo : Combatiente) : void
+  + alTerminarTurno(objetivo : Combatiente) : void
   - calcularDaño(objetivo : Combatiente) : int
   + persisteFueraDeCombate() : boolean
 }
 class Quemadura {
   + {static} GOLPE_MAXIMO : int = 25
   - porcentajePorTurno : int
-  + alIniciarTurno(objetivo : Combatiente) : void
+  + alTerminarTurno(objetivo : Combatiente) : void
   + persisteFueraDeCombate() : boolean
 }
 class Aturdimiento {
@@ -200,7 +200,7 @@ class Proteccion {
 }
 class Regeneracion {
   - curacionPorTurno : int
-  + alIniciarTurno(objetivo : Combatiente) : void
+  + alTerminarTurno(objetivo : Combatiente) : void
   + persisteFueraDeCombate() : boolean
 }
 

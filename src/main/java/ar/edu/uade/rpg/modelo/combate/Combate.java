@@ -203,8 +203,13 @@ public class Combate {
         return objetivos;
     }
 
-    /** El unico camino por el que pasa todo lo que se hace en un turno. */
+    /**
+     * El unico camino por el que pasa todo lo que se hace en un turno. Primero
+     * se asegura de que el turno este abierto, asi el cierre (avanzarTurno) se
+     * le aplica a quien corresponde aunque la Accion se haya armado afuera.
+     */
     public ResultadoAccion ejecutarAccion(Accion accion) {
+        getSiguienteEnActuar();
         ResultadoAccion resultado = accion.ejecutar();
         registro.add(resultado.getDescripcion());
 

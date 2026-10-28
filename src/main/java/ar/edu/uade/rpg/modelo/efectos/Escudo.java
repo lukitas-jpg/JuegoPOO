@@ -35,7 +35,7 @@ public class Escudo extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         // No se regenera: lo que se gasto, se gasto.
     }
 

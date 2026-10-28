@@ -119,6 +119,21 @@ class TurnosTest {
     }
 
     @Test
+    void unaAccionArmadaAfueraCierraElTurnoDeQuienCorresponde() {
+        Combate combate = combateContraUnBruto();
+        Combatiente primero = combate.getSiguienteEnActuar();
+        cerrarElTurnoActual(combate);
+
+        // El primero ya actuo. Se lo envenena y, SIN pedir el turno siguiente,
+        // se ejecuta una accion armada afuera: el cierre no le toca a el.
+        primero.aplicarEfecto(new Veneno(6, 3));
+        int vidaAntes = primero.getVidaActual();
+        combate.ejecutarAccion(new AccionDefender(primero));
+
+        assertEquals(vidaAntes, primero.getVidaActual(), "el veneno no le pega en un turno ajeno");
+    }
+
+    @Test
     void siCaeAlguienQueYaActuoElSiguienteNoPierdeSuTurno() {
         Guerrero lucas = new Guerrero("Lucas");
         Mago giovanni = new Mago("Giovanni");

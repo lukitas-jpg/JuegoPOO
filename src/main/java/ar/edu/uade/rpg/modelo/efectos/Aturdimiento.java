@@ -23,7 +23,7 @@ public class Aturdimiento extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         // No hace daño: su efecto es que el turno no se juega.
     }
 

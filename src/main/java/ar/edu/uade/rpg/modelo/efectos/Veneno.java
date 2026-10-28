@@ -34,7 +34,7 @@ public class Veneno extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         objetivo.recibirDañoDirecto(calcularDaño(objetivo));
     }
 

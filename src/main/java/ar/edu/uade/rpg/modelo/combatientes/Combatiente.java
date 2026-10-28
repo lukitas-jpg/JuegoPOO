@@ -100,7 +100,7 @@ public abstract class Combatiente implements Serializable {
 
     /**
      * Daño que no pasa por defensas ni por escudos: el del veneno y el de la
-     * quemadura. Lo usan esos efectos desde su alIniciarTurno.
+     * quemadura. Lo usan esos efectos desde su alTerminarTurno.
      */
     public int recibirDañoDirecto(int daño) {
         int dañoAplicado = Math.min(daño, vidaActual);
@@ -211,7 +211,7 @@ public abstract class Combatiente implements Serializable {
         Iterator<EfectoEstado> iterador = efectosActivos.iterator();
         while (iterador.hasNext()) {
             EfectoEstado efecto = iterador.next();
-            efecto.alIniciarTurno(this);
+            efecto.alTerminarTurno(this);
             efecto.reducirDuracion();
             if (efecto.haExpirado()) {
                 efecto.alExpirar(this);
