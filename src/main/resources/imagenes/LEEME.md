@@ -112,3 +112,7 @@ Todo es CC0 (dominio público): se puede usar sin pedir permiso y sin atribució
 - Íconos: **496 pixel art icons for medieval/fantasy RPG**, de Henrique Lazarini (7Soul1) — https://opengameart.org/node/39455
 
 Los fondos se armaron combinando baldosas del tileset de 0x72. El Asesino y el Curador son sprites del mismo pack con los colores cambiados. La máquina de slots se dibujó aparte, en el mismo estilo.
+
+Los 36 dibujos propios de los equipables (`arco_corto_de_tejo.png`, etc.) y el ícono `estados/proteccion.png` también se dibujaron aparte, en el estilo de los íconos de 7Soul1: son originales del grupo y los liberamos como CC0. Se pueden rehacer o cambiar con `herramientas/dibujar_equipables.py`; el color del detalle marca la rareza (azul = raro, violeta = épico, dorado = legendario).
+
+El detalle completo de licencias, con links, está en `LICENCIAS.md`, en la raíz del repo.

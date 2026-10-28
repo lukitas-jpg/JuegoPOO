@@ -51,9 +51,11 @@ src/main/java/ar/edu/uade/rpg/
 ├── vista/                Diagrama 5: la ventana Swing y sus 7 pantallas
 └── persistencia/         RepositorioPartidas y su implementación en archivo
 
-src/main/resources/imagenes/   Las 52 imágenes del juego (ver su LEEME.md)
+src/main/resources/imagenes/   Las 89 imágenes del juego (ver su LEEME.md)
 src/test/java/            Tests con JUnit 5 (se corren con mvn package)
 diagramas/                Diagramas UML (.puml, .png y .svg)
+herramientas/             Script que dibuja los equipables propios (opcional, Python)
+LICENCIAS.md              De dónde sale cada recurso y su licencia
 ```
 
 Cada paquete tiene un `package-info.java` que lista qué clases del diagrama van ahí.
@@ -100,4 +102,6 @@ Antes de programar, leer [CONVENCIONES.md](CONVENCIONES.md).
 
 Todo CC0. Personajes, enemigos y fondos: *16x16 DungeonTileset II* de 0x72 (el Asesino
 y el Curador, con los colores cambiados). Íconos: *496 pixel art icons for medieval/fantasy
-RPG* de Henrique Lazarini (7Soul1), en OpenGameArt. La máquina de slots es un dibujo propio.
+RPG* de Henrique Lazarini (7Soul1), en OpenGameArt. La máquina de slots, los 36 dibujos propios
+de los equipables y el ícono de Protección son dibujos propios. Detalle, links y licencias en
+[LICENCIAS.md](LICENCIAS.md).
