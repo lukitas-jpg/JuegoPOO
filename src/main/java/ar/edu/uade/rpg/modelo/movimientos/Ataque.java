@@ -38,12 +38,11 @@ public abstract class Ataque extends Movimiento {
             ResultadoDaño golpe = calculador.calcular(usuario, objetivo, potencia, tipoDaño);
 
             // El daño que devuelve recibirDaño() puede ser menor que el
-            // calculado: el escudo del objetivo se come una parte. Al registro
-            // va el que entro de verdad.
-            resultado.sumarDaño(objetivo.recibirDaño(golpe.getDaño(), tipoDaño));
-            if (golpe.fueCritico()) {
-                resultado.marcarCritico();
-            }
+            // calculado: el escudo del objetivo se come una parte, y no se le
+            // puede sacar mas vida de la que tiene. Al registro va el neto,
+            // el que entro de verdad.
+            int dañoNeto = objetivo.recibirDaño(golpe.getDaño(), tipoDaño);
+            resultado.registrarGolpe(objetivo, dañoNeto, golpe.fueCritico());
             resultado.agregarObjetivoAfectado(objetivo);
         }
         return resultado;

@@ -21,6 +21,7 @@ import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
 import ar.edu.uade.rpg.modelo.efectos.Aturdimiento;
+import ar.edu.uade.rpg.modelo.efectos.Escudo;
 import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
 
@@ -319,6 +320,51 @@ class MovimientosTest {
         assertTrue(dos.getVidaActual() < 500);
         assertTrue(tres.getVidaActual() < 500);
         assertTrue(resultado.getDañoTotal() > 0);
+    }
+
+    @Test
+    void elResultadoInformaElDañoNetoDeCadaGolpe() {
+        Guerrero guerrero = new Guerrero("Lucas");
+        guerrero.ganarExperiencia(100000); // Torbellino, en area
+
+        Maniqui uno = new Maniqui(500, 10, 0);
+        Maniqui dos = new Maniqui(500, 10, 0);
+
+        ResultadoAccion resultado = guerrero.getMovimientos().get(3)
+                .aplicar(guerrero, List.of(uno, dos), calculador);
+
+        List<ResultadoAccion.Golpe> golpes = resultado.getGolpes();
+        assertEquals(2, golpes.size());
+        assertEquals(500 - uno.getVidaActual(), golpes.get(0).daño());
+        assertEquals(500 - dos.getVidaActual(), golpes.get(1).daño());
+        assertTrue(resultado.getDescripcion().contains("maniqui recibe " + golpes.get(0).daño() + " de daño"));
+        assertTrue(resultado.getDescripcion().contains("Daño neto total: " + resultado.getDañoTotal() + "."));
+    }
+
+    @Test
+    void elDañoNetoNoCuentaLoQueSeComioElEscudo() {
+        Guerrero guerrero = new Guerrero("Lucas");
+        Maniqui conEscudo = new Maniqui(500, 10, 0);
+        conEscudo.aplicarEfecto(new Escudo(100000, 3));
+
+        ResultadoAccion resultado = guerrero.getMovimientos().get(0)
+                .aplicar(guerrero, List.of(conEscudo), calculador);
+
+        assertEquals(0, resultado.getDañoTotal());
+        assertTrue(resultado.getDescripcion().contains("maniqui recibe 0 de daño"));
+        // Con un solo golpe no hace falta repetir el total.
+        assertFalse(resultado.getDescripcion().contains("total"));
+    }
+
+    @Test
+    void elDañoNetoNoPasaDeLaVidaQueLeQuedaba() {
+        Guerrero guerrero = new Guerrero("Lucas");
+        Maniqui casiMuerto = new Maniqui(3, 0, 0);
+
+        ResultadoAccion resultado = guerrero.getMovimientos().get(0)
+                .aplicar(guerrero, List.of(casiMuerto), calculador);
+
+        assertEquals(3, resultado.getDañoTotal());
     }
 
     @Test

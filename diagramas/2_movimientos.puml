@@ -63,10 +63,10 @@ class ResultadoAccion {
   - objetivosAfectados : List<Combatiente>
   - objetivosFallados : List<Combatiente>
   - efectosAplicados : List<EfectoEstado>
+  - golpes : List<Golpe>
   --
   + setDescripcion(descripcion : String) : void
-  + sumarDaño(daño : int) : void
-  + marcarCritico() : void
+  + registrarGolpe(objetivo : Combatiente, daño : int, critico : boolean) : void
   + agregarObjetivoAfectado(objetivo : Combatiente) : void
   + agregarObjetivoFallado(objetivo : Combatiente) : void
   + agregarEfectoAplicado(efecto : EfectoEstado) : void
@@ -77,7 +77,23 @@ class ResultadoAccion {
   + getObjetivosFallados() : List<Combatiente>
   + huboAlgunFallo() : boolean
   + getEfectosAplicados() : List<EfectoEstado>
+  + getGolpes() : List<Golpe>
 }
+
+class "ResultadoAccion.Golpe" as Golpe <<record>> {
+  + objetivo : Combatiente
+  + daño : int
+  + fueCritico : boolean
+}
+
+ResultadoAccion "1" *-- "0..*" Golpe : golpes
+
+note bottom of Golpe
+  Uno por objetivo alcanzado, con el daño NETO
+  (lo que devolvio recibirDaño(), ya sin lo que
+  freno el escudo). getDescripcion() arma con esto
+  la linea del registro: "Bruto recibe 15 de daño."
+end note
 
 abstract class Movimiento {
   # nombre : String

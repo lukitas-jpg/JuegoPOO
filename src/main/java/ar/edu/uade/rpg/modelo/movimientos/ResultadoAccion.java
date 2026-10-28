@@ -10,14 +10,24 @@ import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
  * Lo que dejo una accion: cuanto daño hizo, a quienes alcanzo, con quienes
  * fallo y que efectos aplico.
  *
- * No tiene logica propia: existe para que la informacion viaje desde el modelo
- * hacia afuera sin que nadie tenga que espiar el estado interno del combate.
+ * Existe para que la informacion viaje desde el modelo hacia afuera sin que
+ * nadie tenga que espiar el estado interno del combate. Como guarda cada golpe,
+ * tambien es quien sabe escribir la linea del registro con el daño neto
+ * (Information Expert).
  */
 public class ResultadoAccion {
+
+    /**
+     * Un golpe que entro: a quien le pego y cuanta vida le saco de verdad, ya
+     * descontados la defensa y el escudo.
+     */
+    public record Golpe(Combatiente objetivo, int daño, boolean fueCritico) { }
 
     private String descripcion;
     private int dañoTotal;
     private boolean fueCritico;
+
+    private final List<Golpe> golpes = new ArrayList<>();
 
     private final List<Combatiente> objetivosAfectados = new ArrayList<>();
     private final List<Combatiente> objetivosFallados = new ArrayList<>();
@@ -35,12 +45,13 @@ public class ResultadoAccion {
         this.descripcion = descripcion;
     }
 
-    public void sumarDaño(int daño) {
-        this.dañoTotal += daño;
-    }
-
-    public void marcarCritico() {
-        this.fueCritico = true;
+    /** Lo llama el Ataque por cada objetivo, con el daño que devolvio recibirDaño(). */
+    public void registrarGolpe(Combatiente objetivo, int daño, boolean critico) {
+        golpes.add(new Golpe(objetivo, daño, critico));
+        dañoTotal += daño;
+        if (critico) {
+            fueCritico = true;
+        }
     }
 
     public void agregarObjetivoAfectado(Combatiente objetivo) {
@@ -57,8 +68,26 @@ public class ResultadoAccion {
 
     // ------------------------------------------------------------- consultas
 
+    /**
+     * La linea que va al registro del combate: lo que se hizo y, si hubo
+     * golpes, cuanto daño neto recibio cada objetivo. Con mas de un golpe se
+     * agrega el total, asi un Torbellino o los tres golpes del Acechador se
+     * leen de una.
+     */
     public String getDescripcion() {
-        return descripcion;
+        StringBuilder texto = new StringBuilder(descripcion);
+        for (Golpe golpe : golpes) {
+            texto.append(' ').append(golpe.objetivo().getNombre())
+                 .append(" recibe ").append(golpe.daño()).append(" de daño");
+            if (golpe.fueCritico()) {
+                texto.append(" (crítico)");
+            }
+            texto.append('.');
+        }
+        if (golpes.size() > 1) {
+            texto.append(" Daño neto total: ").append(dañoTotal).append('.');
+        }
+        return texto.toString();
     }
 
     public int getDañoTotal() {
@@ -71,6 +100,10 @@ public class ResultadoAccion {
 
     public boolean huboAlgunFallo() {
         return !objetivosFallados.isEmpty();
+    }
+
+    public List<Golpe> getGolpes() {
+        return List.copyOf(golpes);
     }
 
     public List<Combatiente> getObjetivosAfectados() {

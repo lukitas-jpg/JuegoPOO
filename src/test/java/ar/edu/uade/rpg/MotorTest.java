@@ -142,6 +142,25 @@ class MotorTest {
     }
 
     @Test
+    void elRegistroDiceCuantoDañoNetoHizoCadaAtaque() {
+        Bruto bruto = new Bruto();
+        Combate combate = new Combate(party(), List.of(bruto), 35, 35, new Random(1));
+        combate.iniciar();
+
+        // Juega hasta que alguien le pegue a alguien: el primero de la party
+        // usa su primer ataque contra el Bruto y el Bruto elige solo.
+        for (int turno = 0; turno < 10 && !combate.hayGanador(); turno++) {
+            if (combate.esTurnoDelJugador()) {
+                combate.ejecutarMovimiento(combate.getMovimientosDelTurno().get(0), List.of(bruto));
+            } else {
+                combate.ejecutarTurnoDeEnemigo();
+            }
+        }
+
+        assertTrue(combate.getRegistro().stream().anyMatch(linea -> linea.contains(" de daño")));
+    }
+
+    @Test
     void elCombateTerminaCuandoCaenTodosLosEnemigos() {
         Bruto bruto = new Bruto();
         Combate combate = new Combate(party(), List.of(bruto), 35, 35, new Random(1));
