@@ -99,7 +99,7 @@ final class ConversorDTO {
         if (movimiento.estaEnCooldown()) {
             return "Espera " + movimiento.getCooldownRestante();
         }
-        return "Sin mana";
+        return "Sin maná";
     }
 
     // ------------------------------------------------------------------ objetos

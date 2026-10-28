@@ -75,7 +75,7 @@ final class PantallaTragamonedas extends PanelConFondo {
         tirar.addActionListener(e -> controlador.tirar());
         pasar.addActionListener(e -> controlador.pasarALaTienda());
         JPanel abajo = new FranjaOscura(new FlowLayout(FlowLayout.CENTER, 16, 10));
-        abajo.add(Estilo.texto("La primera tirada es gratis. Si pasas a la tienda, no podes volver.",
+        abajo.add(Estilo.texto("La primera tirada es gratis. Si pasás a la tienda, no podés volver.",
                 Estilo.NORMAL, Estilo.TEXTO_SUAVE));
         abajo.add(tirar);
         abajo.add(pasar);
@@ -85,7 +85,7 @@ final class PantallaTragamonedas extends PanelConFondo {
     void mostrar(MaquinaDTO datos) {
         animacion.stop();
         simbolosPosibles = datos.simbolos();
-        titulo.setText("Maquina de slots  ·  etapa " + datos.numeroEtapa() + " de 20");
+        titulo.setText("Máquina de slots  ·  etapa " + datos.numeroEtapa() + " de 20");
         mensaje.setText(" ");
         maquina.mostrar(List.of(), false);
         actualizarBotones(datos);

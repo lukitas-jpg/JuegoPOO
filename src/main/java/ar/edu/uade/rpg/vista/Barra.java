@@ -9,7 +9,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 
-/** Barra de vida, mana o experiencia con el numero adentro: "Vida 85 / 120". */
+/** Barra de vida, maná o experiencia con el número adentro: "Vida 85 / 120". */
 final class Barra extends JComponent {
 
     private static final long serialVersionUID = 1L;
@@ -26,6 +26,8 @@ final class Barra extends JComponent {
         this.color = color;
         setPreferredSize(new Dimension(150, alto));
         setMinimumSize(new Dimension(60, alto));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, alto));
+        setAlignmentX(LEFT_ALIGNMENT);
         setFont(alto >= 16 ? Estilo.NEGRITA : Estilo.CHICA);
     }
 

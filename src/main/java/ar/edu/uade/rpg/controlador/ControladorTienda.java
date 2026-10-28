@@ -77,7 +77,7 @@ public class ControladorTienda {
     /** El indice es la posicion en la lista de consumibles de la tienda. */
     public void comprarConsumible(int indice) {
         if (!juego.comprarConsumible(indice)) {
-            vista.avisar("No alcanza el oro o ya tenes el maximo de ese objeto.");
+            vista.avisar("No alcanza el oro o ya tenés el máximo de ese objeto.");
         }
         vista.mostrarTienda(armarTienda());
     }

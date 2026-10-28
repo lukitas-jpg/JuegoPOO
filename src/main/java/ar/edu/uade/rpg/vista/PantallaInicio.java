@@ -23,7 +23,7 @@ final class PantallaInicio extends PanelConFondo {
         posicion.insets = new Insets(6, 0, 6, 0);
 
         add(Estilo.texto("RPG por turnos", Estilo.TITULO.deriveFont(52f), Estilo.DORADO), posicion);
-        add(Estilo.texto("Veinte etapas, tres heroes, un Señor de las Sombras", Estilo.SUBTITULO,
+        add(Estilo.texto("Veinte etapas, tres héroes, un Señor de las Sombras", Estilo.SUBTITULO,
                 Estilo.TEXTO), posicion);
         posicion.insets = new Insets(40, 0, 6, 0);
 

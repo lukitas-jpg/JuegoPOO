@@ -53,7 +53,7 @@ final class PantallaTienda extends PanelConFondo {
         centro.add(columna("Equipo", slots));
         add(centro, BorderLayout.CENTER);
 
-        Boton seguir = new Boton("Seguir a la proxima etapa");
+        Boton seguir = new Boton("Seguir a la próxima etapa");
         seguir.addActionListener(e -> controlador.salir());
         JPanel abajo = new FranjaOscura(new FlowLayout(FlowLayout.RIGHT, 16, 8));
         abajo.add(Estilo.texto("Lo que compres se guarda al salir de la tienda.", Estilo.NORMAL,
@@ -84,7 +84,7 @@ final class PantallaTienda extends PanelConFondo {
             slots.add(tarjetaDeSlot(tienda.slots().get(i), i));
         }
         Boton reroll = new Boton("Cambiar el equipo  ·  " + tienda.costoDelReroll() + " de oro");
-        reroll.setToolTipText("Vuelve a sortear los 3 slots. Cada vez sale mas caro.");
+        reroll.setToolTipText("Vuelve a sortear los 3 slots. Cada vez sale más caro.");
         reroll.setEnabled(tienda.puedeRerollear());
         reroll.addActionListener(e -> controlador.rerollear());
         JPanel filaReroll = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -102,7 +102,7 @@ final class PantallaTienda extends PanelConFondo {
 
         JPanel texto = new JPanel(new GridLayout(2, 1));
         texto.setOpaque(false);
-        texto.add(Estilo.texto(item.nombre() + "   (tenes " + item.cantidad() + " de " + item.tope() + ")",
+        texto.add(Estilo.texto(item.nombre() + "   (tenés " + item.cantidad() + " de " + item.tope() + ")",
                 Estilo.NEGRITA, Estilo.TEXTO));
         texto.add(Estilo.texto(item.descripcion(), Estilo.CHICA, Estilo.TEXTO_SUAVE));
         fila.add(texto, BorderLayout.CENTER);
@@ -126,8 +126,9 @@ final class PantallaTienda extends PanelConFondo {
         JPanel texto = new JPanel(new GridLayout(0, 1));
         texto.setOpaque(false);
         texto.add(Estilo.texto(item.nombre(), Estilo.NEGRITA, Estilo.colorDeRareza(item.rareza())));
-        texto.add(Estilo.texto(item.rareza() + "  ·  para " + slot.destinatario() + "  ·  " + slot.bonificaciones(),
-                Estilo.CHICA, Estilo.TEXTO));
+        texto.add(Estilo.texto(rarezaConTilde(item.rareza()) + "  ·  para " + slot.destinatario(),
+                Estilo.CHICA, Estilo.TEXTO_SUAVE));
+        texto.add(Estilo.texto(slot.bonificaciones(), Estilo.CHICA, Estilo.TEXTO));
         if (slot.reemplaza() != null) {
             texto.add(Estilo.texto("Reemplaza a " + slot.reemplaza() + ", que se descarta.",
                     Estilo.CHICA, Estilo.ROJO));
@@ -139,6 +140,15 @@ final class PantallaTienda extends PanelConFondo {
         comprar.addActionListener(e -> controlador.comprarEquipable(indice));
         tarjeta.add(centrado(comprar), BorderLayout.EAST);
         return tarjeta;
+    }
+
+    private static String rarezaConTilde(String rareza) {
+        return switch (rareza) {
+            case "epico" -> "Épico";
+            case "raro" -> "Raro";
+            case "legendario" -> "Legendario";
+            default -> rareza;
+        };
     }
 
     private static JPanel centrado(Boton boton) {

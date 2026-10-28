@@ -40,7 +40,7 @@ final class PantallaSeleccionParty extends PanelConFondo {
         this.controlador = controlador;
         setBorder(BorderFactory.createEmptyBorder(24, 40, 24, 40));
 
-        JLabel titulo = Estilo.texto("Arma tu party", Estilo.TITULO, Estilo.DORADO);
+        JLabel titulo = Estilo.texto("Armá tu party", Estilo.TITULO, Estilo.DORADO);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         add(titulo, BorderLayout.NORTH);
 
@@ -110,8 +110,8 @@ final class PantallaSeleccionParty extends PanelConFondo {
             texto.add(Estilo.texto(clase.nombre(), Estilo.SUBTITULO, Estilo.DORADO));
             JLabel descripcion = Estilo.texto("<html>" + clase.descripcion() + "</html>", Estilo.NORMAL, Estilo.TEXTO);
             texto.add(descripcion);
-            texto.add(Estilo.texto("Vida " + clase.vida() + "  ·  Mana " + clase.mana()
-                    + "  ·  Velocidad " + clase.velocidad(), Estilo.CHICA, Estilo.TEXTO_SUAVE));
+            texto.add(Estilo.texto("Vida " + clase.vida() + "  ·  Maná " + clase.mana()
+                    + "  ·  Vel. " + clase.velocidad(), Estilo.CHICA, Estilo.TEXTO_SUAVE));
             add(texto, BorderLayout.CENTER);
 
             addMouseListener(new MouseAdapter() {

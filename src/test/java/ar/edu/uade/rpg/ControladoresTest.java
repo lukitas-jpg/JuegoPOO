@@ -147,6 +147,23 @@ class ControladoresTest {
         assertEquals(2, vista.party.proximaEtapa());
     }
 
+    @Test
+    void unTurnoAutomaticoQueLlegaTardeNoHaceNada() throws Exception {
+        armar(1);
+        controlador.nuevaPartida();
+        controlador.confirmarParty(List.of(0, 1, 3));
+        while (!vista.pantalla.equals("resultado")) {
+            jugarUnPaso();
+        }
+        int etapaDespuesDeGanar = vista.resultado.numeroEtapa();
+
+        // El Timer de la pantalla dispara de nuevo despues de que termino la pelea.
+        controlador.getControladorCombate().avanzarTurnoAutomatico();
+        controlador.continuar();
+
+        assertEquals(etapaDespuesDeGanar + 1, vista.party.proximaEtapa(), "la etapa se cerro una sola vez");
+    }
+
     /**
      * Partidas enteras desde los controladores: pelear, cobrar, ver la party,
      * tirar en la maquina, comprar y usar pociones, hasta volver al inicio.

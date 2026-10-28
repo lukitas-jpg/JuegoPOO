@@ -47,18 +47,45 @@ public class GeneradorDeStock {
 
     /** Un equipable al azar para esa tienda, o null si no hay ninguno posible. */
     public Equipable sortearEquipable(int numeroDeTienda, List<ClaseDePersonaje> clases) {
-        Rareza rareza = sortearRareza(numeroDeTienda);
-        List<Equipable> posibles = CatalogoDeEquipables.filtrar(clases, rareza);
-        return posibles.isEmpty() ? null : posibles.get(random.nextInt(posibles.size()));
+        return sortearEquipable(numeroDeTienda, clases, List.of());
     }
 
+    /**
+     * Los 3 slots de una visita. No repite un objeto mientras haya otro de la
+     * misma rareza para ofrecer: dos slots iguales no sirven, porque comprar el
+     * segundo reemplaza al primero por uno identico.
+     */
     public List<Equipable> sortearStock(int numeroDeTienda, List<ClaseDePersonaje> clases,
                                         int cantidad) {
         List<Equipable> stock = new ArrayList<>();
         for (int slot = 0; slot < cantidad; slot++) {
-            stock.add(sortearEquipable(numeroDeTienda, clases));
+            stock.add(sortearEquipable(numeroDeTienda, clases, stock));
         }
         return stock;
+    }
+
+    private Equipable sortearEquipable(int numeroDeTienda, List<ClaseDePersonaje> clases,
+                                       List<Equipable> yaOfrecidos) {
+        Rareza rareza = sortearRareza(numeroDeTienda);
+        List<Equipable> posibles = CatalogoDeEquipables.filtrar(clases, rareza);
+        List<Equipable> nuevos = new ArrayList<>();
+        for (Equipable posible : posibles) {
+            if (!estaOfrecido(posible, yaOfrecidos)) {
+                nuevos.add(posible);
+            }
+        }
+        List<Equipable> deDondeElegir = nuevos.isEmpty() ? posibles : nuevos;
+        return deDondeElegir.isEmpty() ? null : deDondeElegir.get(random.nextInt(deDondeElegir.size()));
+    }
+
+    /** Se compara por nombre: el catalogo crea objetos nuevos en cada llamada. */
+    private static boolean estaOfrecido(Equipable equipable, List<Equipable> yaOfrecidos) {
+        for (Equipable ofrecido : yaOfrecidos) {
+            if (ofrecido != null && ofrecido.getNombre().equals(equipable.getNombre())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Rareza sortearRareza(int numeroDeTienda) {

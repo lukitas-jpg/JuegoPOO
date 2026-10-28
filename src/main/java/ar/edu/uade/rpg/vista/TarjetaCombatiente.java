@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -25,23 +27,33 @@ import ar.edu.uade.rpg.dto.EfectoDTO;
  * batalla, el estado de la party, el resultado y la tienda.
  *
  * Los dibujos van a su tamaño real (todos tienen la misma escala de pixel), asi
- * el jefe se ve mas grande que un esqueleto. La version compacta los achica a la
- * mitad cuando hay muchos enemigos en pantalla.
+ * el jefe se ve mas grande que un esqueleto. Cuando hay muchos enemigos las
+ * tarjetas se ponen en vertical y, si hace falta, el dibujo va a la mitad.
  */
 final class TarjetaCombatiente extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private static final int TAMAÑO_ICONO = 34;
 
+    /** COMPLETA: dibujo a la izquierda y todas las barras. VERTICAL y CHICA: dibujo arriba y solo la vida. */
+    enum Formato { COMPLETA, VERTICAL, CHICA }
+
     private final boolean tieneElTurno;
 
-    TarjetaCombatiente(CombatienteDTO combatiente, boolean compacta) {
-        super(new BorderLayout(8, 0));
+    TarjetaCombatiente(CombatienteDTO combatiente, Formato formato) {
+        super(new BorderLayout(8, 2));
         this.tieneElTurno = combatiente.tieneElTurno();
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 10));
+        boolean compacta = formato != Formato.COMPLETA;
 
-        add(dibujo(combatiente, compacta), BorderLayout.WEST);
+        JLabel dibujo = dibujo(combatiente, formato == Formato.CHICA);
+        if (compacta) {
+            dibujo.setHorizontalAlignment(SwingConstants.CENTER);
+            add(dibujo, BorderLayout.NORTH);
+        } else {
+            add(dibujo, BorderLayout.WEST);
+        }
 
         JPanel datos = new JPanel();
         datos.setOpaque(false);
@@ -51,7 +63,7 @@ final class TarjetaCombatiente extends JPanel {
         datos.add(new Barra("Vida", combatiente.vidaActual(), combatiente.vidaMaxima(), Estilo.VIDA, altoBarra));
         if (!compacta && combatiente.manaMaximo() > 0) {
             datos.add(separacion());
-            datos.add(new Barra("Mana", combatiente.manaActual(), combatiente.manaMaximo(), Estilo.MANA, altoBarra));
+            datos.add(new Barra("Maná", combatiente.manaActual(), combatiente.manaMaximo(), Estilo.MANA, altoBarra));
         }
         if (!compacta && combatiente.esPersonaje()) {
             datos.add(separacion());
@@ -59,11 +71,19 @@ final class TarjetaCombatiente extends JPanel {
                     Estilo.EXPERIENCIA, 13));
         }
         datos.add(efectos(combatiente, compacta));
-        add(datos, BorderLayout.CENTER);
+
+        // Envuelto para que las barras tengan su alto natural y no se estiren.
+        JPanel centrado = new JPanel(new GridBagLayout());
+        centrado.setOpaque(false);
+        GridBagConstraints relleno = new GridBagConstraints();
+        relleno.fill = GridBagConstraints.HORIZONTAL;
+        relleno.weightx = 1;
+        centrado.add(datos, relleno);
+        add(centrado, BorderLayout.CENTER);
     }
 
-    private JLabel dibujo(CombatienteDTO combatiente, boolean compacta) {
-        BufferedImage imagen = compacta
+    private JLabel dibujo(CombatienteDTO combatiente, boolean aLaMitad) {
+        BufferedImage imagen = aLaMitad
                 ? CargadorDeImagenes.escalada(combatiente.imagen(), 0.5)
                 : CargadorDeImagenes.imagen(combatiente.imagen());
         ImageIcon icono = combatiente.vivo()
@@ -82,7 +102,7 @@ final class TarjetaCombatiente extends JPanel {
         }
         fila.add(Estilo.texto(nombre, Estilo.NEGRITA, tieneElTurno ? Estilo.DORADO : Estilo.TEXTO));
         if (!combatiente.vivo()) {
-            fila.add(Estilo.texto("  CAIDO", Estilo.NEGRITA, Estilo.ROJO));
+            fila.add(Estilo.texto("  CAÍDO", Estilo.NEGRITA, Estilo.ROJO));
         }
         return fila;
     }
@@ -91,7 +111,7 @@ final class TarjetaCombatiente extends JPanel {
         JPanel fila = filaIzquierda();
         int tamaño = compacta ? TAMAÑO_ICONO / 2 : TAMAÑO_ICONO;
         if (combatiente.defendiendo()) {
-            fila.add(icono("estados/defendiendo", "Defendiendo: recibe la mitad de daño", tamaño));
+            fila.add(icono("estados/defendiendo", "Defendiendo: recibe la mitad de daño hasta su próximo turno", tamaño));
         }
         for (EfectoDTO efecto : combatiente.efectos()) {
             fila.add(icono(efecto.imagen(),

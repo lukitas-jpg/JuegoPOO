@@ -126,19 +126,21 @@ final class PantallaBatalla extends PanelConFondo {
     private void mostrarCombatientes() {
         aliados.removeAll();
         for (CombatienteDTO aliado : estado.aliados()) {
-            aliados.add(new TarjetaCombatiente(aliado, false));
+            aliados.add(new TarjetaCombatiente(aliado, TarjetaCombatiente.Formato.COMPLETA));
             aliados.add(espacio());
         }
 
         // Con muchos enemigos (el Nigromante llega con cinco esqueletos) las
-        // tarjetas se achican y se acomodan en mas columnas.
+        // tarjetas se ponen en vertical, se achican y van en mas columnas.
         int cantidad = estado.enemigos().size();
-        boolean compactas = cantidad > 4;
+        TarjetaCombatiente.Formato formato = cantidad <= 3 ? TarjetaCombatiente.Formato.COMPLETA
+                : cantidad == 4 ? TarjetaCombatiente.Formato.VERTICAL
+                : TarjetaCombatiente.Formato.CHICA;
         int columnas = cantidad <= 3 ? 1 : cantidad <= 8 ? 2 : 3;
         enemigos.removeAll();
         enemigos.setLayout(new GridLayout(0, columnas, 8, 8));
         for (CombatienteDTO enemigo : estado.enemigos()) {
-            enemigos.add(new TarjetaCombatiente(enemigo, compactas));
+            enemigos.add(new TarjetaCombatiente(enemigo, formato));
         }
         // Relleno para que pocas tarjetas no se estiren a todo el alto.
         for (int i = cantidad; i < 3; i++) {
@@ -157,7 +159,7 @@ final class PantallaBatalla extends PanelConFondo {
 
     /** Los 4 movimientos (los que no se pueden usar, apagados), Defender y Objeto. */
     private void mostrarMenuPrincipal() {
-        indicacion.setText("Turno de " + estado.nombreTurnoActual() + ": elegi una accion");
+        indicacion.setText("Turno de " + estado.nombreTurnoActual() + ": elegí una acción");
         limpiarBotones();
         List<MovimientoDTO> movimientos = estado.movimientos();
         for (int i = 0; i < movimientos.size(); i++) {
@@ -167,7 +169,7 @@ final class PantallaBatalla extends PanelConFondo {
             if (!movimiento.disponible()) {
                 texto += "  ·  " + movimiento.motivo();
             } else if (movimiento.costoMana() > 0) {
-                texto += "  ·  " + movimiento.costoMana() + " mana";
+                texto += "  ·  " + movimiento.costoMana() + " maná";
             }
             Boton boton = new Boton(texto);
             boton.setToolTipText(movimiento.descripcion());
@@ -176,7 +178,7 @@ final class PantallaBatalla extends PanelConFondo {
             botones.add(boton);
         }
         Boton defender = new Boton("Defender");
-        defender.setToolTipText("Recibe la mitad de daño hasta su proximo turno y recupera algo de mana.");
+        defender.setToolTipText("Recibe la mitad de daño hasta su próximo turno y recupera algo de maná.");
         defender.addActionListener(e -> controlador.defender());
         botones.add(defender);
 
@@ -193,12 +195,12 @@ final class PantallaBatalla extends PanelConFondo {
             return;
         }
         List<CombatienteDTO> objetivos = controlador.getObjetivosDeMovimiento(indice);
-        mostrarObjetivos(movimiento.nombre() + ": elegi el objetivo", objetivos,
+        mostrarObjetivos(movimiento.nombre() + ": elegí el objetivo", objetivos,
                 objetivo -> controlador.usarMovimiento(indice, objetivo));
     }
 
     private void mostrarInventario() {
-        indicacion.setText("Elegi un objeto");
+        indicacion.setText("Elegí un objeto");
         limpiarBotones();
         List<ItemDTO> inventario = estado.inventario();
         for (int i = 0; i < inventario.size(); i++) {
@@ -219,7 +221,7 @@ final class PantallaBatalla extends PanelConFondo {
             indicacion.setText(item.nombre() + ": no hay nadie sobre quien usarlo");
             return;
         }
-        mostrarObjetivos(item.nombre() + ": ¿sobre quien?", objetivos,
+        mostrarObjetivos(item.nombre() + ": ¿sobre quién?", objetivos,
                 objetivo -> controlador.usarConsumible(indice, objetivo));
     }
 

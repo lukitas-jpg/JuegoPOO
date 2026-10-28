@@ -55,13 +55,13 @@ final class PantallaResultado extends PanelConFondo {
         cambiarFondo(Fondos.paraEtapa(resultado.numeroEtapa()));
         if (resultado.runGanada()) {
             titulo.setText("¡Ganaste la run!");
-            detalle.setText("El Señor de las Sombras cayo. Superaste las 20 etapas.");
+            detalle.setText("El Señor de las Sombras cayó. Superaste las 20 etapas.");
             continuar.setText("Volver al inicio");
         } else if (resultado.runTerminada()) {
             titulo.setForeground(Estilo.ROJO);
             titulo.setText("Derrota");
-            detalle.setText("Cayo toda la party en la etapa " + resultado.numeroEtapa()
-                    + ". La partida guardada se borro.");
+            detalle.setText("Cayó toda la party en la etapa " + resultado.numeroEtapa()
+                    + ". La partida guardada se borró.");
             continuar.setText("Volver al inicio");
         } else {
             titulo.setForeground(Estilo.DORADO);
@@ -72,7 +72,7 @@ final class PantallaResultado extends PanelConFondo {
         }
         party.removeAll();
         for (CombatienteDTO miembro : resultado.party()) {
-            party.add(new TarjetaCombatiente(miembro, false));
+            party.add(new TarjetaCombatiente(miembro, TarjetaCombatiente.Formato.COMPLETA));
         }
         revalidate();
         repaint();

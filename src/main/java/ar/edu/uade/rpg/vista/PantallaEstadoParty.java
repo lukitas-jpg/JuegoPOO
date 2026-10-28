@@ -47,11 +47,14 @@ final class PantallaEstadoParty extends PanelConFondo {
         JPanel centro = new JPanel(new BorderLayout(0, 18));
         centro.setOpaque(false);
         centro.add(miembros, BorderLayout.NORTH);
-        centro.add(inventario, BorderLayout.CENTER);
+        JPanel arribaDelTodo = new JPanel(new BorderLayout());
+        arribaDelTodo.setOpaque(false);
+        arribaDelTodo.add(inventario, BorderLayout.NORTH);
+        centro.add(arribaDelTodo, BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
         Boton salir = new Boton("Volver al inicio");
-        salir.setToolTipText("La partida ya quedo guardada al terminar la etapa.");
+        salir.setToolTipText("La partida ya quedó guardada al terminar la etapa.");
         salir.addActionListener(e -> controlador.volverAlInicio());
         Boton siguiente = new Boton("Siguiente etapa");
         siguiente.addActionListener(e -> controlador.siguienteEtapa());
@@ -66,8 +69,8 @@ final class PantallaEstadoParty extends PanelConFondo {
         this.party = nuevo;
         cambiarFondo(Fondos.paraEtapa(nuevo.proximaEtapa()));
         titulo.setText("Tu party  ·  " + nuevo.oro() + " de oro");
-        proxima.setText("Proxima: " + nuevo.descripcionProximaEtapa()
-                + "   La vida y el mana no se recuperan solos entre etapas.");
+        proxima.setText("Próxima: " + nuevo.descripcionProximaEtapa()
+                + "   La vida y el maná no se recuperan solos entre etapas.");
 
         miembros.removeAll();
         for (CombatienteDTO miembro : nuevo.miembros()) {
@@ -81,7 +84,7 @@ final class PantallaEstadoParty extends PanelConFondo {
     private JPanel conEquipo(CombatienteDTO miembro) {
         JPanel columna = new JPanel(new BorderLayout(0, 4));
         columna.setOpaque(false);
-        columna.add(new TarjetaCombatiente(miembro, false), BorderLayout.CENTER);
+        columna.add(new TarjetaCombatiente(miembro, TarjetaCombatiente.Formato.COMPLETA), BorderLayout.CENTER);
         JPanel equipo = new JPanel(new GridLayout(2, 1));
         equipo.setOpaque(false);
         equipo.add(Estilo.texto("Arma: " + nombreONada(miembro.arma()), Estilo.NORMAL, Estilo.TEXTO_SUAVE));
@@ -95,7 +98,7 @@ final class PantallaEstadoParty extends PanelConFondo {
         inventario.add(Estilo.texto("Inventario", Estilo.SUBTITULO, Estilo.DORADO));
         List<ItemDTO> objetos = party.inventario();
         if (objetos.isEmpty()) {
-            inventario.add(Estilo.texto("Vacio. Las pociones se compran en las tiendas (etapas 4, 9, 14 y 19).",
+            inventario.add(Estilo.texto("Vacío. Las pociones se compran en las tiendas (etapas 4, 9, 14 y 19).",
                     Estilo.NORMAL, Estilo.TEXTO_SUAVE));
         }
         for (int i = 0; i < objetos.size(); i++) {

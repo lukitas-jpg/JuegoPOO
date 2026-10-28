@@ -53,10 +53,20 @@ public class ControladorCombate {
 
     // ------------------------------------------------------ turnos automaticos
 
-    /** El turno de un enemigo, o el de un personaje aturdido que lo pierde. */
+    /**
+     * El turno de un enemigo, o el de un personaje aturdido que lo pierde. Si
+     * llega tarde (la pelea ya termino o le toca elegir al jugador), no hace
+     * nada: asi la etapa nunca se cierra dos veces.
+     */
     public void avanzarTurnoAutomatico() {
+        if (combate == null || combate.estaFinalizado()) {
+            return;
+        }
         if (combate.hayGanador()) {
             terminar();
+            return;
+        }
+        if (combate.esTurnoDelJugador() && combate.puedeActuarElSiguiente()) {
             return;
         }
         if (!combate.puedeActuarElSiguiente()) {

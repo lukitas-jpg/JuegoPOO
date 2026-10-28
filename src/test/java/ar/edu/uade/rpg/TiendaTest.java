@@ -222,6 +222,20 @@ class TiendaTest {
     }
 
     @Test
+    void unaVisitaNoOfreceDosVecesElMismoObjeto() {
+        List<ClaseDePersonaje> tres = List.of(ClaseDePersonaje.GUERRERO, ClaseDePersonaje.MAGO,
+                ClaseDePersonaje.CURADOR);
+        for (int semilla = 0; semilla < 200; semilla++) {
+            GeneradorDeStock generador = new GeneradorDeStock(new Random(semilla));
+            List<String> nombres = new ArrayList<>();
+            for (Equipable equipable : generador.sortearStock(1, tres, Tienda.CANTIDAD_DE_SLOTS)) {
+                assertFalse(nombres.contains(equipable.getNombre()), "repitio " + equipable.getNombre());
+                nombres.add(equipable.getNombre());
+            }
+        }
+    }
+
+    @Test
     void loLegendarioAparecePorPrimeraVezEnLaTiendaTres() {
         GeneradorDeStock generador = new GeneradorDeStock(new Random(3));
         assertEquals(0, GeneradorDeStock.getPesos(1)[2]);

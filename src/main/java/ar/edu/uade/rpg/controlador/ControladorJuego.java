@@ -76,7 +76,7 @@ public final class ControladorJuego {
     /** Los indices son posiciones en la lista de clases que se mostro. */
     public void confirmarParty(List<Integer> indicesDeClases) {
         if (indicesDeClases.size() != TAMAÑO_DE_LA_PARTY) {
-            vista.avisar("Elegi " + TAMAÑO_DE_LA_PARTY + " personajes.");
+            vista.avisar("Elegí " + TAMAÑO_DE_LA_PARTY + " personajes.");
             return;
         }
         List<ClaseDePersonaje> elegidas = new ArrayList<>();
