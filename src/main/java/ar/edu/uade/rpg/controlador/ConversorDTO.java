@@ -1,5 +1,6 @@
 package ar.edu.uade.rpg.controlador;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -106,13 +107,14 @@ final class ConversorDTO {
 
     static ItemDTO consumible(Consumible consumible, int cantidad, boolean disponible) {
         return new ItemDTO(consumible.getNombre(), consumible.getDescripcion(),
-                imagenDe(consumible), consumible.getPrecio(),
+                imagenDe(consumible), imagenDe(consumible), consumible.getPrecio(),
                 nombreDeArchivo(consumible.getRareza().name()),
                 cantidad, consumible.getTopeEnInventario(), disponible);
     }
 
     static ItemDTO equipable(Equipable equipable, boolean disponible) {
         return new ItemDTO(equipable.getNombre(), equipable.getDescripcion(),
+                "equipables/" + archivoDeObjeto(equipable.getNombre()),
                 "equipables/" + nombreDeArchivo(equipable.getSlot().name())
                         + "_" + nombreDeArchivo(equipable.getRareza().name()),
                 equipable.getPrecio(),
@@ -180,6 +182,16 @@ final class ConversorDTO {
      */
     static String nombreDeArchivo(String nombre) {
         return nombre.toLowerCase().replace("ñ", "ni");
+    }
+
+    /**
+     * El dibujo propio de un objeto: su nombre en minuscula, sin tildes y con
+     * guiones bajos. "Espada de Acero Templado" -> espada_de_acero_templado.
+     */
+    static String archivoDeObjeto(String nombre) {
+        String sinTildes = Normalizer.normalize(nombreDeArchivo(nombre), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return sinTildes.trim().replaceAll("[^a-z0-9]+", "_");
     }
 
     private static String nombreONada(Equipable equipable) {

@@ -33,6 +33,16 @@ final class CargadorDeImagenes {
     }
 
     /**
+     * La imagen de clave si existe; si no, la de respaldo. La usan los
+     * equipables: cada uno puede tener su dibujo, y si falta se usa el
+     * generico de su rareza.
+     */
+    static BufferedImage imagen(String clave, String respaldo) {
+        boolean existe = CargadorDeImagenes.class.getResource("/imagenes/" + clave + ".png") != null;
+        return imagen(existe ? clave : respaldo);
+    }
+
+    /**
      * La misma imagen agrandada o achicada, sin suavizar: el pixel art se ve
      * con bordes nitidos en vez de borroso.
      */

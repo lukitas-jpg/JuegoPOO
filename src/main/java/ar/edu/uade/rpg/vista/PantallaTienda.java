@@ -121,7 +121,9 @@ final class PantallaTienda extends PanelConFondo {
             return tarjeta;
         }
         ItemDTO item = slot.item();
-        tarjeta.add(new JLabel(new ImageIcon(CargadorDeImagenes.imagen(item.imagen()))), BorderLayout.WEST);
+        // Su dibujo propio si existe, si no el generico de su rareza; siempre a 68x68.
+        tarjeta.add(new JLabel(new ImageIcon(CargadorDeImagenes.redimensionar(
+                CargadorDeImagenes.imagen(item.imagen(), item.imagenDeRespaldo()), 68, 68))), BorderLayout.WEST);
 
         JPanel texto = new JPanel(new GridLayout(0, 1));
         texto.setOpaque(false);

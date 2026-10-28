@@ -3,6 +3,7 @@ package ar.edu.uade.rpg.vista;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -157,11 +158,15 @@ final class PantallaBatalla extends PanelConFondo {
 
     // --------------------------------------------------------------- menues
 
-    /** Los 4 movimientos (los que no se pueden usar, apagados), Defender y Objeto. */
+    /**
+     * Los 4 movimientos en dos filas a la izquierda (los que no se pueden usar,
+     * apagados) y, en la columna de la derecha, Defender arriba de Objeto.
+     */
     private void mostrarMenuPrincipal() {
         indicacion.setText("Turno de " + estado.nombreTurnoActual() + ": elegí una acción");
         limpiarBotones();
         List<MovimientoDTO> movimientos = estado.movimientos();
+        List<Boton> ataques = new ArrayList<>();
         for (int i = 0; i < movimientos.size(); i++) {
             MovimientoDTO movimiento = movimientos.get(i);
             int indice = i;
@@ -175,17 +180,30 @@ final class PantallaBatalla extends PanelConFondo {
             boton.setToolTipText(movimiento.descripcion());
             boton.setEnabled(movimiento.disponible());
             boton.addActionListener(e -> elegirMovimiento(indice, movimiento));
-            botones.add(boton);
+            ataques.add(boton);
         }
+
         Boton defender = new Boton("Defender");
         defender.setToolTipText("Recibe la mitad de daño hasta su próximo turno y recupera algo de maná.");
         defender.addActionListener(e -> controlador.defender());
-        botones.add(defender);
 
         Boton objeto = new Boton("Objeto (" + contarObjetos() + ")");
         objeto.setEnabled(!estado.inventario().isEmpty());
         objeto.addActionListener(e -> mostrarInventario());
-        botones.add(objeto);
+
+        // La grilla es de 3 columnas: dos ataques y despues el boton de la derecha.
+        List<Boton> derecha = List.of(defender, objeto);
+        for (int fila = 0; fila < 2; fila++) {
+            for (int columna = 0; columna < 2; columna++) {
+                int indice = fila * 2 + columna;
+                if (indice < ataques.size()) {
+                    botones.add(ataques.get(indice));
+                } else {
+                    botones.add(espacio());
+                }
+            }
+            botones.add(derecha.get(fila));
+        }
         refrescarBotones();
     }
 

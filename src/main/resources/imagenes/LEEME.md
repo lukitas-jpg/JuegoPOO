@@ -18,6 +18,55 @@
 
 Los símbolos de la máquina son CEREZA, LIMON, TREBOL, RUBI, DIAMANTE y MONEDA. Si el enum `SimboloSlot` usa otros nombres, renombrá los archivos o el enum.
 
+## Dibujo propio de cada equipable (opcional)
+
+Cada uno de los 36 equipables puede tener su propio dibujo en `equipables/`. Si el
+archivo existe, la tienda lo usa; si no, usa el genérico de su rareza
+(`arma_raro.png`, `armadura_epico.png`, etc.). Se pueden ir agregando de a uno.
+
+Mismo tamaño que el resto de los íconos (68×68, o 34×34: el juego los lleva a 68×68
+sin suavizar). El nombre del archivo es el nombre del objeto en minúscula, sin tildes
+y con guiones bajos:
+
+| Clase | Lugar | Rareza | Objeto | Archivo |
+|---|---|---|---|---|
+| Arquero | Arma | Raro | Arco Corto de Tejo | `arco_corto_de_tejo.png` |
+| Arquero | Arma | Epico | Arco Largo del Vendaval | `arco_largo_del_vendaval.png` |
+| Arquero | Arma | Legendario | Arco de la Luna Menguante | `arco_de_la_luna_menguante.png` |
+| Arquero | Armadura | Raro | Jubon de Cuero Endurecido | `jubon_de_cuero_endurecido.png` |
+| Arquero | Armadura | Epico | Atuendo del Montaraz | `atuendo_del_montaraz.png` |
+| Arquero | Armadura | Legendario | Vestimenta del Cazador Eterno | `vestimenta_del_cazador_eterno.png` |
+| Asesino | Arma | Raro | Daga de Hoja Negra | `daga_de_hoja_negra.png` |
+| Asesino | Arma | Epico | Colmillo Gemelo | `colmillo_gemelo.png` |
+| Asesino | Arma | Legendario | Estilete de la Ultima Sombra | `estilete_de_la_ultima_sombra.png` |
+| Asesino | Armadura | Raro | Traje de Contrabandista | `traje_de_contrabandista.png` |
+| Asesino | Armadura | Epico | Sayo del Gremio Silencioso | `sayo_del_gremio_silencioso.png` |
+| Asesino | Armadura | Legendario | Sudario del Sin Nombre | `sudario_del_sin_nombre.png` |
+| Curador | Arma | Raro | Cetro de Plata Bendecida | `cetro_de_plata_bendecida.png` |
+| Curador | Arma | Epico | Baculo del Alba | `baculo_del_alba.png` |
+| Curador | Arma | Legendario | Cetro de la Luz Primera | `cetro_de_la_luz_primera.png` |
+| Curador | Armadura | Raro | Habito de Lino Sagrado | `habito_de_lino_sagrado.png` |
+| Curador | Armadura | Epico | Vestiduras del Santuario | `vestiduras_del_santuario.png` |
+| Curador | Armadura | Legendario | Manto de la Aurora | `manto_de_la_aurora.png` |
+| Guerrero | Arma | Raro | Espada de Acero Templado | `espada_de_acero_templado.png` |
+| Guerrero | Arma | Epico | Mandoble del Juramento | `mandoble_del_juramento.png` |
+| Guerrero | Arma | Legendario | Filo del Primer Amanecer | `filo_del_primer_amanecer.png` |
+| Guerrero | Armadura | Raro | Cota de Malla Reforzada | `cota_de_malla_reforzada.png` |
+| Guerrero | Armadura | Epico | Armadura de Placas del Bastion | `armadura_de_placas_del_bastion.png` |
+| Guerrero | Armadura | Legendario | Egida del Rey Caido | `egida_del_rey_caido.png` |
+| Mago | Arma | Raro | Baculo de Roble Runico | `baculo_de_roble_runico.png` |
+| Mago | Arma | Epico | Cetro de Cuarzo Ardiente | `cetro_de_cuarzo_ardiente.png` |
+| Mago | Arma | Legendario | Vara del Eclipse | `vara_del_eclipse.png` |
+| Mago | Armadura | Raro | Tunica de Hilo Runico | `tunica_de_hilo_runico.png` |
+| Mago | Armadura | Epico | Manto del Conclave | `manto_del_conclave.png` |
+| Mago | Armadura | Legendario | Vestiduras del Vacio | `vestiduras_del_vacio.png` |
+| Tanque | Arma | Raro | Maza de Hierro Macizo | `maza_de_hierro_macizo.png` |
+| Tanque | Arma | Epico | Martillo del Yunque | `martillo_del_yunque.png` |
+| Tanque | Arma | Legendario | Quebrantamontanas | `quebrantamontanas.png` |
+| Tanque | Armadura | Raro | Armadura de Escamas Pesada | `armadura_de_escamas_pesada.png` |
+| Tanque | Armadura | Epico | Coraza del Muro Inquebrantable | `coraza_del_muro_inquebrantable.png` |
+| Tanque | Armadura | Legendario | Baluarte de Obsidiana | `baluarte_de_obsidiana.png` |
+
 ## Fondo según la etapa
 
 | Etapas | Fondo |
