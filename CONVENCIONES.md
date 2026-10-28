@@ -76,7 +76,7 @@ modelo/
 ├── movimientos/            Accion, Movimiento, Ataque, Habilidad
 ├── efectos/                EfectoEstado y sus 8 subclases
 ├── items/                  Item, Consumible, Equipable, Inventario y los catálogos
-├── tienda/                 Tienda, GeneradorDeStock, MaquinaDeSlots, ResultadoTirada
+├── tienda/                 Tienda, GeneradorDeStock
 ├── combate/                Combate, GestorDeTurnos, CalculadorDeDaño
 └── partida/                Juego, Partida, Party, Etapa, GeneradorDeEtapas
 
@@ -156,21 +156,20 @@ Hoy hay **128 tests en seis archivos**:
 | `EfectosTest` | los 8 efectos de estado, el tope del veneno, los buffos que no se multiplican |
 | `MovimientosTest` | los 24 movimientos, la fórmula de daño, el tope del crítico |
 | `EnemigosTest` | los 11 enemigos, las 4 interfaces de apuntado y el escalado por etapa |
-| `TiendaTest` | catálogos, inventario, reroll y el retorno exacto de la máquina |
+| `TiendaTest` | catálogos, inventario, tienda y reroll |
 | `MotorTest` | turnos, combate, etapas, partida, persistencia y **una run entera** |
 
 Reglas para los que se agreguen:
 
 - **Un test prueba una cosa y el nombre la dice.** `elVenenoNuncaPegaMasDelTope` se
   entiende sin abrirlo; `testVeneno2` no.
-- **Nada de azar sin semilla.** `CalculadorDeDaño`, `HabilidadDeEstado`, `Enemigo`,
-  `GeneradorDeStock` y `MaquinaDeSlots` tienen todos un constructor que recibe el
+- **Nada de azar sin semilla.** `CalculadorDeDaño`, `HabilidadDeEstado`, `Enemigo` y
+  `GeneradorDeStock` tienen todos un constructor que recibe el
   `Random`. Usalo con semilla fija: un test que falla una vez cada veinte corridas es
   peor que no tenerlo.
-- **Donde se pueda, calculá en vez de estimar.** El test del retorno de la máquina
-  recorre los 216 resultados posibles y verifica que la suma dé 205, en vez de tirar
-  muchas veces y mirar el promedio. Si alguien toca un premio, el test falla con el
-  número viejo al lado del nuevo.
+- **Donde se pueda, calculá en vez de estimar.** La run entera de `MotorTest` verifica
+  que el oro total sea exactamente 2390, en vez de mirar si "da más o menos". Si alguien
+  toca una recompensa, el test falla con el número viejo al lado del nuevo.
 - **Si un test falla, primero leé si el que está mal es el test.** Nos pasó tres
   veces: el código tenía razón y la aserción estaba mal escrita.
 

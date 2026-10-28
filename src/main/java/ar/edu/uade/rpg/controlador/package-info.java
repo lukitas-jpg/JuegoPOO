@@ -2,7 +2,7 @@
  * CONTROLADOR (la C de MVC): conecta las pantallas con el modelo.
  *
  * ControladorJuego (inicio, seleccion, party entre etapas), ControladorCombate
- * (batalla) y ControladorTienda (maquina de slots y tienda). Reciben los clicks
+ * (batalla) y ControladorTienda (tienda). Reciben los clicks
  * de la vista con indices, le hablan a Juego y le devuelven DTOs.
  *
  * VistaDelJuego es la interfaz que implementa la ventana: los controladores no

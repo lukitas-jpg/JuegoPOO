@@ -7,7 +7,7 @@ valores que están efectivamente en el código**, extraídos de las clases del p
 Todo lo que está acá salió de simular partidas completas con el modelo real: las seis
 clases jugables con sus 24 movimientos, el `CalculadorDeDaño`, los efectos de estado,
 y —desde la última revisión— la `Tienda`, el `CatalogoDeEquipables`, los consumibles
-y la `MaquinaDeSlots` del proyecto. No es un modelo aparte: la simulación instancia
+y la máquina de slots (que después se sacó del juego). No es un modelo aparte: la simulación instancia
 las mismas clases que se entregan. El simulador en sí es descartable y no está en el
 repo.
 

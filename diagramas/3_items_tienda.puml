@@ -1,5 +1,5 @@
 @startuml 3_items_tienda
-title TPO POO - RPG por turnos\nDiagrama 3: Ítems, Inventario, Tienda y Máquina de Slots
+title TPO POO - RPG por turnos\nDiagrama 3: Ítems, Inventario y Tienda
 
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
@@ -26,15 +26,6 @@ enum ClaseDePersonaje {
 enum SlotEquipo {
   ARMA
   ARMADURA
-}
-
-enum Simbolo {
-  MONEDA
-  CEREZA
-  TREBOL
-  RUBI
-  DIAMANTE
-  LIMON
 }
 
 abstract class Item {
@@ -165,34 +156,6 @@ class CatalogoDeConsumibles <<(U,#b0c4de) utilitaria>> {
   + {static} catalogoCompleto() : List<Consumible>
 }
 
-class MaquinaDeSlots {
-  + {static} APUESTA : int = 50
-  - quedaTiradaGratis : boolean
-  - abandonada : boolean
-  - random : Random
-  --
-  + tirar() : ResultadoTirada
-  + {static} calcularMultiplicador(salieron : List<Simbolo>) : int
-  + getCostoDeLaProximaTirada() : int
-  + puedeTirar(oroDisponible : int) : boolean
-  + abandonar() : void
-  + estaAbandonada() : boolean
-  + quedaTiradaGratis() : boolean
-}
-
-class ResultadoTirada {
-  - simbolos : List<Simbolo>
-  - multiplicador : int
-  - oroGanado : int
-  - fueGratis : boolean
-  --
-  + fuePremio() : boolean
-  + getSimbolos() : List<Simbolo>
-  + getMultiplicador() : int
-  + getOroGanado() : int
-  + fueGratis() : boolean
-}
-
 Item <|-- Consumible
 Item <|-- Equipable
 Item --> Rareza
@@ -219,9 +182,6 @@ CatalogoDeEquipables ..> Equipable : construye
 CatalogoDeConsumibles ..> Consumible : construye
 Equipable --> ClaseDePersonaje
 
-MaquinaDeSlots ..> ResultadoTirada : produce
-MaquinaDeSlots ..> Simbolo : gira
-ResultadoTirada "1" o-- "1..*" Simbolo : simbolosObtenidos
 
 note bottom of Inventario
   El inventario guarda SOLO consumibles.
@@ -237,22 +197,14 @@ note bottom of EfectoConsumible
   EfectoCuracion solo sobre uno VIVO.
 end note
 
-note right of MaquinaDeSlots
-  Aparece solo en las etapas 9 y 19, y
-  siempre ANTES de la tienda. Si el jugador
-  decide pasar a la tienda, abandonar() la
-  cierra y no puede volver en esa etapa.
-  Paga únicamente oro. La estadística SUERTE
-  de los personajes NO influye.
-end note
 
 
 note as N_TIENDA
-  La Tienda y la MaquinaDeSlots NO manejan oro. Dicen
-  cuanto cuesta cada cosa y entregan el objeto; la resta
-  la hace quien lleva la cuenta (Partida, diagrama 4).
-  Asi ninguna de las dos necesita conocer a la partida y
-  se las puede probar sin armar media partida alrededor.
+  La Tienda NO maneja oro. Dice cuanto cuesta cada cosa
+  y entrega el objeto; la resta la hace Juego sobre la
+  Party (diagrama 4). Asi no necesita conocer a la
+  partida y se la puede probar sin armar media partida
+  alrededor.
 
   Los 3 slots NO se refrescan al comprar: el slot
   comprado queda vacio y la unica forma de ver objetos

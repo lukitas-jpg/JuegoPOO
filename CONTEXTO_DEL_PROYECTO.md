@@ -28,12 +28,12 @@ con `-Xlint:all,-serial`.
 | `modelo.movimientos` | 15 | `Accion`, `Movimiento` y sus familias |
 | `modelo.efectos` | 9 | `EfectoEstado` y sus 8 subclases |
 | `modelo.partida` | 9 | `Juego`, `Partida`, `Party`, las etapas y el generador |
-| `modelo.tienda` | 5 | `Tienda`, `GeneradorDeStock`, `MaquinaDeSlots` |
+| `modelo.tienda` | 2 | `Tienda` y `GeneradorDeStock` |
 | `modelo.combate` | 5 | `Combate`, `GestorDeTurnos`, `CalculadorDeDaño` |
 | `persistencia` | 2 | la interfaz del repositorio y su implementación en archivo |
 | `controlador` | 5 | los 3 controladores del MVC, `ConversorDTO` y la interfaz `VistaDelJuego` |
 | `dto` | 12 | los datos que viajan a la vista, como `record` |
-| `vista` | 17 | `VentanaPrincipal`, las 7 pantallas y las piezas visuales |
+| `vista` | 17 | `VentanaPrincipal`, las 6 pantallas y las piezas visuales |
 
 **La vista en Swing y los controladores están hechos** (paquetes `vista/`,
 `controlador/` y `dto/`, diagrama 5). Se tomó como base la versión jugable que había
@@ -49,21 +49,20 @@ cada mensaje de las secuencias exista en el código.
 Esto es lo que más nos diferencia y conviene saber explicarlo: **ninguno de los
 números del juego está puesto a ojo**. Se armó un simulador descartable que juega
 partidas completas instanciando las clases reales del proyecto —las mismas seis
-clases jugables, el `CalculadorDeDaño`, la `Tienda`, el `CatalogoDeEquipables`, la
-`MaquinaDeSlots`— y se corrieron miles de partidas por cada configuración hasta que la
+clases jugables, el `CalculadorDeDaño`, la `Tienda`, el `CatalogoDeEquipables`— y se
+corrieron miles de partidas por cada configuración hasta que la
 curva de dificultad dio bien.
 
 Resultado actual: **19% de partidas perdidas** con una party de Guerrero, Mago y
 Curador. Las ocho composiciones que se probaron terminan el juego.
 
-Los números y su justificación están en cuatro documentos:
+Los números y su justificación están en tres documentos:
 
 | Documento | Qué tiene |
 |---|---|
 | `BALANCE_ENEMIGOS.md` | los 11 enemigos, sus movimientos y el escalado por etapa |
 | `EQUIPABLES.md` | los 36 equipables, los precios y la economía del oro |
 | `CONSUMIBLES.md` | los 5 consumibles y la comparación con la curación del Curador |
-| `MAQUINA_DE_SLOTS.md` | símbolos, tabla de premios y el retorno exacto |
 
 Dos hallazgos que vale la pena tener a mano, porque son el tipo de cosa que se
 pregunta:

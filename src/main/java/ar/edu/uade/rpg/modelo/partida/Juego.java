@@ -15,8 +15,6 @@ import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.items.Consumible;
 import ar.edu.uade.rpg.modelo.items.Equipable;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
-import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidas;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
@@ -124,11 +122,10 @@ public class Juego {
         return combate;
     }
 
-    // ------------------------------------------------- tienda y maquina
+    // ------------------------------------------------------------------ tienda
 
     /*
-     * La Tienda y la MaquinaDeSlots no manejan oro: dicen cuanto cuesta y
-     * entregan. La cuenta la lleva la Party. Juego es quien junta las dos
+     * La Tienda no maneja oro: dice cuanto cuesta y entrega. La cuenta la lleva la Party. Juego es quien junta las dos
      * cosas, como Controller: cobra, entrega y deja todo consistente en un paso.
      */
 
@@ -181,24 +178,6 @@ public class Juego {
         return true;
     }
 
-    /** Cobra la tirada (la primera es gratis), tira y paga el premio. */
-    public ResultadoTirada tirarEnLaMaquina() {
-        MaquinaDeSlots maquina = getEtapaDeTienda().getMaquinaDeSlots();
-        Party party = partida.getParty();
-        if (maquina == null || !maquina.puedeTirar(party.getOro())) {
-            throw new IllegalStateException("No se puede tirar en la maquina");
-        }
-        party.gastarOro(maquina.getCostoDeLaProximaTirada());
-        ResultadoTirada resultado = maquina.tirar();
-        party.agregarOro(resultado.getOroGanado());
-        return resultado;
-    }
-
-    /** Deja la maquina y pasa a la tienda. No hay vuelta atras. */
-    public void pasarALaTienda() {
-        getEtapaDeTienda().pasarALaTienda();
-    }
-
     // ------------------------------------------------------------- inventario
 
     /**
@@ -241,10 +220,6 @@ public class Juego {
         return getEtapaDeTienda().getTienda();
     }
 
-    /** null en las tiendas de las etapas 4 y 14, que no tienen maquina. */
-    public MaquinaDeSlots getMaquinaDeSlots() {
-        return getEtapaDeTienda().getMaquinaDeSlots();
-    }
 
     // --------------------------------------------------------- cerrar etapa
 

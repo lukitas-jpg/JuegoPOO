@@ -1,6 +1,6 @@
 /**
- * Diagrama 3: tienda y máquina de slots.
+ * Diagrama 3: la tienda.
  *
- * Tienda, GeneradorDeStock, MaquinaDeSlots, ResultadoTirada y Simbolo.
+ * Tienda y GeneradorDeStock.
  */
 package ar.edu.uade.rpg.modelo.tienda;

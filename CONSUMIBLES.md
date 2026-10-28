@@ -85,8 +85,8 @@ cada tres. El Curador sigue siendo de lejos la mejor elección, que es como tien
 ser, pero ya no es obligatorio.
 
 Estos números son de la última medición, hecha con las clases reales del proyecto:
-la `Tienda`, el `CatalogoDeEquipables` y la `MaquinaDeSlots` que se entregan, no un
-modelo aparte. Coinciden con los de `BALANCE_ENEMIGOS.md`.
+la `Tienda` y el `CatalogoDeEquipables` que se entregan (y la máquina de slots, que
+después se sacó del juego), no un modelo aparte. Coinciden con los de `BALANCE_ENEMIGOS.md`.
 
 Un efecto secundario que conviene saber: las partys sin Curador gastan la mitad en
 equipamiento (unos 500 contra 1100) porque el oro se les va en pociones. Es un
@@ -123,5 +123,6 @@ Tampoco medí el Elixir de Maná, el Antídoto ni la Piedra de Afilar: los tres 
 situacionales y el simulador no modela la decisión de cuándo usarlos. Sus precios
 están puestos en relación a la Poción de Vida, que sí está medida.
 
-Y queda pendiente la máquina de slots de las etapas 9 y 19, que es un sumidero de oro
-y va a mover todos estos números.
+La máquina de slots que había en las etapas 9 y 19 se sacó del juego en octubre para
+simplificarlo. Como en promedio se quedaba con oro, sin ella la party llega con un poco
+más a cada tienda.

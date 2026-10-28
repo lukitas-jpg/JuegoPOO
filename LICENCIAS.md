@@ -9,7 +9,7 @@ sin pedir permiso y sin atribución obligatoria. Igual damos crédito porque cor
 | Qué | Dónde está | Origen | Autor | Licencia |
 |---|---|---|---|---|
 | Personajes, enemigos y fondos | `imagenes/personajes/`, `imagenes/enemigos/`, `imagenes/fondos/` | [16x16 DungeonTileset II](https://0x72.itch.io/dungeontileset-ii) | Robert (0x72) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
-| Íconos de estados, consumibles, símbolos de la máquina y equipables genéricos (`arma_<rareza>.png`, `armadura_<rareza>.png`) | `imagenes/estados/`, `imagenes/consumibles/`, `imagenes/slots/`, `imagenes/equipables/` | [496 pixel art icons for medieval/fantasy RPG](https://opengameart.org/node/39455) | Henrique Lazarini (7Soul1) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (el autor también lo publicó como dominio público) |
+| Íconos de estados, consumibles y equipables genéricos (`arma_<rareza>.png`, `armadura_<rareza>.png`) | `imagenes/estados/`, `imagenes/consumibles/`, `imagenes/equipables/` | [496 pixel art icons for medieval/fantasy RPG](https://opengameart.org/node/39455) | Henrique Lazarini (7Soul1) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (el autor también lo publicó como dominio público) |
 
 Cambios que hicimos sobre esos recursos:
 
@@ -21,7 +21,6 @@ Cambios que hicimos sobre esos recursos:
 
 | Qué | Dónde está | Licencia |
 |---|---|---|
-| Máquina de slots (`maquina.png`, `maquina_palanca_abajo.png`) | `imagenes/slots/` | CC0 1.0 |
 | Dibujo propio de cada uno de los 36 equipables (`arco_corto_de_tejo.png`, etc.) | `imagenes/equipables/` | CC0 1.0 |
 | Ícono de Protección (`proteccion.png`) | `imagenes/estados/` | CC0 1.0 |
 

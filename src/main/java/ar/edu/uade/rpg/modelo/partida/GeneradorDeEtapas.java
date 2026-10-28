@@ -19,7 +19,6 @@ import ar.edu.uade.rpg.modelo.combatientes.Nigromante;
 import ar.edu.uade.rpg.modelo.combatientes.SeñorDeLasSombras;
 import ar.edu.uade.rpg.modelo.combatientes.Verdugo;
 import ar.edu.uade.rpg.modelo.tienda.GeneradorDeStock;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
 /**
@@ -27,7 +26,7 @@ import ar.edu.uade.rpg.modelo.tienda.Tienda;
  * progresion en un solo lugar.
  *
  * Las etapas 4, 9, 14 y 19 son de tienda; la 10 es el minijefe y la 20 el jefe
- * final. La maquina de slots solo esta en la 9 y en la 19.
+ * final.
  *
  * Los enemigos se eligen al azar de un pool que se va abriendo, y sus
  * estadisticas se escalan segun lo lejos que este la etapa. El Esqueleto deja de
@@ -37,7 +36,6 @@ import ar.edu.uade.rpg.modelo.tienda.Tienda;
 public class GeneradorDeEtapas {
 
     private static final int[] ETAPAS_DE_TIENDA = {4, 9, 14, 19};
-    private static final int[] ETAPAS_CON_MAQUINA = {9, 19};
     private static final int ETAPA_DEL_MINIJEFE = 10;
     private static final int ETAPA_DEL_JEFE_FINAL = 20;
 
@@ -70,15 +68,6 @@ public class GeneradorDeEtapas {
         return false;
     }
 
-    public static boolean llevaMaquinaDeSlots(int numero) {
-        for (int etapa : ETAPAS_CON_MAQUINA) {
-            if (etapa == numero) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static TipoEtapa determinarTipo(int numero) {
         if (numero == ETAPA_DEL_JEFE_FINAL) {
             return TipoEtapa.JEFE_FINAL;
@@ -103,8 +92,7 @@ public class GeneradorDeEtapas {
 
     private EtapaDeTienda crearEtapaDeTienda(int numero, List<ClaseDePersonaje> clases) {
         Tienda tienda = new Tienda(getNumeroDeTienda(numero), clases, generadorDeStock);
-        MaquinaDeSlots maquina = llevaMaquinaDeSlots(numero) ? new MaquinaDeSlots(random) : null;
-        return new EtapaDeTienda(numero, tienda, maquina);
+        return new EtapaDeTienda(numero, tienda);
     }
 
     private EtapaDeCombate crearEtapaDeCombate(int numero) {

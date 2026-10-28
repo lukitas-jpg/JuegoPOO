@@ -5,25 +5,17 @@ import java.util.List;
 
 import ar.edu.uade.rpg.dto.EquipableEnVentaDTO;
 import ar.edu.uade.rpg.dto.ItemDTO;
-import ar.edu.uade.rpg.dto.MaquinaDTO;
 import ar.edu.uade.rpg.dto.TiendaDTO;
-import ar.edu.uade.rpg.dto.TiradaDTO;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.items.Consumible;
 import ar.edu.uade.rpg.modelo.items.Equipable;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.modelo.partida.Party;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
-import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
-import ar.edu.uade.rpg.modelo.tienda.Simbolo;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
 /**
- * Controlador MVC de las etapas de tienda: la maquina de slots (etapas 9 y 19)
- * y la tienda.
- *
- * Si la etapa tiene maquina, se muestra primero. El jugador tira las veces que
- * quiera y despues pasa a la tienda, sin vuelta atras.
+ * Controlador MVC de las etapas de tienda (4, 9, 14 y 19): comprar
+ * consumibles y equipo, cambiar el equipo en venta y seguir.
  */
 public class ControladorTienda {
 
@@ -41,34 +33,6 @@ public class ControladorTienda {
     }
 
     void iniciar() {
-        MaquinaDeSlots maquina = juego.getMaquinaDeSlots();
-        if (maquina != null && !maquina.estaAbandonada()) {
-            vista.mostrarMaquina(armarMaquina());
-        } else {
-            vista.mostrarTienda(armarTienda());
-        }
-    }
-
-    // ------------------------------------------------------------------ maquina
-
-    public void tirar() {
-        if (!juego.getMaquinaDeSlots().puedeTirar(juego.getPartida().getParty().getOro())) {
-            vista.avisar("No alcanza el oro para tirar.");
-            return;
-        }
-        ResultadoTirada resultado = juego.tirarEnLaMaquina();
-        List<String> simbolos = new ArrayList<>();
-        for (Simbolo simbolo : resultado.getSimbolos()) {
-            simbolos.add(imagenDe(simbolo));
-        }
-        vista.mostrarTirada(
-                new TiradaDTO(simbolos, resultado.getMultiplicador(), resultado.getOroGanado(),
-                        resultado.fueGratis()),
-                armarMaquina());
-    }
-
-    public void pasarALaTienda() {
-        juego.pasarALaTienda();
         vista.mostrarTienda(armarTienda());
     }
 
@@ -108,17 +72,6 @@ public class ControladorTienda {
 
     // ------------------------------------------------------------------- armado
 
-    private MaquinaDTO armarMaquina() {
-        MaquinaDeSlots maquina = juego.getMaquinaDeSlots();
-        int oro = juego.getPartida().getParty().getOro();
-        List<String> simbolos = new ArrayList<>();
-        for (Simbolo simbolo : Simbolo.values()) {
-            simbolos.add(imagenDe(simbolo));
-        }
-        return new MaquinaDTO(juego.getPartida().getEtapaActual(), oro,
-                maquina.getCostoDeLaProximaTirada(), maquina.puedeTirar(oro), simbolos);
-    }
-
     private TiendaDTO armarTienda() {
         Tienda tienda = juego.getTienda();
         Party party = juego.getPartida().getParty();
@@ -152,10 +105,6 @@ public class ControladorTienda {
                 ConversorDTO.bonificaciones(equipable),
                 destinatario.getNombre(),
                 puesto == null ? null : puesto.getNombre());
-    }
-
-    private static String imagenDe(Simbolo simbolo) {
-        return "slots/" + ConversorDTO.nombreDeArchivo(simbolo.name());
     }
 
     /**

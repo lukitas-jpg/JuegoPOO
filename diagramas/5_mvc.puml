@@ -25,8 +25,6 @@ package "ar.edu.uade.rpg.vista" {
     + mostrarResultado(datos : ResultadoDTO) : void
     + mostrarEstadoDeLaParty(party : PartyDTO) : void
     + mostrarTienda(datos : TiendaDTO) : void
-    + mostrarMaquina(maquina : MaquinaDTO) : void
-    + mostrarTirada(tirada : TiradaDTO, maquina : MaquinaDTO) : void
     + avisar(mensaje : String) : void
   }
 
@@ -67,13 +65,6 @@ package "ar.edu.uade.rpg.vista" {
   class PantallaTienda {
     ~ mostrar(tienda : TiendaDTO) : void
   }
-  class PantallaTragamonedas {
-    - animacion : Timer
-    --
-    ~ mostrar(datos : MaquinaDTO) : void
-    ~ animar(tirada : TiradaDTO, despues : MaquinaDTO) : void
-    - siguienteCuadro() : void
-  }
 
   class TarjetaCombatiente {
     ~ TarjetaCombatiente(combatiente : CombatienteDTO, formato : Formato)
@@ -102,8 +93,6 @@ package "ar.edu.uade.rpg.controlador" {
     + mostrarResultado(resultado : ResultadoDTO) : void
     + mostrarEstadoDeLaParty(party : PartyDTO) : void
     + mostrarTienda(tienda : TiendaDTO) : void
-    + mostrarMaquina(maquina : MaquinaDTO) : void
-    + mostrarTirada(tirada : TiradaDTO, maquina : MaquinaDTO) : void
     + avisar(mensaje : String) : void
   }
 
@@ -149,13 +138,10 @@ package "ar.edu.uade.rpg.controlador" {
   class ControladorTienda {
     ~ setVista(vista : VistaDelJuego) : void
     ~ iniciar() : void
-    + tirar() : void
-    + pasarALaTienda() : void
     + comprarConsumible(indice : int) : void
     + comprarEquipable(indiceSlot : int) : void
     + rerollear() : void
     + salir() : void
-    - armarMaquina() : MaquinaDTO
     - armarTienda() : TiendaDTO
     - armarSlot(equipable : Equipable, party : Party) : EquipableEnVentaDTO
     - destinatarioDe(equipable : Equipable) : Personaje
@@ -187,8 +173,6 @@ package "ar.edu.uade.rpg.dto" <<records>> {
   class PartyDTO <<record>>
   class ResultadoDTO <<record>>
   class TiendaDTO <<record>>
-  class MaquinaDTO <<record>>
-  class TiradaDTO <<record>>
   hide <<record>> members
 }
 
@@ -212,7 +196,6 @@ VentanaPrincipal *-- PantallaBatalla
 VentanaPrincipal *-- PantallaResultado
 VentanaPrincipal *-- PantallaEstadoParty
 VentanaPrincipal *-- PantallaTienda
-VentanaPrincipal *-- PantallaTragamonedas
 
 PanelConFondo <|-- PantallaInicio
 PanelConFondo <|-- PantallaSeleccionParty
@@ -220,7 +203,6 @@ PanelConFondo <|-- PantallaBatalla
 PanelConFondo <|-- PantallaResultado
 PanelConFondo <|-- PantallaEstadoParty
 PanelConFondo <|-- PantallaTienda
-PanelConFondo <|-- PantallaTragamonedas
 
 PantallaBatalla ..> TarjetaCombatiente
 PantallaResultado ..> TarjetaCombatiente
@@ -235,7 +217,6 @@ PantallaResultado --> ControladorJuego
 PantallaEstadoParty --> ControladorJuego
 PantallaBatalla --> ControladorCombate
 PantallaTienda --> ControladorTienda
-PantallaTragamonedas --> ControladorTienda
 
 ControladorJuego "1" *-- "1" ControladorCombate
 ControladorJuego "1" *-- "1" ControladorTienda

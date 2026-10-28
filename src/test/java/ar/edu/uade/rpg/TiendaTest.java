@@ -13,7 +13,6 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import ar.edu.uade.rpg.modelo.combatientes.ClaseDePersonaje;
-import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.combatientes.Guerrero;
 import ar.edu.uade.rpg.modelo.combatientes.Mago;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
@@ -26,16 +25,10 @@ import ar.edu.uade.rpg.modelo.items.Inventario;
 import ar.edu.uade.rpg.modelo.items.Rareza;
 import ar.edu.uade.rpg.modelo.movimientos.AccionUsarConsumible;
 import ar.edu.uade.rpg.modelo.tienda.GeneradorDeStock;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
-import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
-import ar.edu.uade.rpg.modelo.tienda.Simbolo;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
 /**
- * Pruebas del catalogo, el inventario, la tienda y la maquina de slots.
- *
- * El retorno de la maquina no se estima con tiradas al azar: se calcula
- * recorriendo los 216 resultados posibles, asi que el numero es exacto.
+ * Pruebas del catalogo, el inventario y la tienda.
  */
 class TiendaTest {
 
@@ -322,90 +315,5 @@ class TiendaTest {
             Tienda tienda = new Tienda(numero, PARTY, new GeneradorDeStock(new Random(numero)));
             assertEquals(5, tienda.getConsumiblesALaVenta().size());
         }
-    }
-
-    // ------------------------------------------------------ maquina de slots
-
-    @Test
-    void elRetornoDeLaMaquinaEs205De216() {
-        int suma = 0;
-        int tiradasQuePagan = 0;
-        for (Simbolo a : Simbolo.values()) {
-            for (Simbolo b : Simbolo.values()) {
-                for (Simbolo c : Simbolo.values()) {
-                    int multiplicador = MaquinaDeSlots.calcularMultiplicador(List.of(a, b, c));
-                    suma += multiplicador;
-                    if (multiplicador > 0) {
-                        tiradasQuePagan++;
-                    }
-                }
-            }
-        }
-        assertEquals(205, suma, "el retorno deberia ser 205/216 = 94.9%");
-        assertEquals(80, tiradasQuePagan, "deberia pagar 80 de las 216 veces = 37%");
-    }
-
-    @Test
-    void laTablaDePremiosDaLosNumerosQueDiceElDocumento() {
-        assertEquals(15, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.DIAMANTE)));
-        assertEquals(10, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CEREZA, Simbolo.CEREZA, Simbolo.CEREZA)));
-        assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.LIMON, Simbolo.LIMON, Simbolo.LIMON)));
-        assertEquals(4, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.MONEDA)));
-        assertEquals(2, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.MONEDA)));
-        assertEquals(1, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.TREBOL, Simbolo.TREBOL, Simbolo.DIAMANTE)));
-        assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.DIAMANTE)));
-    }
-
-    @Test
-    void laPrimeraTiradaDeCadaMaquinaEsGratis() {
-        MaquinaDeSlots maquina = new MaquinaDeSlots(new Random(4));
-
-        assertEquals(0, maquina.getCostoDeLaProximaTirada());
-        assertTrue(maquina.puedeTirar(0), "con la gratis se puede tirar sin oro");
-
-        ResultadoTirada primera = maquina.tirar();
-        assertTrue(primera.fueGratis());
-
-        assertEquals(MaquinaDeSlots.APUESTA, maquina.getCostoDeLaProximaTirada());
-        assertFalse(maquina.puedeTirar(0));
-    }
-
-    @Test
-    void laMaquinaAbandonadaNoSePuedeVolverAUsar() {
-        MaquinaDeSlots maquina = new MaquinaDeSlots(new Random(4));
-        maquina.abandonar();
-
-        assertTrue(maquina.estaAbandonada());
-        assertFalse(maquina.puedeTirar(100000));
-    }
-
-    @Test
-    void cadaTiradaDevuelveTresSimbolos() {
-        MaquinaDeSlots maquina = new MaquinaDeSlots(new Random(4));
-        ResultadoTirada tirada = maquina.tirar();
-
-        assertEquals(3, tirada.getSimbolos().size());
-        assertEquals(tirada.getMultiplicador() * MaquinaDeSlots.APUESTA, tirada.getOroGanado());
-    }
-
-    @Test
-    void aLaLargaLaMaquinaDevuelveMenosDeLoQueRecibe() {
-        MaquinaDeSlots maquina = new MaquinaDeSlots(new Random(2024));
-        int apostado = 0;
-        int ganado = 0;
-        for (int tirada = 0; tirada < 20000; tirada++) {
-            apostado += MaquinaDeSlots.APUESTA;
-            ganado += maquina.tirar().getOroGanado();
-        }
-        double retorno = ganado * 100.0 / apostado;
-        assertTrue(retorno > 90 && retorno < 100,
-                "el retorno deberia rondar el 95%, dio " + retorno);
     }
 }

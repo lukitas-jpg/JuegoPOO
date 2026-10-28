@@ -36,15 +36,12 @@ class Juego {
   + {static} crearPersonaje(clase : ClaseDePersonaje) : Personaje
   .. combate ..
   + iniciarCombate() : Combate
-  .. tienda y maquina ..
+  .. tienda ..
   + getTienda() : Tienda
-  + getMaquinaDeSlots() : MaquinaDeSlots
   + puedeComprarEquipable(indiceSlot : int, destinatario : Personaje) : boolean
   + comprarEquipable(indiceSlot : int, destinatario : Personaje) : Equipable
   + comprarConsumible(indiceEnElCatalogo : int) : boolean
   + rerollearTienda() : boolean
-  + tirarEnLaMaquina() : ResultadoTirada
-  + pasarALaTienda() : void
   + usarConsumibleFueraDeCombate(consumible : Consumible, objetivo : Personaje) : boolean
   - getEtapaDeCombate() : EtapaDeCombate
   - getEtapaDeTienda() : EtapaDeTienda
@@ -115,10 +112,7 @@ class EtapaDeCombate {
 }
 
 class EtapaDeTienda {
-  + pasarALaTienda() : void
-  + tieneMaquinaDeSlots() : boolean
   + getTienda() : Tienda
-  + getMaquinaDeSlots() : MaquinaDeSlots
   + getDescripcion() : String
   + otorgaExperiencia() : boolean
   + esDeCombate() : boolean
@@ -129,7 +123,6 @@ class GeneradorDeEtapas {
   --
   + crearEtapa(numero : int, clasesDeLaParty : List<ClaseDePersonaje>) : Etapa
   + {static} esEtapaDeTienda(numero : int) : boolean
-  + {static} llevaMaquinaDeSlots(numero : int) : boolean
   + {static} determinarTipo(numero : int) : TipoEtapa
   + {static} getNumeroDeTienda(numeroDeEtapa : int) : int
   - crearEtapaDeCombate(numero : int) : EtapaDeCombate
@@ -279,11 +272,9 @@ Etapa <|-- EtapaDeTienda
 EtapaDeCombate "1" *-- "1..*" Enemigo : enemigos
 EtapaDeCombate --> TipoEtapa
 EtapaDeTienda "1" *-- "1" Tienda
-EtapaDeTienda "1" *-- "0..1" MaquinaDeSlots
 EtapaDeCombate ..> Combate : crea
 Juego ..> Combate : pide a la etapa
 Juego ..> Tienda : cobra y entrega
-Juego ..> MaquinaDeSlots : cobra y paga
 GeneradorDeEtapas ..> Etapa : crea
 GeneradorDeEtapas ..> Enemigo : crea
 
@@ -319,9 +310,9 @@ note bottom of Juego
   pasa sus enemigos y sus recompensas. Así es
   imposible armar una pelea en una etapa de tienda.
 
-  Tienda y MaquinaDeSlots no manejan oro: Juego
-  cobra y entrega en un paso (comprarEquipable,
-  tirarEnLaMaquina...). getEtapaDeCombate() y
+  Tienda no maneja oro: Juego cobra y entrega en
+  un paso (comprarEquipable, comprarConsumible,
+  rerollearTienda). getEtapaDeCombate() y
   getEtapaDeTienda() son los dos únicos casts del
   modelo, y los dos después de preguntar
   esDeCombate().

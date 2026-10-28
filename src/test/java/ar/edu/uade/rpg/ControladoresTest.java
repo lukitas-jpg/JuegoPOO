@@ -17,12 +17,10 @@ import ar.edu.uade.rpg.controlador.VistaDelJuego;
 import ar.edu.uade.rpg.dto.ClaseDTO;
 import ar.edu.uade.rpg.dto.CombatienteDTO;
 import ar.edu.uade.rpg.dto.EstadoCombateDTO;
-import ar.edu.uade.rpg.dto.MaquinaDTO;
 import ar.edu.uade.rpg.dto.MovimientoDTO;
 import ar.edu.uade.rpg.dto.PartyDTO;
 import ar.edu.uade.rpg.dto.ResultadoDTO;
 import ar.edu.uade.rpg.dto.TiendaDTO;
-import ar.edu.uade.rpg.dto.TiradaDTO;
 import ar.edu.uade.rpg.modelo.partida.GeneradorDeEtapas;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
@@ -46,8 +44,6 @@ class ControladoresTest {
         ResultadoDTO resultado;
         PartyDTO party;
         TiendaDTO tienda;
-        MaquinaDTO maquina;
-        TiradaDTO tirada;
         boolean hayGuardada;
 
         private void ir(String nueva) {
@@ -63,8 +59,6 @@ class ControladoresTest {
         @Override public void mostrarResultado(ResultadoDTO r) { resultado = r; ir("resultado"); }
         @Override public void mostrarEstadoDeLaParty(PartyDTO p) { party = p; ir("estado"); }
         @Override public void mostrarTienda(TiendaDTO t) { tienda = t; ir("tienda"); }
-        @Override public void mostrarMaquina(MaquinaDTO m) { maquina = m; ir("maquina"); }
-        @Override public void mostrarTirada(TiradaDTO t, MaquinaDTO m) { tirada = t; maquina = m; ir("tirada"); }
         @Override public void avisar(String mensaje) { avisos.add(mensaje); }
     }
 
@@ -166,7 +160,7 @@ class ControladoresTest {
 
     /**
      * Partidas enteras desde los controladores: pelear, cobrar, ver la party,
-     * tirar en la maquina, comprar y usar pociones, hasta volver al inicio.
+     * comprar y usar pociones, hasta volver al inicio.
      */
     @Test
     void unaRunEnteraSeJuegaDesdeLosControladores() throws Exception {
@@ -205,11 +199,6 @@ class ControladoresTest {
                 curarAlMasHerido();
                 controlador.siguienteEtapa();
             }
-            case "maquina" -> {
-                controlador.getControladorTienda().tirar();
-                controlador.getControladorTienda().pasarALaTienda();
-            }
-            case "tirada" -> controlador.getControladorTienda().pasarALaTienda();
             case "tienda" -> comprarYSalir();
             default -> throw new AssertionError("pantalla inesperada: " + vista.pantalla);
         }

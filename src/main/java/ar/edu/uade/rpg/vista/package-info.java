@@ -7,6 +7,6 @@
  * del modelo.
  *
  * Pantallas: inicio, seleccion de la party, batalla, resultado, estado de la
- * party (con el inventario), maquina de slots y tienda.
+ * party (con el inventario) y tienda.
  */
 package ar.edu.uade.rpg.vista;

@@ -32,7 +32,6 @@ import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
 import ar.edu.uade.rpg.modelo.items.CatalogoDeConsumibles;
 import ar.edu.uade.rpg.modelo.partida.Etapa;
 import ar.edu.uade.rpg.modelo.partida.EtapaDeCombate;
-import ar.edu.uade.rpg.modelo.partida.EtapaDeTienda;
 import ar.edu.uade.rpg.modelo.partida.EstadoPartida;
 import ar.edu.uade.rpg.modelo.partida.GeneradorDeEtapas;
 import ar.edu.uade.rpg.modelo.partida.Juego;
@@ -272,16 +271,6 @@ class MotorTest {
             boolean esperadaDeTienda = numero == 4 || numero == 9 || numero == 14 || numero == 19;
             assertEquals(!esperadaDeTienda, etapa.esDeCombate(), "etapa " + numero);
             assertEquals(!esperadaDeTienda, etapa.otorgaExperiencia(), "etapa " + numero);
-        }
-    }
-
-    @Test
-    void laMaquinaDeSlotsSoloEstaEnLaEtapa9YEnLa19() {
-        GeneradorDeEtapas generador = new GeneradorDeEtapas(new Random(1));
-        for (int numero : new int[]{4, 9, 14, 19}) {
-            EtapaDeTienda etapa = (EtapaDeTienda) generador.crearEtapa(numero, TRES_CLASES);
-            boolean deberiaTenerla = numero == 9 || numero == 19;
-            assertEquals(deberiaTenerla, etapa.tieneMaquinaDeSlots(), "etapa " + numero);
         }
     }
 

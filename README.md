@@ -43,12 +43,12 @@ src/main/java/ar/edu/uade/rpg/
 │   ├── movimientos/      Diagrama 2: Accion, Movimiento, Ataque, Habilidad
 │   ├── efectos/          Diagrama 2: EfectoEstado (veneno, escudo, buffs...)
 │   ├── items/            Diagrama 3: Item, Consumible, Equipable, Inventario y catálogos
-│   ├── tienda/           Diagrama 3: Tienda, GeneradorDeStock, MaquinaDeSlots
+│   ├── tienda/           Diagrama 3: Tienda y GeneradorDeStock
 │   ├── combate/          Diagrama 4: Combate, GestorDeTurnos, CalculadorDeDaño
 │   └── partida/          Diagrama 4: Juego, Partida, Party, Etapas
 ├── controlador/          Diagrama 5: los controladores del MVC y la interfaz VistaDelJuego
 ├── dto/                  Diagrama 5: los datos que viajan a la vista (records)
-├── vista/                Diagrama 5: la ventana Swing y sus 7 pantallas
+├── vista/                Diagrama 5: la ventana Swing y sus 6 pantallas
 └── persistencia/         RepositorioPartidas y su implementación en archivo
 
 src/main/resources/imagenes/   Las 89 imágenes del juego (ver su LEEME.md)
@@ -70,7 +70,7 @@ que juegan runs enteras con peleas de verdad, tanto contra el modelo como a trav
 de los controladores con una vista falsa.
 
 Pantallas: inicio, selección de la party, batalla, resultado, estado de la party (con
-inventario), máquina de slots y tienda. Ver `diagramas/S3_mapa_de_pantallas`.
+inventario) y tienda. Ver `diagramas/S3_mapa_de_pantallas`.
 
 La vista de esta versión salió de la versión "jugable" que se armó aparte, pasada a
 este modelo. El modelo de aquella versión no se usa.
@@ -87,7 +87,6 @@ Los números del juego están medidos por simulación y documentados:
 | [BALANCE_ENEMIGOS.md](BALANCE_ENEMIGOS.md) | Los 11 enemigos: estadísticas, movimientos y escalado por etapa |
 | [EQUIPABLES.md](EQUIPABLES.md) | Los 36 equipables, los precios, la economía del oro y el reroll |
 | [CONSUMIBLES.md](CONSUMIBLES.md) | Los 5 consumibles y por qué la poción vale lo que vale |
-| [MAQUINA_DE_SLOTS.md](MAQUINA_DE_SLOTS.md) | Símbolos, tabla de premios y retorno de la máquina |
 
 Antes de programar, leer [CONVENCIONES.md](CONVENCIONES.md).
 
@@ -102,6 +101,6 @@ Antes de programar, leer [CONVENCIONES.md](CONVENCIONES.md).
 
 Todo CC0. Personajes, enemigos y fondos: *16x16 DungeonTileset II* de 0x72 (el Asesino
 y el Curador, con los colores cambiados). Íconos: *496 pixel art icons for medieval/fantasy
-RPG* de Henrique Lazarini (7Soul1), en OpenGameArt. La máquina de slots, los 36 dibujos propios
+RPG* de Henrique Lazarini (7Soul1), en OpenGameArt. Los 36 dibujos propios
 de los equipables y el ícono de Protección son dibujos propios. Detalle, links y licencias en
 [LICENCIAS.md](LICENCIAS.md).
