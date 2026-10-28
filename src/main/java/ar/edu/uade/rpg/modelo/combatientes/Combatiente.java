@@ -270,18 +270,11 @@ public abstract class Combatiente implements Serializable {
      * Preparacion antes del primer turno de la etapa. El mana se llena entero
      * (asi cada pelea arranca con todos los recursos) pero la vida NO se toca:
      * si vengo golpeado de la etapa anterior, entro golpeado, y para eso estan
-     * las pociones y el curador.
-     *
-     * Devuelve los combatientes que este combatiente mete en el campo al
-     * empezar. La lista vacia es el caso normal; el Nigromante la sobrescribe
-     * para entrar con sus cinco esqueletos. Se devuelven en vez de agregarlos
-     * el mismo porque asi ningun enemigo necesita conocer a Combate, y es
-     * Combate el que decide que hacer con ellos.
+     * las pociones y el curador. Las definitivas tambien arrancan disponibles.
      */
-    public List<Combatiente> alIniciarCombate() {
+    public void alIniciarCombate() {
         manaActual = manaMaximo;
         reiniciarCooldowns();
-        return List.of();
     }
 
     // ----------------------------------------------------- estadisticas

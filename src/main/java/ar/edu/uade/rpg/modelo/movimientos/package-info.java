@@ -1,8 +1,8 @@
 /**
  * Diagrama 2: acciones y movimientos.
  *
- * Accion (interfaz, patrón Command) y sus 4 implementaciones:
- * AccionUsarMovimiento, AccionDefender, AccionUsarConsumible y AccionInvocar.
+ * Accion (interfaz, patrón Command) y sus 3 implementaciones:
+ * AccionUsarMovimiento, AccionDefender y AccionUsarConsumible.
  * Movimiento (abstracta), Ataque, AtaqueFisico, AtaqueMagico, Habilidad,
  * HabilidadDeCuracion y HabilidadDeEstado.
  * ResultadoAccion, AlcanceMovimiento y Estadistica.

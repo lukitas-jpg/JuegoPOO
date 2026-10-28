@@ -53,8 +53,7 @@ public final class SeñorDeLasSombras extends Enemigo
     }
 
     @Override
-    public Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                               CalculadorDeDaño calculador) {
+    public Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador) {
         if (debeCambiarDeFase()) {
             cambiarDeFase();
         }

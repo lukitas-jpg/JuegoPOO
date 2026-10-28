@@ -106,7 +106,7 @@ No son cinco reglas abstractas: cada una se traduce en algo concreto del modelo.
 
 **L — Sustitución de Liskov.** Donde se espera un `Combatiente`, cualquier subclase tiene que funcionar. En la práctica: una subclase no puede lanzar una excepción en un método que hereda ni devolver `null` donde el padre devuelve una lista; que devuelva la lista vacía.
 
-**I — Segregación de interfaces.** Interfaces chicas y específicas en lugar de una grande. Es la razón por la que tenemos cuatro interfaces de apuntado de un método cada una y no una sola interfaz con todo adentro: el `Hechicero` no implementa ninguna porque ataca en área, y el `SeñorDeLasSombras` implementa dos.
+**I — Segregación de interfaces.** Interfaces chicas y específicas en lugar de una grande. Es la razón por la que tenemos cuatro interfaces de apuntado de un método cada una y no una sola interfaz con todo adentro: cada enemigo implementa solo la que usa, y el `SeñorDeLasSombras` implementa dos.
 
 **D — Inversión de dependencias.** Depender de abstracciones, no de implementaciones. `Juego` tiene un atributo de tipo `RepositorioPartidas` (la interfaz), nunca de `RepositorioPartidasArchivo`. Lo mismo con `EfectoConsumible`.
 
@@ -155,7 +155,7 @@ Hoy hay **128 tests en seis archivos**:
 | `PersonajeTest` | estadísticas base, daño, curación, niveles y equipo |
 | `EfectosTest` | los 8 efectos de estado, el tope del veneno, los buffos que no se multiplican |
 | `MovimientosTest` | los 24 movimientos, la fórmula de daño, el tope del crítico |
-| `EnemigosTest` | los 11 enemigos, las 4 interfaces de apuntado y el escalado por etapa |
+| `EnemigosTest` | los 6 enemigos, las 4 interfaces de apuntado y el escalado por etapa |
 | `TiendaTest` | catálogos, inventario, tienda y reroll |
 | `MotorTest` | turnos, combate, etapas, partida, persistencia y **una run entera** |
 

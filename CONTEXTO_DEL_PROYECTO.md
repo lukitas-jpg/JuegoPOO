@@ -22,7 +22,7 @@ con `-Xlint:all,-serial`.
 
 | Paquete | Clases | Qué hay |
 |---|---|---|
-| `modelo.combatientes` | 22 | `Combatiente`, `Personaje` y las 6 clases jugables, `Enemigo` y los 11 enemigos |
+| `modelo.combatientes` | 17 | `Combatiente`, `Personaje` y las 6 clases jugables, `Enemigo` y los 6 enemigos |
 | `modelo.combatientes.objetivos` | 4 | las interfaces de apuntado |
 | `modelo.items` | 16 | `Item`, `Consumible`, `Equipable`, `Inventario` y los dos catálogos |
 | `modelo.movimientos` | 15 | `Accion`, `Movimiento` y sus familias |
@@ -60,7 +60,7 @@ Los números y su justificación están en tres documentos:
 
 | Documento | Qué tiene |
 |---|---|
-| `BALANCE_ENEMIGOS.md` | los 11 enemigos, sus movimientos y el escalado por etapa |
+| `BALANCE_ENEMIGOS.md` | los 6 enemigos, sus movimientos y el escalado por etapa |
 | `EQUIPABLES.md` | los 36 equipables, los precios y la economía del oro |
 | `CONSUMIBLES.md` | los 5 consumibles y la comparación con la curación del Curador |
 
@@ -99,8 +99,8 @@ declara en su firma a quién apunta, y la lógica se escribe una sola vez. El
 `SeñorDeLasSombras` implementa dos y desambigua con `Interfaz.super.elegirObjetivo()`
 según la fase.
 
-**El Nigromante no conoce al Combate.** Devuelve sus esqueletos dentro de un
-`ResultadoAccion` y es `Combate` quien los incorpora. Si fuera al revés, cada enemigo
+**Ningún enemigo conoce al Combate.** Recibe la lista de personajes vivos y devuelve
+una `Accion`; es `Combate` quien la ejecuta. Si fuera al revés, cada enemigo
 necesitaría una referencia al combate que lo está jugando y habría dependencia
 circular entre los paquetes.
 
@@ -117,8 +117,8 @@ existe una clase Berserker.
 jugador arma su acción desde la pantalla y el enemigo la arma solo en su
 `elegirAccion()`; `Combate` no los distingue, solo dice `ejecutar()`.
 
-**La recompensa la define la etapa, no el enemigo.** Si viniera por enemigo, el
-Nigromante sería una fuente infinita de experiencia y oro, porque invoca sin parar.
+**La recompensa la define la etapa, no el enemigo.** La etapa se la pasa al `Combate`
+al crearlo, y es la misma sin importar cuántos enemigos haya.
 
 **Lo que se guarda es solo la `Partida`.** De ahí cuelgan la party, los personajes con
 su nivel y su equipo, los efectos activos y el inventario. La etapa no se guarda: al
@@ -134,7 +134,6 @@ para subir de nivel.
 
 **Creator.** `EtapaDeCombate.crearCombate()` crea el `Combate` porque es quien tiene
 los enemigos. `Combate.ejecutarMovimiento()` crea la `Accion` porque tiene los datos.
-El `Nigromante` crea sus `Esqueleto`.
 
 **Controller.** `Juego` recibe los eventos del sistema y coordina delegando. Vive en el
 modelo: no tiene un solo método que muestre, pinte o reciba clicks.
@@ -159,7 +158,8 @@ es agregar una clase, sin tocar las que ya existen.
 no distingue entre un `Personaje` y un `Enemigo`.
 
 **Segregación de interfaces.** Cuatro interfaces de apuntado de un método cada una en
-vez de una grande: el `Hechicero` no implementa ninguna porque pega en área.
+vez de una grande: cada enemigo implementa solo la que usa, y el `SeñorDeLasSombras`
+implementa dos.
 
 **Inversión de dependencias.** `Juego` depende de `RepositorioPartidas`, no de
 `RepositorioPartidasArchivo`.

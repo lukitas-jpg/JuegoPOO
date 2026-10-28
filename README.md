@@ -38,7 +38,7 @@ java -jar target/rpg.jar
 src/main/java/ar/edu/uade/rpg/
 ├── App.java              Punto de entrada: arma modelo, vistas y controladores
 ├── modelo/               M de MVC: reglas del juego, sin nada de Swing
-│   ├── combatientes/     Diagrama 1: Combatiente, Personaje, Enemigo y los 11 enemigos
+│   ├── combatientes/     Diagrama 1: Combatiente, Personaje, Enemigo y los 6 enemigos
 │   │   └── objetivos/    Diagrama 1: las 4 interfaces de apuntado
 │   ├── movimientos/      Diagrama 2: Accion, Movimiento, Ataque, Habilidad
 │   ├── efectos/          Diagrama 2: EfectoEstado (veneno, escudo, buffs...)
@@ -84,7 +84,7 @@ Los números del juego están medidos por simulación y documentados:
 | Documento | Qué tiene |
 |---|---|
 | [CONVENCIONES.md](CONVENCIONES.md) | Cómo escribimos el código. **Leer antes de programar.** |
-| [BALANCE_ENEMIGOS.md](BALANCE_ENEMIGOS.md) | Los 11 enemigos: estadísticas, movimientos y escalado por etapa |
+| [BALANCE_ENEMIGOS.md](BALANCE_ENEMIGOS.md) | Los 6 enemigos: estadísticas, movimientos y escalado por etapa |
 | [EQUIPABLES.md](EQUIPABLES.md) | Los 36 equipables, los precios, la economía del oro y el reroll |
 | [CONSUMIBLES.md](CONSUMIBLES.md) | Los 5 consumibles y por qué la poción vale lo que vale |
 

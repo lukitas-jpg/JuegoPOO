@@ -3,9 +3,8 @@
  *
  * Combatiente (abstracta), TipoDaño, Personaje (abstracta), ClaseDePersonaje
  * y las 6 clases jugables: Guerrero, Mago, Arquero, Curador, Asesino y Tanque.
- * Enemigo (abstracta) y los 11 enemigos: Bruto, Nigromante, Esqueleto,
- * Guardian, Acechador, Hechicero, Emponzoñador, Acolito, Berserker, Verdugo
- * y SeñorDeLasSombras.
+ * Enemigo (abstracta) y los 6 enemigos: Bruto, Acechador, Emponzoñador,
+ * Berserker, Verdugo (minijefe) y SeñorDeLasSombras (jefe final).
  *
  * Las interfaces de apuntado viven en el subpaquete objetivos.
  */

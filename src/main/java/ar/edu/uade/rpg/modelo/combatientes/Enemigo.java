@@ -15,11 +15,11 @@ import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
  * Un Enemigo no sube de nivel ni lleva equipo. Lo que lo define es que DECIDE
  * solo: elegirAccion() es el unico metodo abstracto y es donde vive la
  * personalidad de cada uno. El motor de combate nunca pregunta de que tipo es
- * un enemigo; le pide una Accion y la ejecuta. Esos 11 elegirAccion() distintos
+ * un enemigo; le pide una Accion y la ejecuta. Esos 6 elegirAccion() distintos
  * son el polimorfismo del trabajo.
  *
  * Tampoco tienen el limite de 4 movimientos de los personajes ni niveles de
- * desbloqueo: el Esqueleto tiene uno solo y el SeñorDeLasSombras tres.
+ * desbloqueo: el Bruto tiene uno solo y el SeñorDeLasSombras tres.
  */
 public abstract class Enemigo extends Combatiente {
 
@@ -46,13 +46,8 @@ public abstract class Enemigo extends Combatiente {
         this.ataqueMagico = 0;
     }
 
-    /**
-     * Que hace este enemigo en su turno. Recibe a quienes puede atacar y a sus
-     * companeros, porque algunos (el Acolito, el Guardian) actuan sobre los
-     * suyos y no sobre la party.
-     */
-    public abstract Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                                        CalculadorDeDaño calculador);
+    /** Que hace este enemigo en su turno, contra los miembros vivos de la party. */
+    public abstract Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador);
 
     /** Lo pide ObjetivoAleatorio. Como el Random ya es atributo, sale gratis. */
     public Random getRandom() {
@@ -69,7 +64,7 @@ public abstract class Enemigo extends Combatiente {
         return vivos;
     }
 
-    /** Atajo para no repetir el new en los once elegirAccion(). */
+    /** Atajo para no repetir el new en los seis elegirAccion(). */
     protected Accion usar(Movimiento movimiento, List<Combatiente> objetivos,
                           CalculadorDeDaño calculador) {
         return new AccionUsarMovimiento(this, movimiento, objetivos, calculador);
@@ -87,7 +82,7 @@ public abstract class Enemigo extends Combatiente {
      *
      * La velocidad y la suerte NO escalan. Si escalaran, sobre el final los
      * enemigos actuarian siempre primero y criticarian la mitad de los golpes, y
-     * la diferencia entre el Acechador y el Guardian dejaria de significar algo.
+     * la diferencia entre el Acechador y el Bruto dejaria de significar algo.
      *
      * Los jefes lo sobrescriben para no escalar: sus numeros ya son los finales.
      */

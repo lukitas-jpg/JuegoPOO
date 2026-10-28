@@ -131,13 +131,13 @@ final class PantallaBatalla extends PanelConFondo {
             aliados.add(espacio());
         }
 
-        // Con muchos enemigos (el Nigromante llega con cinco esqueletos) las
-        // tarjetas se ponen en vertical, se achican y van en mas columnas.
+        // Hasta 3 enemigos van en una columna; con 4, en dos columnas y las
+        // tarjetas en vertical para que entren.
         int cantidad = estado.enemigos().size();
-        TarjetaCombatiente.Formato formato = cantidad <= 3 ? TarjetaCombatiente.Formato.COMPLETA
-                : cantidad == 4 ? TarjetaCombatiente.Formato.VERTICAL
-                : TarjetaCombatiente.Formato.CHICA;
-        int columnas = cantidad <= 3 ? 1 : cantidad <= 8 ? 2 : 3;
+        TarjetaCombatiente.Formato formato = cantidad <= 3
+                ? TarjetaCombatiente.Formato.COMPLETA
+                : TarjetaCombatiente.Formato.VERTICAL;
+        int columnas = cantidad <= 3 ? 1 : 2;
         enemigos.removeAll();
         enemigos.setLayout(new GridLayout(0, columnas, 8, 8));
         for (CombatienteDTO enemigo : estado.enemigos()) {

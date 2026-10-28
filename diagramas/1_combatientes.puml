@@ -40,7 +40,7 @@ abstract class Combatiente {
   + quitarEfecto(nombre : String) : boolean
   + limpiarEfectosTemporales() : void
   + getEfectosActivos() : List<EfectoEstado>
-  + alIniciarCombate() : List<Combatiente>
+  + alIniciarCombate() : void
   + reducirCooldowns() : void
   + reiniciarCooldowns() : void
   + getMovimientos() : List<Movimiento>
@@ -117,7 +117,7 @@ abstract class Enemigo {
   + {static} CRECIMIENTO_ATAQUE : int = 10
   # random : Random
   --
-  + {abstract} elegirAccion(party : List<Combatiente>, aliados : List<Enemigo>, calculador : CalculadorDeDaño) : Accion
+  + {abstract} elegirAccion(party : List<Combatiente>, calculador : CalculadorDeDaño) : Accion
   + escalarParaEtapa(numeroEtapa : int) : void
   + getRandom() : Random
   # filtrarVivos(candidatos : List<Combatiente>) : List<Combatiente>
@@ -125,58 +125,27 @@ abstract class Enemigo {
 }
 
 class Bruto {
-  + elegirAccion(party, aliados, calculador) : Accion
-}
-class Acolito {
-  + elegirAccion(party, aliados, calculador) : Accion
+  + elegirAccion(party, calculador) : Accion
 }
 class Berserker {
-  + elegirAccion(party, aliados, calculador) : Accion
+  + elegirAccion(party, calculador) : Accion
   + getAtaqueFisicoEfectivo() : int
 }
 class Verdugo {
   + {static} RESISTENCIA_DE_JEFE : int = 50
   --
-  + elegirAccion(party, aliados, calculador) : Accion
+  + elegirAccion(party, calculador) : Accion
   + escalarParaEtapa(numeroEtapa : int) : void
-}
-class Hechicero {
-  + elegirAccion(party, aliados, calculador) : Accion
-}
-class Guardian {
-  - reduccionOtorgada : int = 30
-  --
-  + elegirAccion(party, aliados, calculador) : Accion
-  - protegerAliados(aliados : List<Enemigo>) : void
-  + getReduccionOtorgada() : int
 }
 class Acechador {
   - cantidadGolpes : int
   --
-  + elegirAccion(party, aliados, calculador) : Accion
-}
-class Nigromante {
-  - rondasEntreInvocaciones : int
-  - rondasDesdeUltimaInvocacion : int
-  - maximoEsqueletosVivos : int
-  --
-  + alIniciarCombate() : List<Combatiente>
-  + elegirAccion(party, aliados, calculador) : Accion
-  - tocaInvocar() : boolean
-  - invocarHastaElTope() : List<Esqueleto>
-  - contarEsqueletosVivos() : int
-}
-class Esqueleto {
-  - invocador : Nigromante
-  --
-  + elegirAccion(party, aliados, calculador) : Accion
-  + alMorirElInvocador() : void
-  + escalarParaEtapa(numeroEtapa : int) : void
+  + elegirAccion(party, calculador) : Accion
 }
 class Emponzoñador {
   - efectoBuscado : String
   --
-  + elegirAccion(party, aliados, calculador) : Accion
+  + elegirAccion(party, calculador) : Accion
   + getEfectoBuscado() : String
   + elegirDeRespaldo(vivos : List<Combatiente>) : Combatiente
 }
@@ -184,7 +153,7 @@ class SeñorDeLasSombras {
   + {static} RESISTENCIA_DE_JEFE : int = 50
   - fase : int
   --
-  + elegirAccion(party, aliados, calculador) : Accion
+  + elegirAccion(party, calculador) : Accion
   + escalarParaEtapa(numeroEtapa : int) : void
   + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
   - debeCambiarDeFase() : boolean
@@ -220,28 +189,19 @@ Personaje <|-- Asesino
 Personaje <|-- Tanque
 
 Enemigo <|-- Bruto
-Enemigo <|-- Acolito
 Enemigo <|-- Berserker
 Enemigo <|-- Verdugo
-Enemigo <|-- Hechicero
-Enemigo <|-- Guardian
 Enemigo <|-- Acechador
-Enemigo <|-- Nigromante
-Enemigo <|-- Esqueleto
 Enemigo <|-- Emponzoñador
 Enemigo <|-- SeñorDeLasSombras
 
 ' ================= REALIZACION =================
 Bruto              ..|> ObjetivoMasDebil
-Acolito            ..|> ObjetivoMasDebil
 SeñorDeLasSombras  ..|> ObjetivoMasDebil
 Berserker          ..|> ObjetivoMasPeligroso
 Verdugo            ..|> ObjetivoMasPeligroso
 SeñorDeLasSombras  ..|> ObjetivoMasPeligroso
-Guardian           ..|> ObjetivoAleatorio
 Acechador          ..|> ObjetivoAleatorio
-Nigromante         ..|> ObjetivoAleatorio
-Esqueleto          ..|> ObjetivoAleatorio
 Emponzoñador       ..|> ObjetivoSinEfecto
 
 ' ================= COMPOSICION Y ASOCIACION =================
@@ -251,7 +211,6 @@ Combatiente ..> TipoDaño : usa
 Personaje --> ClaseDePersonaje
 Personaje "1" --> "0..1" Arma : arma
 Personaje "1" --> "0..1" Armadura : armadura
-Nigromante "1" o-- "0..5" Esqueleto : invoca
 
 ' ================= DISPOSICION =================
 Movimiento   -[hidden]right- EfectoEstado
@@ -267,20 +226,12 @@ Curador  -[hidden]right- Asesino
 Asesino  -[hidden]right- Tanque
 Guerrero -[hidden]down- Curador
 
-' enemigos en tres filas de cuatro, para que el diagrama no se corte
-Bruto     -[hidden]right- Acolito
-Acolito   -[hidden]right- Berserker
-Berserker -[hidden]right- Verdugo
-
-Hechicero -[hidden]right- Guardian
-Guardian  -[hidden]right- Acechador
-Acechador -[hidden]right- Nigromante
-
-Esqueleto    -[hidden]right- Emponzoñador
-Emponzoñador -[hidden]right- SeñorDeLasSombras
-
-Bruto     -[hidden]down- Hechicero
-Hechicero -[hidden]down- Esqueleto
+' enemigos en dos filas de tres
+Bruto     -[hidden]right- Berserker
+Berserker -[hidden]right- Acechador
+Emponzoñador -[hidden]right- Verdugo
+Verdugo      -[hidden]right- SeñorDeLasSombras
+Bruto     -[hidden]down- Emponzoñador
 
 Tanque -[hidden]down- Bruto
 
@@ -291,15 +242,14 @@ ObjetivoAleatorio    -[hidden]right- ObjetivoSinEfecto
 note bottom of Enemigo
   Enemigo ya NO tiene experienciaOtorgada ni
   oroOtorgado: las recompensas las define la
-  EtapaDeCombate completa. Si vinieran por enemigo,
-  el Nigromante seria una granja infinita de
-  experiencia, porque repone esqueletos cada 3 rondas.
+  EtapaDeCombate completa, que se las pasa al
+  Combate al crearlo.
 
-  alIniciarCombate() devuelve los combatientes que
-  hay que incorporar al combate. Casi todos devuelven
-  la lista vacia; el Nigromante devuelve sus 5
-  esqueletos. Asi el Nigromante no necesita conocer a
-  Combate, y no hay dependencia circular.
+  Hay 6 enemigos: uno por cada interfaz de apuntado
+  (Bruto, Berserker, Acechador, Emponzoñador) más
+  el minijefe (Verdugo) y el jefe final (Señor de
+  las Sombras). Cada uno decide distinto en su
+  elegirAccion(): eso es el polimorfismo.
 end note
 
 note right of Combatiente
@@ -379,7 +329,6 @@ note bottom of ObjetivoAleatorio
   que provee Enemigo. ObjetivoSinEfecto pide igual el
   nombre del efecto y el criterio de respaldo.
 
-  El Hechicero no implementa ninguno: ataca en área.
   El SeñorDeLasSombras implementa dos y desambigua
   según su fase.
 end note
@@ -398,11 +347,8 @@ note as N_ESCALADO
   paralelas. Los numeros salieron de simular 2000
   partidas completas.
 
-  Los dos jefes y los esqueletos invocados sobrescriben
-  escalarParaEtapa() para no hacer nada: los jefes
-  porque sus valores ya son los finales, y los
-  esqueletos porque si escalaran, el Nigromante de la
-  etapa 15 entraria con cinco enemigos de pleno nivel.
+  Los dos jefes sobrescriben escalarParaEtapa() para
+  no hacer nada: sus valores ya son los finales.
 
   elegirAccion() recibe List<Combatiente> y no Party
   para que el diagrama 1 no dependa del 4: el enemigo

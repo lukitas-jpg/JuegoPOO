@@ -7,8 +7,8 @@ import java.util.Random;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
 /**
- * Apunta a cualquiera, al azar. Lo implementan el Esqueleto, el Guardian, el
- * Acechador y el Nigromante.
+ * Apunta a cualquiera, al azar. Lo implementa el Acechador, que elige de nuevo
+ * antes de cada uno de sus tres golpes.
  *
  * Como las interfaces no pueden tener atributos de instancia, esta PIDE el
  * Random en vez de tenerlo: declara getRandom() como abstracto y quien la

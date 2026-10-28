@@ -5,12 +5,8 @@ import java.util.List;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
 /**
- * Apunta al de menos vida. Lo implementan el Bruto, que remata al herido, y el
- * Acolito, que cura al mas lastimado.
- *
- * El metodo recibe una lista de candidatos y no sabe si son enemigos o
- * aliados: el Bruto le pasa la party y el Acolito le pasa sus companeros. La
- * misma interfaz, dos usos opuestos, cero codigo duplicado.
+ * Apunta al de menos vida actual. Lo implementan el Bruto, que remata al
+ * herido, y el Señor de las Sombras en su primera fase.
  */
 public interface ObjetivoMasDebil {
 

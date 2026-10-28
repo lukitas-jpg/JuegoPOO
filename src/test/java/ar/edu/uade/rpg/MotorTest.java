@@ -25,7 +25,6 @@ import ar.edu.uade.rpg.modelo.combatientes.Curador;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
 import ar.edu.uade.rpg.modelo.combatientes.Guerrero;
 import ar.edu.uade.rpg.modelo.combatientes.Mago;
-import ar.edu.uade.rpg.modelo.combatientes.Nigromante;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
@@ -140,15 +139,6 @@ class MotorTest {
         assertFalse(combate.getRegistro().isEmpty());
         assertNotNull(combate.getSiguienteEnActuar());
         assertFalse(combate.hayGanador());
-    }
-
-    @Test
-    void elNigromanteMeteSusEsqueletosAlIniciarElCombate() {
-        Combate combate = new Combate(party(), List.of(new Nigromante()), 35, 35, new Random(1));
-        combate.iniciar();
-
-        // El nigromante mas sus cinco esqueletos.
-        assertEquals(6, combate.getEnemigosVivos().size());
     }
 
     @Test

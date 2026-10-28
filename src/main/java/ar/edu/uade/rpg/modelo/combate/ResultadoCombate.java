@@ -7,8 +7,7 @@ import java.util.List;
  * registro completo de lo que paso.
  *
  * La experiencia y el oro NO los calcula el combate sumando lo que valia cada
- * enemigo: los define la etapa entera. Si vinieran por enemigo, el Nigromante
- * seria una fuente infinita de ambos, porque invoca esqueletos sin parar.
+ * enemigo: los define la etapa entera, que se los pasa al combate al crearlo.
  *
  * Es inmutable: un combate terminado no cambia.
  */

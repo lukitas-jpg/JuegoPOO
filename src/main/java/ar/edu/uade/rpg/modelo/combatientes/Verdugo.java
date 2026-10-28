@@ -40,8 +40,7 @@ public final class Verdugo extends Enemigo implements ObjetivoMasPeligroso {
     }
 
     @Override
-    public Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                               CalculadorDeDaño calculador) {
+    public Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador) {
         Combatiente objetivo = elegirObjetivo(filtrarVivos(party));
         int movimiento = getMovimientos().get(1).estaEnCooldown() ? 0 : 1;
         return usar(getMovimientos().get(movimiento), List.of(objetivo), calculador);

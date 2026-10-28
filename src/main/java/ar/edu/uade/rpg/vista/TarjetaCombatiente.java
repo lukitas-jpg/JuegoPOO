@@ -27,16 +27,16 @@ import ar.edu.uade.rpg.dto.EfectoDTO;
  * batalla, el estado de la party, el resultado y la tienda.
  *
  * Los dibujos van a su tamaño real (todos tienen la misma escala de pixel), asi
- * el jefe se ve mas grande que un esqueleto. Cuando hay muchos enemigos las
- * tarjetas se ponen en vertical y, si hace falta, el dibujo va a la mitad.
+ * el jefe se ve mas grande que el Acechador. Con 4 enemigos las tarjetas se
+ * ponen en vertical para que entren en dos columnas.
  */
 final class TarjetaCombatiente extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private static final int TAMAÑO_ICONO = 34;
 
-    /** COMPLETA: dibujo a la izquierda y todas las barras. VERTICAL y CHICA: dibujo arriba y solo la vida. */
-    enum Formato { COMPLETA, VERTICAL, CHICA }
+    /** COMPLETA: dibujo a la izquierda y todas las barras. VERTICAL: dibujo arriba y solo la vida. */
+    enum Formato { COMPLETA, VERTICAL }
 
     private final boolean tieneElTurno;
 
@@ -47,7 +47,7 @@ final class TarjetaCombatiente extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 10));
         boolean compacta = formato != Formato.COMPLETA;
 
-        JLabel dibujo = dibujo(combatiente, formato == Formato.CHICA);
+        JLabel dibujo = dibujo(combatiente);
         if (compacta) {
             dibujo.setHorizontalAlignment(SwingConstants.CENTER);
             add(dibujo, BorderLayout.NORTH);
@@ -82,10 +82,8 @@ final class TarjetaCombatiente extends JPanel {
         add(centrado, BorderLayout.CENTER);
     }
 
-    private JLabel dibujo(CombatienteDTO combatiente, boolean aLaMitad) {
-        BufferedImage imagen = aLaMitad
-                ? CargadorDeImagenes.escalada(combatiente.imagen(), 0.5)
-                : CargadorDeImagenes.imagen(combatiente.imagen());
+    private JLabel dibujo(CombatienteDTO combatiente) {
+        BufferedImage imagen = CargadorDeImagenes.imagen(combatiente.imagen());
         ImageIcon icono = combatiente.vivo()
                 ? new ImageIcon(imagen)
                 : new ImageIcon(GrayFilter.createDisabledImage(imagen));

@@ -1,8 +1,15 @@
 # Balance de los enemigos
 
-Estadísticas base, movimientos y escalado de los 11 enemigos. **Estos son los
+Estadísticas base, movimientos y escalado de los 6 enemigos. **Estos son los
 valores que están efectivamente en el código**, extraídos de las clases del paquete
 `modelo.combatientes`.
+
+> **Atención: hay que volver a medir.** Las simulaciones de abajo son anteriores a dos
+> cambios grandes de octubre: el arreglo del ciclo de turnos (el primero de cada ronda
+> no procesaba efectos ni cooldowns, y el aturdimiento de 1 turno no hacía nada) y la
+> simplificación del juego (se sacaron la máquina de slots, 5 enemigos y 4 efectos).
+> Las estadísticas y los movimientos de las tablas sí están al día; los porcentajes de
+> derrotas y el oro gastado son de la versión anterior.
 
 Todo lo que está acá salió de simular partidas completas con el modelo real: las seis
 clases jugables con sus 24 movimientos, el `CalculadorDeDaño`, los efectos de estado,
@@ -41,8 +48,8 @@ equipamiento, 454 en pociones y 179 en la máquina.
 
 La dificultad se concentra en las etapas 11 a 13, que se llevan el 74% de las
 partidas perdidas. Tiene sentido: la party viene de pelear al minijefe, el pool de
-enemigos se abre con el Acólito y el Berserker, y la tienda siguiente recién está en
-la etapa 14.
+enemigos se abre con enemigos nuevos (en esa medición, el Acólito y el Berserker), y la
+tienda siguiente recién está en la etapa 14.
 
 Por composición de party, 600 partidas cada una:
 
@@ -67,15 +74,10 @@ clase. De ahí en adelante escalan.
 
 | Enemigo | Vida | Maná | AtqF | DefF | AtqM | DefM | Vel | Suerte | Resist. |
 |---|---|---|---|---|---|---|---|---|---|
-| Esqueleto | 30 | — | 11 | 5 | — | 4 | 12 | 5 | 0 |
 | Bruto | 70 | — | 18 | 8 | — | 5 | 9 | 8 | 0 |
-| Guardián | 95 | — | 10 | 22 | — | 15 | 5 | 4 | 0 |
 | Acechador | 55 | — | 13 | 7 | — | 6 | 20 | 15 | 0 |
-| Hechicero | 50 | 60 | 4 | 6 | 17 | 12 | 11 | 8 | 0 |
 | Emponzoñador | 60 | — | 12 | 8 | — | 7 | 10 | 8 | 0 |
-| Acólito | 55 | 50 | 5 | 7 | 12 | 12 | 10 | 6 | 0 |
 | Berserker | 80 | — | 15 | 6 | — | 5 | 12 | 10 | 0 |
-| Nigromante | 45 | — | 4 | 5 | 14 | 10 | 8 | 6 | 0 |
 | **Verdugo** (minijefe) | 380 | — | 50 | 38 | — | 26 | 24 | 14 | **50** |
 | **Señor de las Sombras** (jefe final) | 500 | — | 52 | 42 | 52 | 42 | 40 | 20 | **50** |
 
@@ -88,27 +90,19 @@ Para comparar: un personaje arranca entre 80 y 150 de vida y termina la partida 
 
 ## Movimientos
 
-Los enemigos tienen lista libre: algunos uno solo, otros dos o tres. No gastan maná
-salvo el Hechicero y el Acólito, y no tienen niveles de desbloqueo.
+Los enemigos tienen lista libre: algunos uno solo, otros dos o tres. No gastan maná y
+no tienen niveles de desbloqueo.
 
 Atención con el nombre del alcance: `TODOS_LOS_ENEMIGOS` está escrito desde el punto
 de vista del jugador, así que cuando lo usa un enemigo significa *toda la party*.
 
 | Enemigo | Movimiento | Clase | Pot. | Alcance | Detalle |
 |---|---|---|---|---|---|
-| Esqueleto | Zarpazo | AtaqueFisico | 7 | objetivo único | |
 | Bruto | Mazazo | AtaqueFisico | 12 | objetivo único | apunta al más débil |
-| Guardián | Embestida | AtaqueFisico | 8 | objetivo único | |
-| Guardián | *Cubrir* | *acción, no movimiento* | — | — | 35% de sus turnos: pasa y aplica `Proteccion` (−30%) a sus aliados |
 | Acechador | Tajo Rápido | AtaqueFisico | 5 | objetivo único | **3 golpes por turno**, reelige objetivo en cada uno |
-| Hechicero | Onda Oscura | AtaqueMagico | 9 | toda la party | 12 de maná |
-| Hechicero | Chispa | AtaqueMagico | 9 | objetivo único | cuando se queda sin maná |
 | Emponzoñador | Escupitajo Tóxico | HabilidadDeEstado | — | objetivo único | Veneno 6% × 3 turnos, sobre quien no esté envenenado |
 | Emponzoñador | Mordisco | AtaqueFisico | 9 | objetivo único | si ya están todos envenenados |
-| Acólito | Plegaria | HabilidadDeCuracion | 15 base | aliado | 10 de maná, al aliado más herido (por debajo del 70%) |
-| Acólito | Golpe de Báculo | AtaqueMagico | 8 | objetivo único | si no hay a quién curar |
 | Berserker | Embate | AtaqueFisico | 11 | objetivo único | apunta al más peligroso |
-| Nigromante | Toque Marchito | AtaqueMagico | 9 | objetivo único | |
 | **Verdugo** | Hachazo Brutal | AtaqueFisico | 15 | objetivo único | apunta al más peligroso |
 | **Verdugo** | Mirada Petrificante | HabilidadDeEstado | — | objetivo único | Aturdimiento 1 turno, 50% de acierto, cooldown de 4 turnos |
 | **Señor** fase 1 | Garra de Sombra | AtaqueFisico | 17 | objetivo único | apunta al más débil |
@@ -117,11 +111,6 @@ de vista del jugador, así que cuando lo usa un enemigo significa *toda la party
 
 El Berserker sobrescribe `getAtaqueFisicoEfectivo()`: su ataque sube de forma lineal
 a medida que baja su vida, hasta el doble cuando está por caer.
-
-El Nigromante invoca 5 Esqueletos antes de la primera ronda y vuelve a completar el
-tope cada 3 rondas. Los Esqueletos invocados **no escalan**: sobrescriben
-`escalarParaEtapa()` igual que los jefes. Si escalaran, el Nigromante de la etapa 15
-entraría con cinco enemigos de pleno nivel.
 
 La Mirada Petrificante del Verdugo está marcada como definitiva. No lo es: es la
 forma de quedarse con el cooldown de 4 turnos que ya trae `Movimiento`, sin inventar
@@ -150,7 +139,7 @@ creciendo al ritmo de su vida, las dos curvas quedan paralelas.
 
 **Por qué velocidad y suerte no escalan.** Si escalaran, sobre el final los enemigos
 actuarían siempre primero y criticarían en la mitad de los golpes. La velocidad es lo
-que distingue al Acechador del Guardián, y esa diferencia tiene que seguir
+que distingue al Acechador del Bruto, y esa diferencia tiene que seguir
 significando lo mismo en la etapa 18 que en la 2.
 
 **Por qué `(etapa - 1)` y no `etapa`.** Así las estadísticas base son las de la etapa
@@ -165,19 +154,17 @@ azar dentro de un rango. Todo esto vive en `GeneradorDeEtapas.getPool()`.
 
 | Etapas | Cantidad | Pool |
 |---|---|---|
-| 1 a 3 | 2 | Esqueleto, Bruto, Acechador |
-| 5 a 8 | 2 o 3 | Bruto, Acechador, Guardián, Hechicero, Emponzoñador, Esqueleto |
+| 1 a 3 | 2 | Bruto, Acechador |
+| 5 a 8 | 2 o 3 | Bruto, Acechador, Emponzoñador |
 | 10 | 1 | Verdugo (minijefe) |
-| 11 a 13 | 3 o 4 | los de arriba sin Esqueleto, más Acólito y Berserker |
-| 15 a 18 | 3 o 4 | ídem, más Nigromante |
+| 11 a 18 | 3 o 4 | Bruto, Acechador, Emponzoñador, Berserker |
 | 20 | 1 | Señor de las Sombras (jefe final) |
 
 Las etapas 4, 9, 14 y 19 son de tienda y no tienen combate.
 
-El Esqueleto deja de aparecer suelto a partir de la 11 porque a esa altura es un
-estorbo sin amenaza; desde ahí solo aparece invocado. El Nigromante entra recién en la
-15 porque llega con 5 esqueletos y multiplica la cantidad de enemigos en pantalla:
-antes de que la party tenga sus definitivas, es injusto.
+Hasta octubre había 11 enemigos. Para simplificar se sacaron el Esqueleto, el
+Guardián, el Hechicero, el Acólito y el Nigromante (con él, todo el mecanismo de
+invocaciones). Quedó uno por cada interfaz de apuntado más los dos jefes.
 
 
 ## Historia de este balance, y qué aprendimos

@@ -48,12 +48,6 @@ class AccionDefender {
   + ejecutar() : ResultadoAccion
   + getDescripcion() : String
 }
-class AccionInvocar {
-  - autor : Enemigo
-  - cantidad : int
-  + ejecutar() : ResultadoAccion
-  + getDescripcion() : String
-}
 class AccionUsarConsumible {
   - autor : Combatiente
   - consumible : Consumible
@@ -69,7 +63,6 @@ class ResultadoAccion {
   - objetivosAfectados : List<Combatiente>
   - objetivosFallados : List<Combatiente>
   - efectosAplicados : List<EfectoEstado>
-  - combatientesInvocados : List<Combatiente>
   --
   + setDescripcion(descripcion : String) : void
   + sumarDaño(daño : int) : void
@@ -77,7 +70,6 @@ class ResultadoAccion {
   + agregarObjetivoAfectado(objetivo : Combatiente) : void
   + agregarObjetivoFallado(objetivo : Combatiente) : void
   + agregarEfectoAplicado(efecto : EfectoEstado) : void
-  + agregarCombatienteInvocado(invocado : Combatiente) : void
   + getDescripcion() : String
   + getDañoTotal() : int
   + fueCritico() : boolean
@@ -85,7 +77,6 @@ class ResultadoAccion {
   + getObjetivosFallados() : List<Combatiente>
   + huboAlgunFallo() : boolean
   + getEfectosAplicados() : List<EfectoEstado>
-  + getCombatientesInvocados() : List<Combatiente>
 }
 
 abstract class Movimiento {
@@ -206,7 +197,6 @@ class Regeneracion {
 
 Accion <|.. AccionUsarMovimiento
 Accion <|.. AccionDefender
-Accion <|.. AccionInvocar
 Accion <|.. AccionUsarConsumible
 Accion ..> ResultadoAccion : produce
 
@@ -234,16 +224,6 @@ EfectoEstado <|-- Proteccion
 
 BuffEstadistica --> Estadistica
 DebuffEstadistica --> Estadistica
-
-note bottom of AccionInvocar
-  Invocar no es un Movimiento: no es ni un Ataque ni
-  una Habilidad, asi que entra como Accion, al mismo
-  nivel que defender.
-
-  Su ResultadoAccion viaja con los combatientes
-  invocados, y es Combate quien los incorpora. El
-  Nigromante nunca toca al Combate directamente.
-end note
 
 note right of Veneno
   El daño por turno es un PORCENTAJE de la vida

@@ -12,10 +12,6 @@ import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
  *
  * No tiene logica propia: existe para que la informacion viaje desde el modelo
  * hacia afuera sin que nadie tenga que espiar el estado interno del combate.
- *
- * combatientesInvocados es el que resuelve las invocaciones del Nigromante:
- * el enemigo no conoce al Combate, asi que devuelve los esqueletos aca y es
- * Combate quien los incorpora.
  */
 public class ResultadoAccion {
 
@@ -26,7 +22,6 @@ public class ResultadoAccion {
     private final List<Combatiente> objetivosAfectados = new ArrayList<>();
     private final List<Combatiente> objetivosFallados = new ArrayList<>();
     private final List<EfectoEstado> efectosAplicados = new ArrayList<>();
-    private final List<Combatiente> combatientesInvocados = new ArrayList<>();
 
     public ResultadoAccion(String descripcion) {
         this.descripcion = descripcion;
@@ -60,10 +55,6 @@ public class ResultadoAccion {
         efectosAplicados.add(efecto);
     }
 
-    public void agregarCombatienteInvocado(Combatiente invocado) {
-        combatientesInvocados.add(invocado);
-    }
-
     // ------------------------------------------------------------- consultas
 
     public String getDescripcion() {
@@ -92,9 +83,5 @@ public class ResultadoAccion {
 
     public List<EfectoEstado> getEfectosAplicados() {
         return List.copyOf(efectosAplicados);
-    }
-
-    public List<Combatiente> getCombatientesInvocados() {
-        return List.copyOf(combatientesInvocados);
     }
 }

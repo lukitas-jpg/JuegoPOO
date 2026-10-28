@@ -8,7 +8,7 @@ package ar.edu.uade.rpg.modelo.movimientos;
  * Accion y Combate solo le dice ejecutar(). Para agregar una forma nueva de
  * gastar el turno alcanza con una clase mas; Combate no se toca.
  *
- * Esto es lo que permite que el jugador y los 11 enemigos pasen por el MISMO
+ * Esto es lo que permite que el jugador y los 6 enemigos pasen por el MISMO
  * camino: el jugador arma su Accion desde la pantalla y el enemigo la arma en
  * su elegirAccion(). Combate no distingue entre los dos.
  */

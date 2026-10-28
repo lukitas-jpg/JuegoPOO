@@ -17,9 +17,9 @@ import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
  * iria tambien al otro.
  *
  * La tirada es INDIVIDUAL por objetivo: Andanada Cegadora se tira una vez por
- * cada enemigo, no una sola vez para todos. Contra el Nigromante con sus cinco
- * esqueletos son seis tiradas separadas, y que entren las seis es poco
- * probable aunque cada una sea del 40%.
+ * cada enemigo, no una sola vez para todos. Contra cuatro enemigos son cuatro
+ * tiradas separadas, y que entren las cuatro es poco probable aunque cada una
+ * sea del 40%.
  */
 public class HabilidadDeEstado extends Habilidad {
 

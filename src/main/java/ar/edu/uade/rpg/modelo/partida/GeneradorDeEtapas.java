@@ -6,16 +6,11 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import ar.edu.uade.rpg.modelo.combatientes.Acechador;
-import ar.edu.uade.rpg.modelo.combatientes.Acolito;
 import ar.edu.uade.rpg.modelo.combatientes.Berserker;
 import ar.edu.uade.rpg.modelo.combatientes.Bruto;
 import ar.edu.uade.rpg.modelo.combatientes.ClaseDePersonaje;
 import ar.edu.uade.rpg.modelo.combatientes.Emponzoñador;
-import ar.edu.uade.rpg.modelo.combatientes.Esqueleto;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
-import ar.edu.uade.rpg.modelo.combatientes.Guardian;
-import ar.edu.uade.rpg.modelo.combatientes.Hechicero;
-import ar.edu.uade.rpg.modelo.combatientes.Nigromante;
 import ar.edu.uade.rpg.modelo.combatientes.SeñorDeLasSombras;
 import ar.edu.uade.rpg.modelo.combatientes.Verdugo;
 import ar.edu.uade.rpg.modelo.tienda.GeneradorDeStock;
@@ -29,9 +24,7 @@ import ar.edu.uade.rpg.modelo.tienda.Tienda;
  * final.
  *
  * Los enemigos se eligen al azar de un pool que se va abriendo, y sus
- * estadisticas se escalan segun lo lejos que este la etapa. El Esqueleto deja de
- * aparecer suelto desde la 11 porque a esa altura es un estorbo sin amenaza:
- * desde ahi solo lo trae el Nigromante.
+ * estadisticas se escalan segun lo lejos que este la etapa.
  */
 public class GeneradorDeEtapas {
 
@@ -123,37 +116,23 @@ public class GeneradorDeEtapas {
     }
 
     /**
-     * El pool se va abriendo: cada tramo suma enemigos nuevos.
+     * El pool se va abriendo: cada tramo suma un enemigo nuevo.
      *
-     * El Esqueleto solo aparece suelto en las tres primeras etapas. Desde la 11
-     * es un estorbo sin amenaza y deja de salir solo; a partir de ahi lo trae
-     * unicamente el Nigromante.
+     *   etapas 1 a 3    Bruto y Acechador
+     *   etapas 5 a 8    + Emponzoñador
+     *   etapas 11 a 18  + Berserker
      *
-     * El Nigromante entra recien en la 15 porque llega con cinco esqueletos y
-     * multiplica los enemigos en pantalla: antes de que la party tenga sus
-     * definitivas, es injusto.
+     * La 10 es del Verdugo y la 20 del Señor de las Sombras.
      */
     private List<Supplier<Enemigo>> getPool(int numero) {
         List<Supplier<Enemigo>> pool = new ArrayList<>();
-        if (numero <= 3) {
-            pool.add(() -> new Esqueleto(null, random));
-            pool.add(Bruto::new);
-            pool.add(Acechador::new);
-            return pool;
-        }
         pool.add(Bruto::new);
         pool.add(Acechador::new);
-        pool.add(Guardian::new);
-        pool.add(Hechicero::new);
-        pool.add(Emponzoñador::new);
-        if (numero <= 8) {
-            pool.add(() -> new Esqueleto(null, random));
-            return pool;
+        if (numero >= 5) {
+            pool.add(Emponzoñador::new);
         }
-        pool.add(Acolito::new);
-        pool.add(Berserker::new);
-        if (numero >= 15) {
-            pool.add(Nigromante::new);
+        if (numero >= 11) {
+            pool.add(Berserker::new);
         }
         return pool;
     }

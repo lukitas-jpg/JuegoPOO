@@ -6,7 +6,7 @@ package ar.edu.uade.rpg.modelo.combatientes;
  * El daño FISICO enfrenta el ataque fisico del atacante contra la defensa
  * fisica del objetivo, y el MAGICO hace lo mismo con los atributos magicos.
  * Esa separacion es la que le da identidad a cada clase: un Tanque con mucha
- * defensa fisica sigue siendo vulnerable a un Hechicero.
+ * defensa fisica sigue siendo vulnerable a la magia del Señor de las Sombras.
  */
 public enum TipoDaño {
     FISICO,

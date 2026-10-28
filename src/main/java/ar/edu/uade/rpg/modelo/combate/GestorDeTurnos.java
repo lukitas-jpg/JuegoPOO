@@ -93,7 +93,7 @@ public class GestorDeTurnos {
     }
 
     /**
-     * Los que entran a mitad de ronda (los esqueletos del Nigromante) actuan
+     * Los que entran a mitad de ronda (un personaje revivido) actuan
      * recien en la ronda siguiente: se suman a los participantes pero no al
      * orden ya armado.
      */

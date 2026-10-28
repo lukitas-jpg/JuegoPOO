@@ -64,28 +64,15 @@ public class Combate {
     }
 
     /**
-     * Prepara la pelea y arranca la primera ronda. Aca es donde el Nigromante
-     * mete sus cinco esqueletos antes de que nadie actue.
+     * Prepara la pelea y arranca la primera ronda: a cada uno se le llena el
+     * mana y se le reinician las definitivas.
      */
     public void iniciar() {
-        notificarInicioDeCombate();
+        for (Combatiente participante : gestor.getParticipantes()) {
+            participante.alIniciarCombate();
+        }
         gestor.iniciarNuevaRonda();
         registro.add("Comienza el combate.");
-    }
-
-    /**
-     * Le avisa a cada uno que empieza el combate. Los que devuelven invocados
-     * los suman al campo. Nadie llama a Combate desde afuera: la informacion
-     * sube y la decision la toma el combate.
-     */
-    private void notificarInicioDeCombate() {
-        List<Combatiente> presentes = new ArrayList<>(gestor.getParticipantes());
-        for (Combatiente presente : presentes) {
-            for (Combatiente invocado : presente.alIniciarCombate()) {
-                agregarCombatiente(invocado);
-                registro.add(presente.getNombre() + " invoca a " + invocado.getNombre() + ".");
-            }
-        }
     }
 
     // ---------------------------------------------------------------- turnos
@@ -186,7 +173,7 @@ public class Combate {
                 new AccionUsarConsumible(actor, consumible, objetivo, party.getInventario()));
         if (estabaCaido && objetivo.estaVivo()) {
             // Un revivido vuelve a la pelea: actua desde la ronda siguiente.
-            agregarCombatiente(objetivo);
+            gestor.incorporar(objetivo);
             registro.add(objetivo.getNombre() + " vuelve al combate.");
         }
         return resultado;
@@ -213,7 +200,6 @@ public class Combate {
         ResultadoAccion resultado = accion.ejecutar();
         registro.add(resultado.getDescripcion());
 
-        incorporarInvocados(resultado);
         avanzarTurno();
         retirarCaidos();
         return resultado;
@@ -229,15 +215,7 @@ public class Combate {
             perderTurno();
             return null;
         }
-        Accion accion = enemigo.elegirAccion(
-                new ArrayList<>(party.getMiembrosVivos()), getAliadosVivosDe(enemigo), calculador);
-        if (accion == null) {
-            // Cubrir aliados o desarmarse tambien gasta el turno.
-            registro.add(enemigo.getNombre() + " no ataca este turno.");
-            avanzarTurno();
-            retirarCaidos();
-            return null;
-        }
+        Accion accion = enemigo.elegirAccion(new ArrayList<>(party.getMiembrosVivos()), calculador);
         return ejecutarAccion(accion);
     }
 
@@ -253,19 +231,6 @@ public class Combate {
         }
         gestor.consumirTurno();
         turnoPreparado = false;
-    }
-
-    private void incorporarInvocados(ResultadoAccion resultado) {
-        for (Combatiente invocado : resultado.getCombatientesInvocados()) {
-            agregarCombatiente(invocado);
-        }
-    }
-
-    public void agregarCombatiente(Combatiente combatiente) {
-        if (combatiente instanceof Enemigo enemigo && !enemigos.contains(enemigo)) {
-            enemigos.add(enemigo);
-        }
-        gestor.incorporar(combatiente);
     }
 
     public void retirarCaidos() {
@@ -284,8 +249,8 @@ public class Combate {
     }
 
     /**
-     * La recompensa la define la ETAPA, no los enemigos. Si viniera por
-     * enemigo, el Nigromante seria una fuente infinita de experiencia y oro.
+     * La recompensa la define la ETAPA, no los enemigos: la etapa se la paso a
+     * este combate al crearlo.
      */
     public ResultadoCombate calcularResultado() {
         finalizado = true;
@@ -295,17 +260,6 @@ public class Combate {
                 victoria ? experienciaDeLaEtapa : 0,
                 victoria ? oroDeLaEtapa : 0,
                 registro);
-    }
-
-    /** Los companeros vivos de un enemigo: los necesita el Guardian y el Acolito. */
-    private List<Enemigo> getAliadosVivosDe(Enemigo enemigo) {
-        List<Enemigo> aliados = new ArrayList<>();
-        for (Enemigo otro : enemigos) {
-            if (otro.estaVivo()) {
-                aliados.add(otro);
-            }
-        }
-        return aliados;
     }
 
     public List<Combatiente> getEnemigosVivos() {
