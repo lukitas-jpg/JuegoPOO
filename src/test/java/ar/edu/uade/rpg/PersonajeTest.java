@@ -81,7 +81,7 @@ class PersonajeTest {
         assertEquals(38, mago.getManaActual()); // 30 + 10% de 80
 
         // La guardia dura hasta el turno propio siguiente.
-        mago.procesarEfectosDeTurno();
+        mago.iniciarTurno();
         assertFalse(mago.estaDefendiendo());
         assertEquals(100, mago.getPorcentajeDeDañoRecibido());
     }

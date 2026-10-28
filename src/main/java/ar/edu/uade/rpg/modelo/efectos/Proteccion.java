@@ -37,7 +37,7 @@ public class Proteccion extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         // No actua por turno.
     }
 

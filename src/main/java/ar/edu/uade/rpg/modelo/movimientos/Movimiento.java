@@ -112,6 +112,14 @@ public abstract class Movimiento implements Serializable {
     }
 
     /**
+     * true si el jugador tiene que elegir a quien apuntar (uno entre varios).
+     * Si abarca a todos o es sobre uno mismo, no hay nada que elegir.
+     */
+    public boolean requiereElegirObjetivo() {
+        return alcance == AlcanceMovimiento.OBJETIVO_UNICO || alcance == AlcanceMovimiento.ALIADO;
+    }
+
+    /**
      * Los movimientos de alcance UNO_MISMO (Muro de Hierro, Sombra Agil) no
      * piden objetivo: getObjetivosPosibles() devuelve la lista vacia porque no
      * hay nada que elegir. Aca se cierra ese caso de una vez para las tres

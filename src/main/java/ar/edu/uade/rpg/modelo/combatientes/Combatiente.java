@@ -100,7 +100,7 @@ public abstract class Combatiente implements Serializable {
 
     /**
      * Daño que no pasa por defensas ni por escudos: el del veneno y el de la
-     * quemadura. Lo usan esos efectos desde su alIniciarTurno.
+     * quemadura. Lo usan esos efectos desde su alTerminarTurno.
      */
     public int recibirDañoDirecto(int daño) {
         int dañoAplicado = Math.min(daño, vidaActual);
@@ -191,18 +191,27 @@ public abstract class Combatiente implements Serializable {
     }
 
     /**
-     * Arranque del turno propio. Baja la guardia que habia levantado el turno
-     * anterior, deja que cada efecto haga lo suyo (el veneno pega aca) y en la
-     * misma pasada les descuenta un turno de duracion y se saca los que se
-     * vencieron. Va todo junto para no recorrer la lista tres veces y para que
-     * el orden quede claro: primero actua, despues envejece.
+     * Arranque del turno propio: baja la guardia que habia levantado el turno
+     * anterior y acerca un turno las definitivas. Los efectos NO se procesan
+     * aca: si el aturdimiento se descontara al arrancar, uno de 1 turno se
+     * venceria justo antes de consultarlo y nunca haria nada.
+     */
+    public void iniciarTurno() {
+        defendiendo = false;
+        reducirCooldowns();
+    }
+
+    /**
+     * Cierre del turno propio, lo haya jugado o lo haya perdido aturdido. Cada
+     * efecto hace lo suyo (el veneno pega aca) y en la misma pasada se le
+     * descuenta un turno de duracion y se sacan los que se vencieron: primero
+     * actua, despues envejece.
      */
     public void procesarEfectosDeTurno() {
-        defendiendo = false;
         Iterator<EfectoEstado> iterador = efectosActivos.iterator();
         while (iterador.hasNext()) {
             EfectoEstado efecto = iterador.next();
-            efecto.alIniciarTurno(this);
+            efecto.alTerminarTurno(this);
             efecto.reducirDuracion();
             if (efecto.haExpirado()) {
                 efecto.alExpirar(this);
@@ -362,7 +371,7 @@ public abstract class Combatiente implements Serializable {
 
     // ------------------------------------------------------------ movimientos
 
-    /** Se llama al cerrar el turno propio: acerca un turno las definitivas. */
+    /** Se llama al arrancar el turno propio (ver iniciarTurno): acerca un turno las definitivas. */
     public void reducirCooldowns() {
         for (Movimiento movimiento : movimientos) {
             movimiento.reducirCooldown();

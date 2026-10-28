@@ -116,7 +116,7 @@ No son cinco reglas abstractas: cada una se traduce en algo concreto del modelo.
 
 Los que ya están decididos en el diseño y hay que respetar al programar:
 
-- **Controller:** `Juego` recibe los eventos del sistema y delega. Los controladores de la vista hablan con `Juego`, no con `Combate` ni `Party`.
+- **Controller:** `Juego` recibe los eventos de la sesión (nueva run, comprar, cerrar una etapa, guardar) y delega. Los eventos de cada turno los recibe `Combate`, que es el experto de la pelea: por eso `ControladorCombate` le habla al `Combate` que le dio `Juego.iniciarCombate()`. Los controladores leen la `Party` solo para armar DTOs; nunca la modifican.
 - **Information Expert:** quien tiene el dato hace el cálculo. Nadie fuera de `Combatiente` suma equipamiento y buffs: para eso están los getters "efectivos".
 - **Creator:** `EtapaDeCombate` crea el `Combate` porque tiene los enemigos. `Combate` crea la `Accion` porque tiene los datos.
 - **Polymorphism:** nada de `instanceof` ni de `switch` por tipo. Si aparece uno, falta un método abstracto.
@@ -128,7 +128,8 @@ Los que ya están decididos en el diseño y hay que respetar al programar:
 
 1. **El modelo no conoce a la vista.** Ningún archivo de `modelo/` puede importar `javax.swing`, `java.awt`, `vista` ni `controlador`. El modelo tiene que poder probarse por consola.
 2. **La vista no tiene lógica del juego.** Muestra datos y le avisa al controlador cuando el jugador hace algo.
-3. **Los controladores hablan con `Juego`.**
+3. **Los controladores hablan con `Juego`** (y, durante una pelea, con el `Combate` que les dio `Juego`). No importan nada de Swing: le hablan a la interfaz `VistaDelJuego`, que implementa la ventana.
+5. **La vista recibe DTOs y devuelve índices.** No importa nada de `modelo/`. Los DTOs son `record`: inmutables y sin lógica.
 4. **`App` es la única clase que conoce las tres capas:** crea el modelo, las vistas y los controladores, y los conecta.
 
 ---

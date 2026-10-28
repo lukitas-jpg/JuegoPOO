@@ -7,7 +7,7 @@ apostar o pasar; si pasa, no puede volver.
 resultados posibles. La estadística SUERTE no interviene: es azar puro, como dice el
 diseño.
 
-Símbolos: Moneda, Espada, Escudo, Poción, Corona, Calavera.
+Símbolos: Moneda, Cereza, Trébol, Rubí, Diamante y Limón (los mismos que las imágenes).
 
 **Apuesta fija: 50 de oro. La primera tirada de cada máquina es gratis.**
 
@@ -16,15 +16,19 @@ Símbolos: Moneda, Espada, Escudo, Poción, Corona, Calavera.
 
 | Resultado | Paga | Probabilidad | Con apuesta de 50 |
 |---|---|---|---|
-| 3 Coronas | x15 | 1 de 216 (0.46%) | **750** |
-| 3 iguales (Moneda, Espada, Escudo o Poción) | x10 | 4 de 216 (1.85%) | 500 |
-| 3 Calaveras | nada | 1 de 216 | 0 |
-| 2 Coronas | x4 | 15 de 216 (6.94%) | 200 |
-| 2 Monedas o 2 Pociones | x2 | 30 de 216 (13.89%) | 100 |
-| 2 Espadas o 2 Escudos | x1 | 30 de 216 (13.89%) | 50 (devuelve la apuesta) |
+| 3 Diamantes | x15 | 1 de 216 (0.46%) | **750** |
+| 3 iguales (Moneda, Cereza, Trébol o Rubí) | x10 | 4 de 216 (1.85%) | 500 |
+| 3 Limones | nada | 1 de 216 | 0 |
+| 2 Diamantes | x4 | 15 de 216 (6.94%) | 200 |
+| 2 Monedas o 2 Rubíes | x2 | 30 de 216 (13.89%) | 100 |
+| 2 Cerezas o 2 Tréboles | x1 | 30 de 216 (13.89%) | 50 (devuelve la apuesta) |
 | cualquier otra cosa | nada | 136 de 216 | 0 |
 
-Las tres Calaveras son el chiste de la máquina: el único trío que no paga nada.
+Los tres Limones son el chiste de la máquina, como en las tragamonedas de verdad: el único trío que no paga nada.
+
+Hasta octubre los símbolos eran Moneda, Espada, Escudo, Poción, Corona y Calavera. Se
+renombraron para que coincidan con las imágenes; los premios no cambiaron (Corona pasó a
+Diamante, Calavera a Limón, Poción a Rubí, Espada a Cereza y Escudo a Trébol).
 
 **Retorno: 94.9%.** No es una estimación: se calcula recorriendo los 216 resultados y
 sumando lo que paga cada uno. Son 205/216 exactos.

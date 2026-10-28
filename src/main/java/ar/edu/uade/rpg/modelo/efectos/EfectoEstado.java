@@ -15,7 +15,8 @@ import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
  *
  * Define tres momentos y cada subclase usa los que necesita:
  *   - alAplicarse:   una sola vez, cuando el efecto entra.
- *   - alIniciarTurno: al comienzo de cada turno del afectado.
+ *   - alTerminarTurno: al final de cada turno del afectado, lo haya jugado
+ *                    o lo haya perdido aturdido. El veneno pega aca.
  *   - alExpirar:     cuando el efecto se va.
  *
  * El Veneno solo usa el del medio; el Escudo usa el primero y el ultimo.
@@ -36,7 +37,7 @@ public abstract class EfectoEstado implements Serializable {
 
     public abstract void alAplicarse(Combatiente objetivo);
 
-    public abstract void alIniciarTurno(Combatiente objetivo);
+    public abstract void alTerminarTurno(Combatiente objetivo);
 
     public abstract void alExpirar(Combatiente objetivo);
 

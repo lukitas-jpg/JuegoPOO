@@ -30,11 +30,11 @@ enum SlotEquipo {
 
 enum Simbolo {
   MONEDA
-  ESPADA
-  ESCUDO
-  POCION
-  CORONA
-  CALAVERA
+  CEREZA
+  TREBOL
+  RUBI
+  DIAMANTE
+  LIMON
 }
 
 abstract class Item {
@@ -145,6 +145,8 @@ class GeneradorDeStock {
   --
   + sortearEquipable(numeroDeTienda : int, clases : List<ClaseDePersonaje>) : Equipable
   + sortearStock(numeroDeTienda : int, clases : List<ClaseDePersonaje>, cantidad : int) : List<Equipable>
+  - sortearEquipable(numeroDeTienda : int, clases : List<ClaseDePersonaje>, yaOfrecidos : List<Equipable>) : Equipable
+  - {static} estaOfrecido(equipable : Equipable, yaOfrecidos : List<Equipable>) : boolean
   + sortearRareza(numeroDeTienda : int) : Rareza
   + {static} getPesos(numeroDeTienda : int) : int[]
 }

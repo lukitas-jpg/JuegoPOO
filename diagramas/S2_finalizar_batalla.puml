@@ -1,77 +1,60 @@
 @startuml S2_finalizar_batalla
-title TPO POO - RPG por turnos\nSecuencia 2: Finalizar la batalla (recompensas, subida de nivel, limpieza y guardado)\n(solo clases del modelo: la interfaz y su capa de control son alcance de la Fase B)
+title TPO POO - RPG por turnos\nSecuencia 2: Finalizar la batalla (recompensas, subida de nivel, limpieza y guardado)
 
 skinparam sequenceMessageAlign center
 skinparam maxMessageSize 220
-skinparam ParticipantPadding 12
+skinparam ParticipantPadding 10
 
-actor Jugador as J
-participant "juego : Juego" as C
+participant "controlador : ControladorCombate" as CC
 participant "combate : Combate" as CO
+participant "juego : Juego" as C
 participant "etapa : EtapaDeCombate" as ET
 participant "party : Party" as P
-participant "guerrero : Personaje" as PE
+participant "guerrero : Guerrero" as PE
 participant "veneno : Veneno" as V
 participant "buff : BuffEstadistica" as B
 participant "partida : Partida" as PA
+participant "generador : GeneradorDeEtapas" as GE
 participant "repo : RepositorioPartidas" as RE
+participant "vista : VistaDelJuego" as VI
 
 == 1. Fin del combate ==
 
-J -> CO : hayGanador()
+CC -> CO : hayGanador()
 activate CO
-CO --> J : true
+CO --> CC : true
 deactivate CO
 
-note over J
-  QUIÉN INICIA ESTE FLUJO: el actor es quien venía
-  conduciendo el bucle de combate pidiendo los turnos
-  (en la Fase B, el controlador de la pantalla de
-  batalla). Al resolverse una acción consulta
-  hayGanador(); cuando da true, el combate terminó y
-  recién ahí entra Juego.
-
-  Combate detecta el fin, pero no se cierra la etapa a
-  sí mismo: no conoce ni la Partida ni el repositorio.
+note over CC
+  Combate detecta el fin, pero no cierra la etapa:
+  no conoce ni la Partida ni el repositorio. Lo
+  cierra Juego, que es quien coordina la sesion.
 end note
 
-J -> CO : calcularResultado()
+CC -> CO : calcularResultado()
 activate CO
-CO -> ET : getExperienciaBase()
-activate ET
-ET --> CO : exp
-deactivate ET
-CO -> ET : getOroBase()
-activate ET
-ET --> CO : oro
-deactivate ET
 note right of CO
   Las recompensas las define la ETAPA COMPLETA, no
-  cada enemigo. Por eso Enemigo no tiene
-  experienciaOtorgada ni oroOtorgado: si las tuviera,
+  cada enemigo: EtapaDeCombate.crearCombate() se las
+  paso a Combate al crearlo. Si vinieran por enemigo,
   el Nigromante seria una granja infinita de
-  experiencia, porque repone esqueletos cada 3 rondas.
+  experiencia, porque repone esqueletos.
 end note
 create participant "res : ResultadoCombate" as RC
-CO -> RC : <<create>> (victoria, exp, oro)
-CO --> J : res
+CO -> RC : <<create>> (victoria, exp, oro, registro)
+CO --> CC : res
 deactivate CO
 
 == 2. Cierre de la etapa ==
 
-J -> C : finalizarEtapaDeCombate(resultado : ResultadoCombate)
+CC -> C : finalizarEtapaDeCombate(resultado : ResultadoCombate)
 activate C
 
 note over C
-  GRASP Controller: Juego recibe el evento de fin de
-  etapa y coordina delegando. Es una clase del MODELO,
-  no de la interfaz.
-
-  La firma coincide con el diagrama de clases: Juego
-  recibe el ResultadoCombate ya armado, no sale a
-  buscarlo. Para las etapas de tienda existe el método
-  hermano finalizarEtapaDeTienda(), que no reparte
-  recompensas.
+  GRASP Controller del MODELO: recibe el evento de
+  fin de etapa y coordina delegando. Para las tiendas
+  existe el metodo hermano finalizarEtapaDeTienda(),
+  que no reparte nada.
 end note
 
 C -> RC : fueVictoria()
@@ -80,43 +63,32 @@ RC --> C : victoria : boolean
 deactivate RC
 
 alt la party fue derrotada
+  C -> C : finalizarPorDerrota()
+  activate C
   C -> PA : terminarPorDerrota()
   activate PA
   note right of PA
-    estado = PERDIDA. Es un roguelike:
-    la partida guardada se borra para que
-    no se pueda recargar y deshacer la
-    derrota.
+    estado = PERDIDA. Es un roguelike: el guardado
+    se borra para que no se pueda recargar y
+    deshacer la derrota.
   end note
   deactivate PA
   C -> RE : borrar()
   activate RE
   deactivate RE
-  C --> J : fin de la run (derrota)
+  deactivate C
 
 else hubo victoria
 
 == 3. Reparto de recompensas ==
 
-C -> RC : getOroGanado()
-activate RC
-RC --> C : oro
-deactivate RC
-
-C -> P : agregarOro(cantidad : int)
-activate P
-deactivate P
-
 C -> ET : otorgaExperiencia()
 activate ET
 ET --> C : true
 deactivate ET
-
 note right of ET
-  Polymorphism: Juego no pregunta de que
-  tipo es la etapa. Una EtapaDeTienda
-  respondería false y no se repartiría
-  experiencia.
+  Polymorphism: Juego no pregunta de que tipo es
+  la etapa. Una EtapaDeTienda responderia false.
 end note
 
 C -> RC : getExperienciaGanada()
@@ -126,130 +98,129 @@ deactivate RC
 
 C -> P : repartirExperiencia(cantidad : int)
 activate P
-
-note right of P
-  Information Expert: Juego no calcula nada.
-  La Party reparte y cada Personaje decide
-  solo si le alcanza para subir de nivel.
-end note
-
 loop para cada miembro de la party
+  P -> PE : estaVivo()
+  activate PE
+  PE --> P : true
+  deactivate PE
+  note right of P
+    Information Expert: la Party sabe que un
+    caido cobra la mitad, y cada Personaje
+    decide solo si sube de nivel.
+  end note
   P -> PE : ganarExperiencia(cantidad : int)
   activate PE
-
   loop mientras experienciaActual >= experienciaParaSubir
     PE -> PE : subirNivel()
     activate PE
     PE -> PE : aplicarCrecimientoPorNivel()
     note right of PE
-      Autollamada polimórfica: cada clase de
-      personaje (Guerrero, Mago, Arquero...)
-      tiene su propia curva de crecimiento.
+      Autollamada polimorfica: cada clase tiene su
+      curva de crecimiento. El desbloqueo de
+      movimientos no se guarda: estaDesbloqueado()
+      compara niveles cada vez que se consulta.
     end note
     deactivate PE
-
-    note right of PE
-      El desbloqueo de movimientos NO es un
-      estado que se guarde: es DERIVADO.
-      Movimiento.estaDesbloqueado(personaje)
-      compara nivelDesbloqueo con el nivel
-      actual cada vez que se consulta, así que
-      al subir de nivel no hay nada que marcar.
-    end note
   end
-
+  PE --> P : niveles subidos
   deactivate PE
 end
+deactivate P
 
-P --> C : ok
+C -> RC : getOroGanado()
+activate RC
+RC --> C : oro
+deactivate RC
+C -> P : agregarOro(cantidad : int)
+activate P
 deactivate P
 
 == 4. Limpieza de efectos temporales ==
 
 C -> P : limpiarEfectosTemporales()
 activate P
-
 loop para cada miembro de la party
   P -> PE : limpiarEfectosTemporales()
   activate PE
-
-  loop para cada efecto activo
-    PE -> V : persisteFueraDeCombate()
-    activate V
-    V --> PE : true
-    deactivate V
-    note right of PE
-      El veneno persiste: se arrastra a la
-      etapa siguiente y NO se le vuelve a
-      llamar alAplicarse().
-    end note
-
-    PE -> B : persisteFueraDeCombate()
-    activate B
-    B --> PE : false
-    deactivate B
-
-    alt no persiste
-      PE -> B : alExpirar(objetivo : Combatiente)
-      activate B
-      note right of B
-        Devuelve la estadística a su valor
-        original. Si no se llamara, el buff
-        quedaría inflado para siempre.
-      end note
-      deactivate B
-      destroy B
-    end
-  end
-
+  PE -> V : persisteFueraDeCombate()
+  activate V
+  V --> PE : true
+  deactivate V
+  note right of V
+    El veneno persiste: se arrastra a la etapa
+    siguiente.
+  end note
+  PE -> B : persisteFueraDeCombate()
+  activate B
+  B --> PE : false
+  deactivate B
+  destroy B
+  note right of PE
+    Los que no persisten se sacan de la lista y
+    listo: no hay nada que revertir, porque las
+    estadisticas efectivas se calculan en el
+    momento sumando los efectos activos.
+  end note
   deactivate PE
 end
-
-P --> C : ok
 deactivate P
 
-== 5. Avance de etapa y guardado automático ==
+== 5. Avance de etapa y guardado automatico ==
 
+C -> C : avanzarYGuardar()
+activate C
+C -> ET : marcarCompletada()
+activate ET
+deactivate ET
 C -> PA : avanzarEtapa()
 activate PA
-PA --> C : ok
 deactivate PA
-
 C -> PA : estaEnCurso()
 activate PA
 PA --> C : enCurso : boolean
 deactivate PA
 
-note right of PA
-  avanzarEtapa() detecta solo el fin por
-  victoria: si numeroEtapaActual pasa de 20,
-  el estado cambia a GANADA y no hay nada
-  más que guardar.
-end note
-
 alt la partida sigue en curso
+  C -> C : generarEtapaActual()
+  activate C
+  C -> GE : crearEtapa(numero : int, clases : List<ClaseDePersonaje>)
+  activate GE
+  GE --> C : etapa siguiente
+  deactivate GE
+  deactivate C
+  C -> C : guardarAutomaticamente()
+  activate C
   C -> RE : guardar(partida : Partida)
   activate RE
   note right of RE
     Protected Variations: Juego habla con la
-    INTERFAZ, nunca con
-    RepositorioPartidasArchivo. Cambiar a JSON
-    o base de datos no toca esta secuencia.
+    INTERFAZ, nunca con RepositorioPartidasArchivo.
   end note
-  RE --> C : ok
   deactivate RE
-  C --> J : etapa siguiente
-
-else la run se ganó (se superó la etapa 20)
-  note right of C
-    estado = GANADA. No hay etapa siguiente ni
-    nada que guardar: la run terminó bien. El
-    mensaje de retorno es distinto al del caso
-    normal, igual que en la rama de derrota.
+  deactivate C
+else se supero la etapa 20
+  C -> RE : borrar()
+  activate RE
+  note right of RE
+    estado = GANADA: la run termino bien y no
+    queda nada que retomar.
   end note
-  C --> J : fin de la run (victoria total)
-end
+  deactivate RE
 end
 deactivate C
+end
+deactivate C
+
+== 6. La vista muestra el resultado ==
+
+CC -> VI : mostrarResultado(resultado : ResultadoDTO)
+activate VI
+note right of VI
+  El controlador arma el ResultadoDTO (victoria,
+  experiencia, oro, si la run termino y como quedo
+  la party). VentanaPrincipal implementa esta
+  interfaz y muestra la pantalla de resultado.
+end note
+deactivate VI
 
 @enduml

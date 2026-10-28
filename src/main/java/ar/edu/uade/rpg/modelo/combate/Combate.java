@@ -7,7 +7,10 @@ import java.util.Random;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
+import ar.edu.uade.rpg.modelo.items.Consumible;
 import ar.edu.uade.rpg.modelo.movimientos.Accion;
+import ar.edu.uade.rpg.modelo.movimientos.AccionDefender;
+import ar.edu.uade.rpg.modelo.movimientos.AccionUsarConsumible;
 import ar.edu.uade.rpg.modelo.movimientos.AccionUsarMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
@@ -35,6 +38,10 @@ public class Combate {
     private final int experienciaDeLaEtapa;
     private final int oroDeLaEtapa;
     private boolean finalizado;
+    /** Si al que tiene el turno ya se le aviso que arranca (iniciarTurno). */
+    private boolean turnoPreparado;
+    /** Quien tiene el turno ahora. Se guarda porque puede caer en su propia accion. */
+    private Combatiente actorDelTurno;
 
     public Combate(Party party, List<Enemigo> enemigos,
                    int experienciaDeLaEtapa, int oroDeLaEtapa) {
@@ -49,6 +56,7 @@ public class Combate {
         this.oroDeLaEtapa = oroDeLaEtapa;
         this.calculador = new CalculadorDeDaño(random);
         this.finalizado = false;
+        this.turnoPreparado = false;
 
         List<Combatiente> todos = new ArrayList<>(party.getMiembrosVivos());
         todos.addAll(enemigos);
@@ -82,11 +90,40 @@ public class Combate {
 
     // ---------------------------------------------------------------- turnos
 
+    /**
+     * Quien tiene el turno. La primera vez que se pregunta por un turno nuevo
+     * se le avisa que arranca (iniciarTurno: baja la guardia y los cooldowns).
+     * Se hace una sola vez por turno aunque se pregunte muchas veces, y vale
+     * tambien para el primero de cada ronda. Devuelve null si la pelea termino.
+     */
     public Combatiente getSiguienteEnActuar() {
+        if (hayGanador()) {
+            return null;
+        }
         if (gestor.rondaTerminada()) {
             gestor.iniciarNuevaRonda();
+            turnoPreparado = false;
         }
-        return gestor.getSiguienteEnActuar();
+        Combatiente siguiente = gestor.getSiguienteEnActuar();
+        if (!turnoPreparado) {
+            siguiente.iniciarTurno();
+            turnoPreparado = true;
+            actorDelTurno = siguiente;
+        }
+        return siguiente;
+    }
+
+    /** False si el que tiene el turno esta aturdido: ese turno se pierde. */
+    public boolean puedeActuarElSiguiente() {
+        Combatiente siguiente = getSiguienteEnActuar();
+        return siguiente != null && siguiente.puedeActuar();
+    }
+
+    /** El que tiene el turno no puede actuar. Vale igual para personajes y enemigos. */
+    public void perderTurno() {
+        registro.add(getSiguienteEnActuar().getNombre() + " esta aturdido y pierde el turno.");
+        avanzarTurno();
+        retirarCaidos();
     }
 
     public boolean esTurnoDelJugador() {
@@ -133,14 +170,52 @@ public class Combate {
         return ejecutarAccion(new AccionUsarMovimiento(actor, movimiento, objetivos, calculador));
     }
 
-    /** El unico camino por el que pasa todo lo que se hace en un turno. */
+    /** El que tiene el turno se pone en guardia. */
+    public ResultadoAccion defender() {
+        return ejecutarAccion(new AccionDefender(getSiguienteEnActuar()));
+    }
+
+    /**
+     * El que tiene el turno usa un consumible del inventario de la party sobre
+     * un aliado. Gasta el turno igual que atacar.
+     */
+    public ResultadoAccion usarConsumible(Consumible consumible, Combatiente objetivo) {
+        Combatiente actor = getSiguienteEnActuar();
+        boolean estabaCaido = !objetivo.estaVivo();
+        ResultadoAccion resultado = ejecutarAccion(
+                new AccionUsarConsumible(actor, consumible, objetivo, party.getInventario()));
+        if (estabaCaido && objetivo.estaVivo()) {
+            // Un revivido vuelve a la pelea: actua desde la ronda siguiente.
+            agregarCombatiente(objetivo);
+            registro.add(objetivo.getNombre() + " vuelve al combate.");
+        }
+        return resultado;
+    }
+
+    /** Sobre quien se puede usar: el Polvo de Renacer solo sobre caidos, el resto sobre vivos. */
+    public List<Combatiente> getObjetivosDeConsumible(Consumible consumible) {
+        List<Combatiente> objetivos = new ArrayList<>();
+        for (Personaje miembro : party.getMiembros()) {
+            if (consumible.puedeUsarseSobre(miembro)) {
+                objetivos.add(miembro);
+            }
+        }
+        return objetivos;
+    }
+
+    /**
+     * El unico camino por el que pasa todo lo que se hace en un turno. Primero
+     * se asegura de que el turno este abierto, asi el cierre (avanzarTurno) se
+     * le aplica a quien corresponde aunque la Accion se haya armado afuera.
+     */
     public ResultadoAccion ejecutarAccion(Accion accion) {
+        getSiguienteEnActuar();
         ResultadoAccion resultado = accion.ejecutar();
         registro.add(resultado.getDescripcion());
 
         incorporarInvocados(resultado);
-        retirarCaidos();
         avanzarTurno();
+        retirarCaidos();
         return resultado;
     }
 
@@ -151,8 +226,7 @@ public class Combate {
             return null;
         }
         if (!enemigo.puedeActuar()) {
-            registro.add(enemigo.getNombre() + " pierde el turno.");
-            avanzarTurno();
+            perderTurno();
             return null;
         }
         Accion accion = enemigo.elegirAccion(
@@ -160,20 +234,25 @@ public class Combate {
         if (accion == null) {
             // Cubrir aliados o desarmarse tambien gasta el turno.
             registro.add(enemigo.getNombre() + " no ataca este turno.");
-            retirarCaidos();
             avanzarTurno();
+            retirarCaidos();
             return null;
         }
         return ejecutarAccion(accion);
     }
 
+    /**
+     * Cierra el turno del que actuaba y pasa al siguiente. El cierre procesa
+     * sus efectos: el veneno pega y el aturdimiento se descuenta recien cuando
+     * ya hizo perder el turno. Se consume el turno ANTES de retirar a los
+     * caidos, asi el indice de la ronda no se corre (ver GestorDeTurnos.retirar).
+     */
     private void avanzarTurno() {
-        gestor.consumirTurno();
-        Combatiente siguiente = gestor.getSiguienteEnActuar();
-        if (siguiente != null) {
-            siguiente.procesarEfectosDeTurno();
-            siguiente.reducirCooldowns();
+        if (actorDelTurno != null) {
+            actorDelTurno.procesarEfectosDeTurno();
         }
+        gestor.consumirTurno();
+        turnoPreparado = false;
     }
 
     private void incorporarInvocados(ResultadoAccion resultado) {

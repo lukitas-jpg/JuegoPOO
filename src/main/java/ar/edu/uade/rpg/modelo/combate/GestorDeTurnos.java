@@ -76,9 +76,20 @@ public class GestorDeTurnos {
 
     // ------------------------------------------------- altas y bajas
 
+    /**
+     * Saca a un caido. Si ya habia actuado en esta ronda (esta antes del indice),
+     * el indice retrocede uno: si no, la lista se corre y el que venia despues
+     * perderia su turno sin que nadie se entere.
+     */
     public void retirar(Combatiente combatiente) {
         participantes.remove(combatiente);
-        ordenDeLaRonda.remove(combatiente);
+        int posicion = ordenDeLaRonda.indexOf(combatiente);
+        if (posicion >= 0) {
+            ordenDeLaRonda.remove(posicion);
+            if (posicion < indiceActual) {
+                indiceActual--;
+            }
+        }
     }
 
     /**

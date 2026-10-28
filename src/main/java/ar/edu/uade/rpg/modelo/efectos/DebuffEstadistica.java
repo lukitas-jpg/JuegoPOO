@@ -36,7 +36,7 @@ public class DebuffEstadistica extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         // Nada: no actua por turno, modifica mientras dura.
     }
 

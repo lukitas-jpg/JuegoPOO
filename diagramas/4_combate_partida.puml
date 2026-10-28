@@ -33,7 +33,21 @@ class Juego {
   + getPartida() : Partida
   - generarEtapaActual() : void
   - getClasesDeLaParty() : List<ClaseDePersonaje>
-  - {static} crearPersonaje(clase : ClaseDePersonaje) : Personaje
+  + {static} crearPersonaje(clase : ClaseDePersonaje) : Personaje
+  .. combate ..
+  + iniciarCombate() : Combate
+  .. tienda y maquina ..
+  + getTienda() : Tienda
+  + getMaquinaDeSlots() : MaquinaDeSlots
+  + puedeComprarEquipable(indiceSlot : int, destinatario : Personaje) : boolean
+  + comprarEquipable(indiceSlot : int, destinatario : Personaje) : Equipable
+  + comprarConsumible(indiceEnElCatalogo : int) : boolean
+  + rerollearTienda() : boolean
+  + tirarEnLaMaquina() : ResultadoTirada
+  + pasarALaTienda() : void
+  + usarConsumibleFueraDeCombate(consumible : Consumible, objetivo : Personaje) : boolean
+  - getEtapaDeCombate() : EtapaDeCombate
+  - getEtapaDeTienda() : EtapaDeTienda
 }
 
 class Party <<Serializable>> {
@@ -128,15 +142,22 @@ class GeneradorDeEtapas {
 
 class Combate {
   - finalizado : boolean
+  - turnoPreparado : boolean
+  - actorDelTurno : Combatiente
   --
   + iniciar() : void
   + getSiguienteEnActuar() : Combatiente
+  + puedeActuarElSiguiente() : boolean
+  + perderTurno() : void
   + esTurnoDelJugador() : boolean
   + getMovimientosDelTurno() : List<Movimiento>
   + getObjetivosPosibles(movimiento : Movimiento) : List<Combatiente>
   + ejecutarMovimiento(movimiento : Movimiento, objetivos : List<Combatiente>) : ResultadoAccion
   + ejecutarAccion(accion : Accion) : ResultadoAccion
   + ejecutarTurnoDeEnemigo() : ResultadoAccion
+  + defender() : ResultadoAccion
+  + usarConsumible(consumible : Consumible, objetivo : Combatiente) : ResultadoAccion
+  + getObjetivosDeConsumible(consumible : Consumible) : List<Combatiente>
   - avanzarTurno() : void
   + getEnemigosVivos() : List<Combatiente>
   - getAliadosVivosDe(enemigo : Enemigo) : List<Enemigo>
@@ -260,11 +281,14 @@ EtapaDeCombate --> TipoEtapa
 EtapaDeTienda "1" *-- "1" Tienda
 EtapaDeTienda "1" *-- "0..1" MaquinaDeSlots
 EtapaDeCombate ..> Combate : crea
+Juego ..> Combate : pide a la etapa
+Juego ..> Tienda : cobra y entrega
+Juego ..> MaquinaDeSlots : cobra y paga
 GeneradorDeEtapas ..> Etapa : crea
 GeneradorDeEtapas ..> Enemigo : crea
 
 Combate "1" --> "1" Party
-Combate "1" --> "1" EtapaDeCombate : etapa que se esta jugando
+Combate "1" o-- "1..*" Enemigo : enemigos
 Combate "1" o-- "1..*" Combatiente : participantes
 Combate "1" *-- "1" GestorDeTurnos
 Combate "1" *-- "1" CalculadorDeDaño
@@ -290,11 +314,31 @@ note bottom of Juego
   completada, avanza la Partida y guarda.
 
   La etapa en curso la conoce Juego, con el tipo
-  general Etapa. La asociación de Combate es con
-  EtapaDeCombate y no con Etapa para que sea
-  imposible por construcción armar una pelea en una
-  etapa de tienda: no existe una Partida atada solo
-  a etapas de combate.
+  general Etapa. Combate no conoce la etapa: la
+  crea EtapaDeCombate.crearCombate(party), que le
+  pasa sus enemigos y sus recompensas. Así es
+  imposible armar una pelea en una etapa de tienda.
+
+  Tienda y MaquinaDeSlots no manejan oro: Juego
+  cobra y entrega en un paso (comprarEquipable,
+  tirarEnLaMaquina...). getEtapaDeCombate() y
+  getEtapaDeTienda() son los dos únicos casts del
+  modelo, y los dos después de preguntar
+  esDeCombate().
+end note
+
+note right of Combate
+  Ciclo de un turno:
+   - Al arrancar (la primera vez que se pide
+     getSiguienteEnActuar): actor.iniciarTurno()
+     baja la guardia y los cooldowns.
+   - Si puedeActuarElSiguiente() da false
+     (aturdido), perderTurno().
+   - Al cerrar (avanzarTurno): el actor procesa
+     sus efectos (el veneno pega, las duraciones
+     bajan), se consume el turno y DESPUÉS se
+     retira a los caídos, para no correr el
+     índice de la ronda.
 end note
 
 note bottom of Party

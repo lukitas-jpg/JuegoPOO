@@ -34,6 +34,7 @@ abstract class Combatiente {
   + estaDefendiendo() : boolean
   + getPorcentajeDeDañoRecibido() : int
   + aplicarEfecto(efecto : EfectoEstado) : EfectoEstado
+  + iniciarTurno() : void
   + procesarEfectosDeTurno() : void
   + puedeActuar() : boolean
   + quitarEfecto(nombre : String) : boolean
@@ -90,9 +91,6 @@ abstract class Personaje {
   # {abstract} aplicarCrecimientoPorNivel() : void
   + {abstract} getDescripcionClase() : String
   + {abstract} getClaseDePersonaje() : ClaseDePersonaje
-  + getMovimientosDisponibles() : List<Movimiento>
-  + getMovimientoBasico() : Movimiento
-  + getMovimientoDefinitivo() : Movimiento
   + equipar(equipable : Equipable) : Equipable
   + desequipar(slot : SlotEquipo) : Equipable
   + getEquipadoEn(slot : SlotEquipo) : Equipable

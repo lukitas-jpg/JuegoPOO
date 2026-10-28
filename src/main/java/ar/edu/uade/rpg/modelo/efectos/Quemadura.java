@@ -28,7 +28,7 @@ public class Quemadura extends EfectoEstado {
     }
 
     @Override
-    public void alIniciarTurno(Combatiente objetivo) {
+    public void alTerminarTurno(Combatiente objetivo) {
         int daño = objetivo.getVidaMaxima() * porcentajePorTurno / PORCENTAJE_TOTAL;
         objetivo.recibirDañoDirecto(Math.min(daño, GOLPE_MAXIMO));
     }

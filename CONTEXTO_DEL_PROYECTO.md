@@ -16,8 +16,9 @@ que empezar de nuevo.
 
 ## Dónde estamos
 
-**El modelo está completo: 87 clases y 128 tests de JUnit 5 que pasan.** Compila sin
-un solo warning con `-Xlint:all,-serial`.
+**El juego está completo y se puede jugar: 87 clases de modelo, 34 de vista,
+controladores y DTOs, y 154 tests de JUnit 5 que pasan.** Compila sin un solo warning
+con `-Xlint:all,-serial`.
 
 | Paquete | Clases | Qué hay |
 |---|---|---|
@@ -30,13 +31,17 @@ un solo warning con `-Xlint:all,-serial`.
 | `modelo.tienda` | 5 | `Tienda`, `GeneradorDeStock`, `MaquinaDeSlots` |
 | `modelo.combate` | 5 | `Combate`, `GestorDeTurnos`, `CalculadorDeDaño` |
 | `persistencia` | 2 | la interfaz del repositorio y su implementación en archivo |
+| `controlador` | 5 | los 3 controladores del MVC, `ConversorDTO` y la interfaz `VistaDelJuego` |
+| `dto` | 12 | los datos que viajan a la vista, como `record` |
+| `vista` | 17 | `VentanaPrincipal`, las 7 pantallas y las piezas visuales |
 
-**Falta la vista en Swing y los controladores.** El profesor había dicho de no tocar
-la vista hasta tener el modelo, y ya está.
+**La vista en Swing y los controladores están hechos** (paquetes `vista/`,
+`controlador/` y `dto/`, diagrama 5). Se tomó como base la versión jugable que había
+armado el grupo y se pasó a este modelo.
 
-Los cuatro diagramas de clases y los dos de secuencia están en `diagramas/`, al día
-con el código: verificamos clase por clase y método por método que no haya
-desfasaje.
+Los cinco diagramas de clases y los tres de secuencia/estados están en `diagramas/`,
+al día con el código: se verifica con un script que cada método de los diagramas y
+cada mensaje de las secuencias exista en el código.
 
 
 ## Cómo se decidieron los números
@@ -176,7 +181,10 @@ Están en `CONVENCIONES.md` y hay que leerlas antes de programar. Lo más import
 
 ## Qué falta
 
-1. La **vista en Swing** y los controladores.
+1. Volver a medir el balance: las simulaciones de `BALANCE_ENEMIGOS.md` se hicieron
+   con un motor de turnos que tenía errores (el primero de cada ronda no procesaba
+   efectos ni cooldowns, y el aturdimiento de 1 turno no hacía nada). Ya están
+   corregidos, así que los números pueden haber cambiado.
 2. Decidir dos cosas que quedaron anotadas en `BALANCE_ENEMIGOS.md`: que la party
    nunca pasa de nivel 13 aunque el máximo sea 20, y que la definitiva se desbloquea
    una etapa después del minijefe.

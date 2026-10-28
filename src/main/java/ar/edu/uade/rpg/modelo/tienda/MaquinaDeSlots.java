@@ -77,8 +77,8 @@ public class MaquinaDeSlots {
 
         if (a == b && b == c) {
             return switch (a) {
-                case CALAVERA -> 0;
-                case CORONA -> 15;
+                case LIMON -> 0;
+                case DIAMANTE -> 15;
                 default -> 10;
             };
         }
@@ -93,9 +93,9 @@ public class MaquinaDeSlots {
             return 0;
         }
         return switch (repetido) {
-            case CORONA -> 4;
-            case MONEDA, POCION -> 2;
-            case ESPADA, ESCUDO -> 1;
+            case DIAMANTE -> 4;
+            case MONEDA, RUBI -> 2;
+            case CEREZA, TREBOL -> 1;
             default -> 0;
         };
     }

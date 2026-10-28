@@ -222,6 +222,20 @@ class TiendaTest {
     }
 
     @Test
+    void unaVisitaNoOfreceDosVecesElMismoObjeto() {
+        List<ClaseDePersonaje> tres = List.of(ClaseDePersonaje.GUERRERO, ClaseDePersonaje.MAGO,
+                ClaseDePersonaje.CURADOR);
+        for (int semilla = 0; semilla < 200; semilla++) {
+            GeneradorDeStock generador = new GeneradorDeStock(new Random(semilla));
+            List<String> nombres = new ArrayList<>();
+            for (Equipable equipable : generador.sortearStock(1, tres, Tienda.CANTIDAD_DE_SLOTS)) {
+                assertFalse(nombres.contains(equipable.getNombre()), "repitio " + equipable.getNombre());
+                nombres.add(equipable.getNombre());
+            }
+        }
+    }
+
+    @Test
     void loLegendarioAparecePorPrimeraVezEnLaTiendaTres() {
         GeneradorDeStock generador = new GeneradorDeStock(new Random(3));
         assertEquals(0, GeneradorDeStock.getPesos(1)[2]);
@@ -334,19 +348,19 @@ class TiendaTest {
     @Test
     void laTablaDePremiosDaLosNumerosQueDiceElDocumento() {
         assertEquals(15, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CORONA, Simbolo.CORONA, Simbolo.CORONA)));
+                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.DIAMANTE)));
         assertEquals(10, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.ESPADA, Simbolo.ESPADA, Simbolo.ESPADA)));
+                List.of(Simbolo.CEREZA, Simbolo.CEREZA, Simbolo.CEREZA)));
         assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CALAVERA, Simbolo.CALAVERA, Simbolo.CALAVERA)));
+                List.of(Simbolo.LIMON, Simbolo.LIMON, Simbolo.LIMON)));
         assertEquals(4, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.CORONA, Simbolo.CORONA, Simbolo.MONEDA)));
+                List.of(Simbolo.DIAMANTE, Simbolo.DIAMANTE, Simbolo.MONEDA)));
         assertEquals(2, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.ESPADA, Simbolo.MONEDA)));
+                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.MONEDA)));
         assertEquals(1, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.ESCUDO, Simbolo.ESCUDO, Simbolo.CORONA)));
+                List.of(Simbolo.TREBOL, Simbolo.TREBOL, Simbolo.DIAMANTE)));
         assertEquals(0, MaquinaDeSlots.calcularMultiplicador(
-                List.of(Simbolo.MONEDA, Simbolo.ESPADA, Simbolo.CORONA)));
+                List.of(Simbolo.MONEDA, Simbolo.CEREZA, Simbolo.DIAMANTE)));
     }
 
     @Test
