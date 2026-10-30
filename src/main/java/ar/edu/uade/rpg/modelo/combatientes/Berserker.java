@@ -28,8 +28,7 @@ public final class Berserker extends Enemigo implements ObjetivoMasPeligroso {
     }
 
     @Override
-    public Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                               CalculadorDeDaño calculador) {
+    public Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador) {
         return usar(getMovimientos().get(0),
                 List.of(elegirObjetivo(filtrarVivos(party))), calculador);
     }

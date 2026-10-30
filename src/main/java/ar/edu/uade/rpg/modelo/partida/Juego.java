@@ -15,8 +15,6 @@ import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.items.Consumible;
 import ar.edu.uade.rpg.modelo.items.Equipable;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
-import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidas;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
@@ -131,22 +129,6 @@ public class Juego {
         return true;
     }
 
-    public ResultadoTirada tirarEnLaMaquina() {
-        MaquinaDeSlots maquina = getEtapaDeTienda().getMaquinaDeSlots();
-        Party party = partida.getParty();
-        if (maquina == null || !maquina.puedeTirar(party.getOro())) {
-            throw new IllegalStateException("No se puede tirar en la maquina");
-        }
-        party.gastarOro(maquina.getCostoDeLaProximaTirada());
-        ResultadoTirada resultado = maquina.tirar();
-        party.agregarOro(resultado.getOroGanado());
-        return resultado;
-    }
-
-    public void pasarALaTienda() {
-        getEtapaDeTienda().pasarALaTienda();
-    }
-
     public boolean usarConsumibleFueraDeCombate(Consumible consumible, Personaje objetivo) {
         if (!consumible.puedeUsarseSobre(objetivo)) {
             return false;
@@ -172,10 +154,6 @@ public class Juego {
 
     public Tienda getTienda() {
         return getEtapaDeTienda().getTienda();
-    }
-
-    public MaquinaDeSlots getMaquinaDeSlots() {
-        return getEtapaDeTienda().getMaquinaDeSlots();
     }
 
     public void finalizarEtapaDeCombate(ResultadoCombate resultado) {

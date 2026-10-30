@@ -170,10 +170,9 @@ public abstract class Combatiente implements Serializable {
         return List.copyOf(efectosActivos);
     }
 
-    public List<Combatiente> alIniciarCombate() {
+    public void alIniciarCombate() {
         manaActual = manaMaximo;
         reiniciarCooldowns();
-        return List.of();
     }
 
     public int getAtaqueFisicoEfectivo() {

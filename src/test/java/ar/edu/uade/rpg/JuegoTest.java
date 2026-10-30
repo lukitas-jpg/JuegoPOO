@@ -29,8 +29,6 @@ import ar.edu.uade.rpg.modelo.partida.GeneradorDeEtapas;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.modelo.partida.Party;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
-import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
 class JuegoTest {
@@ -151,36 +149,6 @@ class JuegoTest {
             }
         }
         throw new AssertionError("la tienda solo ofrece equipo de la party");
-    }
-
-    @Test
-    void laPrimeraTiradaEsGratisYLaSegundaCuestaLaApuesta() throws Exception {
-        Juego juego = juegoEnLaEtapa(9);
-        party(juego).agregarOro(100);
-
-        ResultadoTirada primera = juego.tirarEnLaMaquina();
-        assertTrue(primera.fueGratis());
-        assertEquals(100 + primera.getOroGanado(), party(juego).getOro());
-
-        int oroAntes = party(juego).getOro();
-        ResultadoTirada segunda = juego.tirarEnLaMaquina();
-        assertFalse(segunda.fueGratis());
-        assertEquals(oroAntes - MaquinaDeSlots.APUESTA + segunda.getOroGanado(), party(juego).getOro());
-    }
-
-    @Test
-    void despuesDePasarALaTiendaNoSePuedeVolverATirar() throws Exception {
-        Juego juego = juegoEnLaEtapa(9);
-        party(juego).agregarOro(100);
-
-        juego.pasarALaTienda();
-
-        assertThrows(IllegalStateException.class, juego::tirarEnLaMaquina);
-    }
-
-    @Test
-    void laTiendaDeLaEtapa4NoTieneMaquina() throws Exception {
-        assertNull(juegoEnLaEtapa(4).getMaquinaDeSlots());
     }
 
     @Test

@@ -3,7 +3,6 @@ package ar.edu.uade.rpg;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,25 +12,21 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeEstado;
 import ar.edu.uade.rpg.modelo.combate.CalculadorDeDaño;
 import ar.edu.uade.rpg.modelo.combatientes.Acechador;
-import ar.edu.uade.rpg.modelo.combatientes.Acolito;
 import ar.edu.uade.rpg.modelo.combatientes.Berserker;
 import ar.edu.uade.rpg.modelo.combatientes.Bruto;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.combatientes.Emponzoñador;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
 import ar.edu.uade.rpg.modelo.combatientes.Guerrero;
-import ar.edu.uade.rpg.modelo.combatientes.Guardian;
-import ar.edu.uade.rpg.modelo.combatientes.Hechicero;
 import ar.edu.uade.rpg.modelo.combatientes.Mago;
-import ar.edu.uade.rpg.modelo.combatientes.Nigromante;
 import ar.edu.uade.rpg.modelo.combatientes.Personaje;
 import ar.edu.uade.rpg.modelo.combatientes.SeñorDeLasSombras;
 import ar.edu.uade.rpg.modelo.combatientes.Tanque;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
 import ar.edu.uade.rpg.modelo.combatientes.Verdugo;
-import ar.edu.uade.rpg.modelo.efectos.Proteccion;
 import ar.edu.uade.rpg.modelo.efectos.Veneno;
 import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
@@ -48,7 +43,7 @@ class EnemigosTest {
         List<Combatiente> party = party();
         party.get(1).recibirDaño(50, TipoDaño.MAGICO);
 
-        Accion accion = new Bruto().elegirAccion(party, List.of(), calculador);
+        Accion accion = new Bruto().elegirAccion(party, calculador);
         ResultadoAccion resultado = accion.ejecutar();
 
         assertSame(party.get(1), resultado.getObjetivosAfectados().get(0));
@@ -59,7 +54,7 @@ class EnemigosTest {
         List<Combatiente> party = party();
 
         ResultadoAccion resultado = new Berserker()
-                .elegirAccion(party, List.of(), calculador).ejecutar();
+                .elegirAccion(party, calculador).ejecutar();
 
         assertSame(party.get(1), resultado.getObjetivosAfectados().get(0));
     }
@@ -71,7 +66,7 @@ class EnemigosTest {
         party.get(1).aplicarEfecto(new Veneno(6, 3));
 
         ResultadoAccion resultado = new Emponzoñador()
-                .elegirAccion(party, List.of(), calculador).ejecutar();
+                .elegirAccion(party, calculador).ejecutar();
 
         assertSame(party.get(2), resultado.getObjetivosAfectados().get(0));
         assertEquals(1, party.get(2).getEfectosActivos().size());
@@ -88,7 +83,7 @@ class EnemigosTest {
             vidaAntes += miembro.getVidaActual();
         }
 
-        new Emponzoñador().elegirAccion(party, List.of(), calculador).ejecutar();
+        new Emponzoñador().elegirAccion(party, calculador).ejecutar();
 
         int vidaDespues = 0;
         for (Combatiente miembro : party) {
@@ -98,35 +93,11 @@ class EnemigosTest {
     }
 
     @Test
-    void elHechiceroNoEligeObjetivoPorqueLeDaATodos() {
-        List<Combatiente> party = party();
-
-        ResultadoAccion resultado = new Hechicero()
-                .elegirAccion(party, List.of(), calculador).ejecutar();
-
-        assertEquals(3, resultado.getObjetivosAfectados().size());
-    }
-
-    @Test
-    void elHechiceroPasaAlAtaqueBaratoCuandoSeQuedaSinMana() {
-        Hechicero hechicero = new Hechicero();
-        List<Combatiente> party = party();
-
-        for (int uso = 0; uso < 5; uso++) {
-            hechicero.elegirAccion(party, List.of(), calculador).ejecutar();
-        }
-        assertEquals(0, hechicero.getManaActual());
-
-        ResultadoAccion resultado = hechicero.elegirAccion(party, List.of(), calculador).ejecutar();
-        assertEquals(1, resultado.getObjetivosAfectados().size());
-    }
-
-    @Test
     void elAcechadorPegaTresVecesEnUnTurno() {
         List<Combatiente> party = party();
 
         ResultadoAccion resultado = new Acechador()
-                .elegirAccion(party, List.of(), calculador).ejecutar();
+                .elegirAccion(party, calculador).ejecutar();
 
         assertEquals(3, resultado.getObjetivosAfectados().size());
     }
@@ -145,108 +116,14 @@ class EnemigosTest {
     }
 
     @Test
-    void elGuardianCubreASusAliadosYLesBajaElDanio() {
-        Bruto protegido = new Bruto();
-        Proteccion proteccion = new Proteccion(30, 1);
-        protegido.aplicarEfecto(proteccion);
-
-        assertEquals(70, protegido.recibirDaño(100, TipoDaño.FISICO));
-    }
-
-    @Test
-    void elGuardianAlgunasVecesPasaElTurnoYOtrasPega() {
-        List<Combatiente> party = party();
-        Guardian guardian = new Guardian();
-        List<Enemigo> aliados = List.of(guardian, new Bruto());
-
-        boolean cubrioAlgunaVez = false;
-        boolean pegoAlgunaVez = false;
-        for (int turno = 0; turno < 200; turno++) {
-            Accion accion = guardian.elegirAccion(party, aliados, calculador);
-            if (accion == null) {
-                cubrioAlgunaVez = true;
-            } else {
-                pegoAlgunaVez = true;
-            }
-        }
-        assertTrue(cubrioAlgunaVez, "deberia cubrir alguna vez");
-        assertTrue(pegoAlgunaVez, "deberia pegar alguna vez");
-    }
-
-    @Test
-    void elAcolitoCuraAlCompaneroMasHerido() {
-        Bruto herido = new Bruto();
-        herido.recibirDañoDirecto(50);
-        Bruto sano = new Bruto();
-        Acolito acolito = new Acolito();
-
-        acolito.elegirAccion(party(), List.of(acolito, herido, sano), calculador).ejecutar();
-
-        assertTrue(herido.getVidaActual() > 20, "deberia haberlo curado");
-        assertEquals(70, sano.getVidaActual());
-    }
-
-    @Test
-    void elAcolitoAtacaSiNoHayAQuienCurar() {
-        Acolito acolito = new Acolito();
-        List<Combatiente> party = party();
-
-        ResultadoAccion resultado = acolito
-                .elegirAccion(party, List.of(acolito, new Bruto()), calculador).ejecutar();
-
-        assertEquals(1, resultado.getObjetivosAfectados().size());
-        assertTrue(resultado.getDañoTotal() > 0);
-    }
-
-    @Test
-    void elNigromanteEntraAlCombateConCincoEsqueletos() {
-        Nigromante nigromante = new Nigromante();
-
-        List<Combatiente> invocados = nigromante.alIniciarCombate();
-
-        assertEquals(5, invocados.size());
-        assertEquals("Esqueleto", invocados.get(0).getNombre());
-    }
-
-    @Test
-    void elNigromanteReponeLosEsqueletosCadaTresRondas() {
-        Nigromante nigromante = new Nigromante();
-        List<Combatiente> primeros = nigromante.alIniciarCombate();
-        primeros.get(0).recibirDañoDirecto(100);
-
-        nigromante.elegirAccion(party(), List.of(), calculador);
-        nigromante.elegirAccion(party(), List.of(), calculador);
-
-        Accion tercera = nigromante.elegirAccion(party(), List.of(), calculador);
-
-        ResultadoAccion resultado = tercera.ejecutar();
-        assertEquals(1, resultado.getCombatientesInvocados().size());
-    }
-
-    @Test
-    void losEsqueletosSeDesarmanSiMuereElNigromante() {
-        Nigromante nigromante = new Nigromante();
-        List<Combatiente> esqueletos = nigromante.alIniciarCombate();
-        Combatiente esqueleto = esqueletos.get(0);
-        assertTrue(esqueleto.estaVivo());
-
-        nigromante.recibirDañoDirecto(nigromante.getVidaActual());
-        Enemigo comoEnemigo = (Enemigo) esqueleto;
-        Accion accion = comoEnemigo.elegirAccion(party(), List.of(), calculador);
-
-        assertNull(accion, "sin invocador no deberia poder actuar");
-        assertFalse(esqueleto.estaVivo());
-    }
-
-    @Test
     void elVerdugoAlternaEntreElAturdimientoYElHachazo() {
         Verdugo verdugo = new Verdugo();
         List<Combatiente> party = party();
 
-        verdugo.elegirAccion(party, List.of(), calculador).ejecutar();
+        verdugo.elegirAccion(party, calculador).ejecutar();
         assertTrue(verdugo.getMovimientos().get(1).estaEnCooldown());
 
-        ResultadoAccion segundo = verdugo.elegirAccion(party, List.of(), calculador).ejecutar();
+        ResultadoAccion segundo = verdugo.elegirAccion(party, calculador).ejecutar();
         assertTrue(segundo.getDañoTotal() > 0);
     }
 
@@ -255,11 +132,11 @@ class EnemigosTest {
         SeñorDeLasSombras jefe = new SeñorDeLasSombras();
         assertEquals(1, jefe.getFase());
 
-        ResultadoAccion enFase1 = jefe.elegirAccion(party(), List.of(), calculador).ejecutar();
+        ResultadoAccion enFase1 = jefe.elegirAccion(party(), calculador).ejecutar();
         assertEquals(1, enFase1.getObjetivosAfectados().size());
 
         jefe.recibirDañoDirecto(300);
-        ResultadoAccion enFase2 = jefe.elegirAccion(party(), List.of(), calculador).ejecutar();
+        ResultadoAccion enFase2 = jefe.elegirAccion(party(), calculador).ejecutar();
 
         assertEquals(2, jefe.getFase());
 
@@ -276,7 +153,7 @@ class EnemigosTest {
         assertSame(party.get(2), jefe.elegirObjetivo(party));
 
         jefe.recibirDañoDirecto(300);
-        jefe.elegirAccion(party, List.of(), calculador);
+        jefe.elegirAccion(party, calculador);
         assertEquals(2, jefe.getFase());
         assertSame(party.get(1), jefe.elegirObjetivo(party));
     }
@@ -320,7 +197,7 @@ class EnemigosTest {
     }
 
     @Test
-    void losJefesYLosInvocadosNoEscalan() {
+    void losJefesNoEscalan() {
         Verdugo verdugo = new Verdugo();
         verdugo.escalarParaEtapa(10);
         assertEquals(380, verdugo.getVidaMaxima());
@@ -328,11 +205,6 @@ class EnemigosTest {
         SeñorDeLasSombras jefe = new SeñorDeLasSombras();
         jefe.escalarParaEtapa(20);
         assertEquals(500, jefe.getVidaMaxima());
-
-        Nigromante nigromante = new Nigromante();
-        Combatiente esqueleto = nigromante.alIniciarCombate().get(0);
-        ((Enemigo) esqueleto).escalarParaEtapa(18);
-        assertEquals(30, esqueleto.getVidaMaxima());
     }
 
     @Test
@@ -345,10 +217,9 @@ class EnemigosTest {
     }
 
     @Test
-    void losOnceEnemigosArrancanVivosYConAlMenosUnMovimiento() {
-        List<Enemigo> todos = List.of(new Bruto(), new Guardian(), new Acechador(),
-                new Hechicero(), new Emponzoñador(), new Acolito(), new Berserker(),
-                new Nigromante(), new Verdugo(), new SeñorDeLasSombras());
+    void losSeisEnemigosArrancanVivosYConAlMenosUnMovimiento() {
+        List<Enemigo> todos = List.of(new Bruto(), new Acechador(), new Emponzoñador(),
+                new Berserker(), new Verdugo(), new SeñorDeLasSombras());
         for (Enemigo enemigo : todos) {
             assertTrue(enemigo.estaVivo(), enemigo.getNombre());
             assertTrue(enemigo.getVidaMaxima() > 0, enemigo.getNombre());
@@ -361,5 +232,14 @@ class EnemigosTest {
     void ningunEnemigoSubeDeNivel() {
         assertFalse(Personaje.class.isAssignableFrom(Bruto.class));
         assertTrue(Enemigo.class.isAssignableFrom(Bruto.class));
+    }
+
+    @Test
+    void laBrumaSombriaDelJefeEnvenenaEnVezDeQuemar() {
+        SeñorDeLasSombras jefe = new SeñorDeLasSombras();
+        HabilidadDeEstado bruma = (HabilidadDeEstado) jefe.getMovimientos().get(2);
+
+        assertEquals("Bruma Sombria", bruma.getNombre());
+        assertEquals("Veneno", bruma.getPlantillaEfecto().getNombre());
     }
 }

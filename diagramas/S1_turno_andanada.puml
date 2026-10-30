@@ -14,7 +14,7 @@ participant "gestor : GestorDeTurnos" as G
 participant "arquero : Arquero" as A
 participant "andanada : HabilidadDeEstado" as H
 participant "plantilla : Aturdimiento" as P
-participant "e1 : Esqueleto" as E1
+participant "e1 : Bruto" as E1
 
 == 1. Arranca el turno del arquero ==
 

@@ -26,8 +26,7 @@ public final class Emponzoñador extends Enemigo implements ObjetivoSinEfecto {
     }
 
     @Override
-    public Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                               CalculadorDeDaño calculador) {
+    public Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador) {
         List<Combatiente> vivos = filtrarVivos(party);
         Combatiente objetivo = elegirObjetivo(vivos);
         boolean yaEstaEnvenenado = objetivo.getEfectosActivos().stream()

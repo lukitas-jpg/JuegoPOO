@@ -51,19 +51,11 @@ public class Combate {
     }
 
     public void iniciar() {
-        notificarInicioDeCombate();
+        for (Combatiente participante : gestor.getParticipantes()) {
+            participante.alIniciarCombate();
+        }
         gestor.iniciarNuevaRonda();
         registro.add("Comienza el combate.");
-    }
-
-    private void notificarInicioDeCombate() {
-        List<Combatiente> presentes = new ArrayList<>(gestor.getParticipantes());
-        for (Combatiente presente : presentes) {
-            for (Combatiente invocado : presente.alIniciarCombate()) {
-                agregarCombatiente(invocado);
-                registro.add(presente.getNombre() + " invoca a " + invocado.getNombre() + ".");
-            }
-        }
     }
 
     public Combatiente getSiguienteEnActuar() {
@@ -141,7 +133,7 @@ public class Combate {
         ResultadoAccion resultado = ejecutarAccion(
                 new AccionUsarConsumible(actor, consumible, objetivo, party.getInventario()));
         if (estabaCaido && objetivo.estaVivo()) {
-            agregarCombatiente(objetivo);
+            gestor.incorporar(objetivo);
             registro.add(objetivo.getNombre() + " vuelve al combate.");
         }
         return resultado;
@@ -162,7 +154,6 @@ public class Combate {
         ResultadoAccion resultado = accion.ejecutar();
         registro.add(resultado.getDescripcion());
 
-        incorporarInvocados(resultado);
         avanzarTurno();
         retirarCaidos();
         return resultado;
@@ -177,14 +168,7 @@ public class Combate {
             perderTurno();
             return null;
         }
-        Accion accion = enemigo.elegirAccion(
-                new ArrayList<>(party.getMiembrosVivos()), getAliadosVivosDe(enemigo), calculador);
-        if (accion == null) {
-            registro.add(enemigo.getNombre() + " no ataca este turno.");
-            avanzarTurno();
-            retirarCaidos();
-            return null;
-        }
+        Accion accion = enemigo.elegirAccion(new ArrayList<>(party.getMiembrosVivos()), calculador);
         return ejecutarAccion(accion);
     }
 
@@ -194,19 +178,6 @@ public class Combate {
         }
         gestor.consumirTurno();
         turnoPreparado = false;
-    }
-
-    private void incorporarInvocados(ResultadoAccion resultado) {
-        for (Combatiente invocado : resultado.getCombatientesInvocados()) {
-            agregarCombatiente(invocado);
-        }
-    }
-
-    public void agregarCombatiente(Combatiente combatiente) {
-        if (combatiente instanceof Enemigo enemigo && !enemigos.contains(enemigo)) {
-            enemigos.add(enemigo);
-        }
-        gestor.incorporar(combatiente);
     }
 
     public void retirarCaidos() {
@@ -230,16 +201,6 @@ public class Combate {
                 victoria ? experienciaDeLaEtapa : 0,
                 victoria ? oroDeLaEtapa : 0,
                 registro);
-    }
-
-    private List<Enemigo> getAliadosVivosDe(Enemigo enemigo) {
-        List<Enemigo> aliados = new ArrayList<>();
-        for (Enemigo otro : enemigos) {
-            if (otro.estaVivo()) {
-                aliados.add(otro);
-            }
-        }
-        return aliados;
     }
 
     public List<Combatiente> getEnemigosVivos() {
