@@ -42,11 +42,6 @@ state PantallaEstadoParty {
   PantallaEstadoParty : que etapa viene
 }
 
-state PantallaTragamonedas {
-  PantallaTragamonedas : primera tirada gratis, despues 50 de oro
-  PantallaTragamonedas : rodillos animados con Timer
-}
-
 state PantallaTienda {
   PantallaTienda : 5 consumibles fijos
   PantallaTienda : 3 slots de equipo + reroll
@@ -66,18 +61,10 @@ PantallaResultado -right-> PantallaEstadoParty : Continuar\n(la run sigue)
 PantallaResultado -up-> PantallaInicio : Volver al inicio\n(derrota o run ganada)
 
 PantallaEstadoParty -up-> PantallaBatalla : Siguiente etapa\n(etapa de combate)
-PantallaEstadoParty -down-> PantallaTienda : Siguiente etapa\n(etapas 4 y 14)
-PantallaEstadoParty -down-> PantallaTragamonedas : Siguiente etapa\n(etapas 9 y 19)
+PantallaEstadoParty -down-> PantallaTienda : Siguiente etapa\n(etapas 4, 9, 14 y 19)
 PantallaEstadoParty -up-> PantallaInicio : Volver al inicio\n(ya quedo guardado)
 
-PantallaTragamonedas -right-> PantallaTienda : Pasar a la tienda
 PantallaTienda -up-> PantallaEstadoParty : Seguir a la proxima etapa
-
-note right of PantallaTragamonedas
-  Aparece ANTES de la tienda y solo en las
-  etapas 9 y 19. Al pasar a la tienda la
-  maquina queda abandonada: no se vuelve.
-end note
 
 note bottom of PantallaBatalla
   Todo vive en un solo JFrame (VentanaPrincipal)

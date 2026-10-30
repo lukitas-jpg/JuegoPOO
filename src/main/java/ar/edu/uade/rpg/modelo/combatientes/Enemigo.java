@@ -30,8 +30,7 @@ public abstract class Enemigo extends Combatiente {
         this.ataqueMagico = 0;
     }
 
-    public abstract Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                                        CalculadorDeDaño calculador);
+    public abstract Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador);
 
     public Random getRandom() {
         return random;

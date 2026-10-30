@@ -7,14 +7,17 @@ import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
 
 public class ResultadoAccion {
+    public record Golpe(Combatiente objetivo, int daño, boolean fueCritico) { }
+
     private String descripcion;
     private int dañoTotal;
     private boolean fueCritico;
 
+    private final List<Golpe> golpes = new ArrayList<>();
+
     private final List<Combatiente> objetivosAfectados = new ArrayList<>();
     private final List<Combatiente> objetivosFallados = new ArrayList<>();
     private final List<EfectoEstado> efectosAplicados = new ArrayList<>();
-    private final List<Combatiente> combatientesInvocados = new ArrayList<>();
 
     public ResultadoAccion(String descripcion) {
         this.descripcion = descripcion;
@@ -26,12 +29,12 @@ public class ResultadoAccion {
         this.descripcion = descripcion;
     }
 
-    public void sumarDaño(int daño) {
-        this.dañoTotal += daño;
-    }
-
-    public void marcarCritico() {
-        this.fueCritico = true;
+    public void registrarGolpe(Combatiente objetivo, int daño, boolean critico) {
+        golpes.add(new Golpe(objetivo, daño, critico));
+        dañoTotal += daño;
+        if (critico) {
+            fueCritico = true;
+        }
     }
 
     public void agregarObjetivoAfectado(Combatiente objetivo) {
@@ -46,12 +49,20 @@ public class ResultadoAccion {
         efectosAplicados.add(efecto);
     }
 
-    public void agregarCombatienteInvocado(Combatiente invocado) {
-        combatientesInvocados.add(invocado);
-    }
-
     public String getDescripcion() {
-        return descripcion;
+        StringBuilder texto = new StringBuilder(descripcion);
+        for (Golpe golpe : golpes) {
+            texto.append(' ').append(golpe.objetivo().getNombre())
+                 .append(" recibe ").append(golpe.daño()).append(" de daño");
+            if (golpe.fueCritico()) {
+                texto.append(" (crítico)");
+            }
+            texto.append('.');
+        }
+        if (golpes.size() > 1) {
+            texto.append(" Daño neto total: ").append(dañoTotal).append('.');
+        }
+        return texto.toString();
     }
 
     public int getDañoTotal() {
@@ -66,6 +77,10 @@ public class ResultadoAccion {
         return !objetivosFallados.isEmpty();
     }
 
+    public List<Golpe> getGolpes() {
+        return List.copyOf(golpes);
+    }
+
     public List<Combatiente> getObjetivosAfectados() {
         return List.copyOf(objetivosAfectados);
     }
@@ -76,9 +91,5 @@ public class ResultadoAccion {
 
     public List<EfectoEstado> getEfectosAplicados() {
         return List.copyOf(efectosAplicados);
-    }
-
-    public List<Combatiente> getCombatientesInvocados() {
-        return List.copyOf(combatientesInvocados);
     }
 }

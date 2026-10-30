@@ -6,25 +6,18 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import ar.edu.uade.rpg.modelo.combatientes.Acechador;
-import ar.edu.uade.rpg.modelo.combatientes.Acolito;
 import ar.edu.uade.rpg.modelo.combatientes.Berserker;
 import ar.edu.uade.rpg.modelo.combatientes.Bruto;
 import ar.edu.uade.rpg.modelo.combatientes.ClaseDePersonaje;
 import ar.edu.uade.rpg.modelo.combatientes.Emponzoñador;
-import ar.edu.uade.rpg.modelo.combatientes.Esqueleto;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
-import ar.edu.uade.rpg.modelo.combatientes.Guardian;
-import ar.edu.uade.rpg.modelo.combatientes.Hechicero;
-import ar.edu.uade.rpg.modelo.combatientes.Nigromante;
 import ar.edu.uade.rpg.modelo.combatientes.SeñorDeLasSombras;
 import ar.edu.uade.rpg.modelo.combatientes.Verdugo;
 import ar.edu.uade.rpg.modelo.tienda.GeneradorDeStock;
-import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
 public class GeneradorDeEtapas {
     private static final int[] ETAPAS_DE_TIENDA = {4, 9, 14, 19};
-    private static final int[] ETAPAS_CON_MAQUINA = {9, 19};
     private static final int ETAPA_DEL_MINIJEFE = 10;
     private static final int ETAPA_DEL_JEFE_FINAL = 20;
 
@@ -55,15 +48,6 @@ public class GeneradorDeEtapas {
         return false;
     }
 
-    public static boolean llevaMaquinaDeSlots(int numero) {
-        for (int etapa : ETAPAS_CON_MAQUINA) {
-            if (etapa == numero) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static TipoEtapa determinarTipo(int numero) {
         if (numero == ETAPA_DEL_JEFE_FINAL) {
             return TipoEtapa.JEFE_FINAL;
@@ -85,8 +69,7 @@ public class GeneradorDeEtapas {
 
     private EtapaDeTienda crearEtapaDeTienda(int numero, List<ClaseDePersonaje> clases) {
         Tienda tienda = new Tienda(getNumeroDeTienda(numero), clases, generadorDeStock);
-        MaquinaDeSlots maquina = llevaMaquinaDeSlots(numero) ? new MaquinaDeSlots(random) : null;
-        return new EtapaDeTienda(numero, tienda, maquina);
+        return new EtapaDeTienda(numero, tienda);
     }
 
     private EtapaDeCombate crearEtapaDeCombate(int numero) {
@@ -118,25 +101,13 @@ public class GeneradorDeEtapas {
 
     private List<Supplier<Enemigo>> getPool(int numero) {
         List<Supplier<Enemigo>> pool = new ArrayList<>();
-        if (numero <= 3) {
-            pool.add(() -> new Esqueleto(null, random));
-            pool.add(Bruto::new);
-            pool.add(Acechador::new);
-            return pool;
-        }
         pool.add(Bruto::new);
         pool.add(Acechador::new);
-        pool.add(Guardian::new);
-        pool.add(Hechicero::new);
-        pool.add(Emponzoñador::new);
-        if (numero <= 8) {
-            pool.add(() -> new Esqueleto(null, random));
-            return pool;
+        if (numero >= 5) {
+            pool.add(Emponzoñador::new);
         }
-        pool.add(Acolito::new);
-        pool.add(Berserker::new);
-        if (numero >= 15) {
-            pool.add(Nigromante::new);
+        if (numero >= 11) {
+            pool.add(Berserker::new);
         }
         return pool;
     }

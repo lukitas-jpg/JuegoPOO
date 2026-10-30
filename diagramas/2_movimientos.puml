@@ -48,12 +48,6 @@ class AccionDefender {
   + ejecutar() : ResultadoAccion
   + getDescripcion() : String
 }
-class AccionInvocar {
-  - autor : Enemigo
-  - cantidad : int
-  + ejecutar() : ResultadoAccion
-  + getDescripcion() : String
-}
 class AccionUsarConsumible {
   - autor : Combatiente
   - consumible : Consumible
@@ -69,15 +63,13 @@ class ResultadoAccion {
   - objetivosAfectados : List<Combatiente>
   - objetivosFallados : List<Combatiente>
   - efectosAplicados : List<EfectoEstado>
-  - combatientesInvocados : List<Combatiente>
+  - golpes : List<Golpe>
   --
   + setDescripcion(descripcion : String) : void
-  + sumarDaño(daño : int) : void
-  + marcarCritico() : void
+  + registrarGolpe(objetivo : Combatiente, daño : int, critico : boolean) : void
   + agregarObjetivoAfectado(objetivo : Combatiente) : void
   + agregarObjetivoFallado(objetivo : Combatiente) : void
   + agregarEfectoAplicado(efecto : EfectoEstado) : void
-  + agregarCombatienteInvocado(invocado : Combatiente) : void
   + getDescripcion() : String
   + getDañoTotal() : int
   + fueCritico() : boolean
@@ -85,8 +77,23 @@ class ResultadoAccion {
   + getObjetivosFallados() : List<Combatiente>
   + huboAlgunFallo() : boolean
   + getEfectosAplicados() : List<EfectoEstado>
-  + getCombatientesInvocados() : List<Combatiente>
+  + getGolpes() : List<Golpe>
 }
+
+class "ResultadoAccion.Golpe" as Golpe <<record>> {
+  + objetivo : Combatiente
+  + daño : int
+  + fueCritico : boolean
+}
+
+ResultadoAccion "1" *-- "0..*" Golpe : golpes
+
+note bottom of Golpe
+  Uno por objetivo alcanzado, con el daño NETO
+  (lo que devolvio recibirDaño(), ya sin lo que
+  freno el escudo). getDescripcion() arma con esto
+  la linea del registro: "Bruto recibe 15 de daño."
+end note
 
 abstract class Movimiento {
   # nombre : String
@@ -166,12 +173,6 @@ class Veneno {
   - calcularDaño(objetivo : Combatiente) : int
   + persisteFueraDeCombate() : boolean
 }
-class Quemadura {
-  + {static} GOLPE_MAXIMO : int = 25
-  - porcentajePorTurno : int
-  + alTerminarTurno(objetivo : Combatiente) : void
-  + persisteFueraDeCombate() : boolean
-}
 class Aturdimiento {
   + impideActuar() : boolean
   + persisteFueraDeCombate() : boolean
@@ -187,26 +188,9 @@ class BuffEstadistica {
   + getModificadorPorcentual(estadistica : Estadistica) : int
   + persisteFueraDeCombate() : boolean
 }
-class DebuffEstadistica {
-  - estadistica : Estadistica
-  - porcentaje : int
-  + getModificadorPorcentual(estadistica : Estadistica) : int
-  + persisteFueraDeCombate() : boolean
-}
-class Proteccion {
-  - reduccion : int
-  + absorber(daño : int, tipo : TipoDaño) : int
-  + persisteFueraDeCombate() : boolean
-}
-class Regeneracion {
-  - curacionPorTurno : int
-  + alTerminarTurno(objetivo : Combatiente) : void
-  + persisteFueraDeCombate() : boolean
-}
 
 Accion <|.. AccionUsarMovimiento
 Accion <|.. AccionDefender
-Accion <|.. AccionInvocar
 Accion <|.. AccionUsarConsumible
 Accion ..> ResultadoAccion : produce
 
@@ -224,26 +208,11 @@ HabilidadDeEstado "1" *-- "1" EfectoEstado : plantilla
 AccionUsarMovimiento --> Movimiento
 
 EfectoEstado <|-- Veneno
-EfectoEstado <|-- Quemadura
 EfectoEstado <|-- Aturdimiento
 EfectoEstado <|-- Escudo
 EfectoEstado <|-- BuffEstadistica
-EfectoEstado <|-- DebuffEstadistica
-EfectoEstado <|-- Regeneracion
-EfectoEstado <|-- Proteccion
 
 BuffEstadistica --> Estadistica
-DebuffEstadistica --> Estadistica
-
-note bottom of AccionInvocar
-  Invocar no es un Movimiento: no es ni un Ataque ni
-  una Habilidad, asi que entra como Accion, al mismo
-  nivel que defender.
-
-  Su ResultadoAccion viaja con los combatientes
-  invocados, y es Combate quien los incorpora. El
-  Nigromante nunca toca al Combate directamente.
-end note
 
 note right of Veneno
   El daño por turno es un PORCENTAJE de la vida
@@ -288,8 +257,8 @@ note right of EfectoEstado
   los necesita:
 
   getModificadorPorcentual() devuelve 0 salvo en
-  BuffEstadistica y DebuffEstadistica. Los buffos y
-  debuffos NO escriben las estadisticas del
+  BuffEstadistica. Los buffos NO escriben las
+  estadisticas del
   combatiente: las informan, y los getters efectivos
   suman los porcentajes. Asi al expirar el efecto no
   hay nada que revertir.

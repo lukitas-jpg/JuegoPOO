@@ -1,6 +1,6 @@
 package ar.edu.uade.rpg.modelo.combatientes;
 
-import ar.edu.uade.rpg.modelo.efectos.DebuffEstadistica;
+import ar.edu.uade.rpg.modelo.efectos.BuffEstadistica;
 import ar.edu.uade.rpg.modelo.efectos.Escudo;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
@@ -35,9 +35,9 @@ public final class Tanque extends Personaje {
                 new Escudo(40, 3), 100));
 
         agregarMovimiento(new HabilidadDeEstado(
-                "Rugido Intimidante", "Baja el ataque fisico de todos los enemigos un 25% durante 3 turnos.",
-                15, AlcanceMovimiento.TODOS_LOS_ENEMIGOS, NIVEL_TERCER_MOVIMIENTO, false,
-                new DebuffEstadistica(Estadistica.ATAQUE_FISICO, 25, 3), 100));
+                "Postura Firme", "Se planta firme: sube un 25% su defensa fisica durante 3 turnos.",
+                15, AlcanceMovimiento.UNO_MISMO, NIVEL_TERCER_MOVIMIENTO, false,
+                new BuffEstadistica(Estadistica.DEFENSA_FISICA, 25, 3), 100));
 
         agregarMovimiento(new HabilidadDeEstado(
                 "Baluarte", "Cubre a toda la party con un escudo que absorbe 30 de daño durante 3 turnos.",

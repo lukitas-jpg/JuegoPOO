@@ -21,8 +21,7 @@ public final class Acechador extends Enemigo implements ObjetivoAleatorio {
     }
 
     @Override
-    public Accion elegirAccion(List<Combatiente> party, List<Enemigo> aliados,
-                               CalculadorDeDaño calculador) {
+    public Accion elegirAccion(List<Combatiente> party, CalculadorDeDaño calculador) {
         List<Combatiente> vivos = filtrarVivos(party);
         List<Combatiente> objetivos = new java.util.ArrayList<>();
         for (int golpe = 0; golpe < cantidadGolpes; golpe++) {

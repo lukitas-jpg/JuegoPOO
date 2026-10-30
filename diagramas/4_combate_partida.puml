@@ -36,15 +36,12 @@ class Juego {
   + {static} crearPersonaje(clase : ClaseDePersonaje) : Personaje
   .. combate ..
   + iniciarCombate() : Combate
-  .. tienda y maquina ..
+  .. tienda ..
   + getTienda() : Tienda
-  + getMaquinaDeSlots() : MaquinaDeSlots
   + puedeComprarEquipable(indiceSlot : int, destinatario : Personaje) : boolean
   + comprarEquipable(indiceSlot : int, destinatario : Personaje) : Equipable
   + comprarConsumible(indiceEnElCatalogo : int) : boolean
   + rerollearTienda() : boolean
-  + tirarEnLaMaquina() : ResultadoTirada
-  + pasarALaTienda() : void
   + usarConsumibleFueraDeCombate(consumible : Consumible, objetivo : Personaje) : boolean
   - getEtapaDeCombate() : EtapaDeCombate
   - getEtapaDeTienda() : EtapaDeTienda
@@ -115,10 +112,7 @@ class EtapaDeCombate {
 }
 
 class EtapaDeTienda {
-  + pasarALaTienda() : void
-  + tieneMaquinaDeSlots() : boolean
   + getTienda() : Tienda
-  + getMaquinaDeSlots() : MaquinaDeSlots
   + getDescripcion() : String
   + otorgaExperiencia() : boolean
   + esDeCombate() : boolean
@@ -129,7 +123,6 @@ class GeneradorDeEtapas {
   --
   + crearEtapa(numero : int, clasesDeLaParty : List<ClaseDePersonaje>) : Etapa
   + {static} esEtapaDeTienda(numero : int) : boolean
-  + {static} llevaMaquinaDeSlots(numero : int) : boolean
   + {static} determinarTipo(numero : int) : TipoEtapa
   + {static} getNumeroDeTienda(numeroDeEtapa : int) : int
   - crearEtapaDeCombate(numero : int) : EtapaDeCombate
@@ -160,17 +153,13 @@ class Combate {
   + getObjetivosDeConsumible(consumible : Consumible) : List<Combatiente>
   - avanzarTurno() : void
   + getEnemigosVivos() : List<Combatiente>
-  - getAliadosVivosDe(enemigo : Enemigo) : List<Enemigo>
   + getNumeroRonda() : int
   + estaFinalizado() : boolean
   + getParty() : Party
   + hayGanador() : boolean
   + calcularResultado() : ResultadoCombate
-  + agregarCombatiente(combatiente : Combatiente) : void
-  - incorporarInvocados(resultado : ResultadoAccion) : void
   + retirarCaidos() : void
   + getRegistro() : List<String>
-  - notificarInicioDeCombate() : void
 }
 
 class GestorDeTurnos {
@@ -279,11 +268,9 @@ Etapa <|-- EtapaDeTienda
 EtapaDeCombate "1" *-- "1..*" Enemigo : enemigos
 EtapaDeCombate --> TipoEtapa
 EtapaDeTienda "1" *-- "1" Tienda
-EtapaDeTienda "1" *-- "0..1" MaquinaDeSlots
 EtapaDeCombate ..> Combate : crea
 Juego ..> Combate : pide a la etapa
 Juego ..> Tienda : cobra y entrega
-Juego ..> MaquinaDeSlots : cobra y paga
 GeneradorDeEtapas ..> Etapa : crea
 GeneradorDeEtapas ..> Enemigo : crea
 
@@ -319,9 +306,9 @@ note bottom of Juego
   pasa sus enemigos y sus recompensas. Así es
   imposible armar una pelea en una etapa de tienda.
 
-  Tienda y MaquinaDeSlots no manejan oro: Juego
-  cobra y entrega en un paso (comprarEquipable,
-  tirarEnLaMaquina...). getEtapaDeCombate() y
+  Tienda no maneja oro: Juego cobra y entrega en
+  un paso (comprarEquipable, comprarConsumible,
+  rerollearTienda). getEtapaDeCombate() y
   getEtapaDeTienda() son los dos únicos casts del
   modelo, y los dos después de preguntar
   esDeCombate().
@@ -367,18 +354,14 @@ note right of Juego
 end note
 
 note bottom of Combate
-  Dos momentos incorporan combatientes nuevos, y en
-  los dos el dato viaja hacia arriba en vez de que el
-  enemigo empuje hacia abajo:
+  iniciar() le avisa a cada participante con
+  alIniciarCombate(): se le llena el mana y se le
+  reinician las definitivas.
 
-   - Al iniciar: notificarInicioDeCombate() recorre a
-     todos y agrega lo que devuelva alIniciarCombate().
-   - En un turno: ejecutarAccion() llama al privado
-     incorporarInvocados(), que agrega lo que traiga
-     el ResultadoAccion.
-
-  En ambos casos la mayoria devuelve lista vacia, asi
-  que no hace falta ningun if por tipo de enemigo.
+  Un personaje revivido con el Polvo de Renacer
+  (usarConsumible) vuelve a la pelea con
+  GestorDeTurnos.incorporar(): actua desde la ronda
+  siguiente.
 end note
 
 note bottom of GestorDeTurnos
@@ -386,7 +369,7 @@ note bottom of GestorDeTurnos
   se ordena por getVelocidadEfectiva() de
   mayor a menor. Los empates se resuelven
   al azar. Los combatientes incorporados a
-  mitad de ronda (esqueletos del Nigromante)
+  mitad de ronda (un personaje revivido)
   entran recién en la ronda siguiente.
 end note
 
@@ -433,9 +416,11 @@ note as N_MOTOR
   que dejo el barajado. Por eso no hace falta un metodo
   desempatar() aparte.
 
-  Los que entran a mitad de ronda (los esqueletos del
-  Nigromante) se suman a los participantes pero no al
+  Los que entran a mitad de ronda (un personaje
+  revivido) se suman a los participantes pero no al
   orden ya armado: actuan recien en la ronda siguiente.
+  Si cae alguien que ya actuo, retirar() corre el
+  indice para que nadie pierda su turno.
 end note
 
 @enduml

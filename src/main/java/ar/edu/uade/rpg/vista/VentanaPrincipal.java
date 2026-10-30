@@ -13,11 +13,9 @@ import ar.edu.uade.rpg.controlador.ControladorJuego;
 import ar.edu.uade.rpg.controlador.VistaDelJuego;
 import ar.edu.uade.rpg.dto.ClaseDTO;
 import ar.edu.uade.rpg.dto.EstadoCombateDTO;
-import ar.edu.uade.rpg.dto.MaquinaDTO;
 import ar.edu.uade.rpg.dto.PartyDTO;
 import ar.edu.uade.rpg.dto.ResultadoDTO;
 import ar.edu.uade.rpg.dto.TiendaDTO;
-import ar.edu.uade.rpg.dto.TiradaDTO;
 
 public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
     private static final long serialVersionUID = 1L;
@@ -34,7 +32,6 @@ public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
     private final PantallaResultado resultado;
     private final PantallaEstadoParty estadoParty;
     private final PantallaTienda tienda;
-    private final PantallaTragamonedas tragamonedas;
 
     public VentanaPrincipal(ControladorJuego controlador) {
         super("RPG por turnos - Grupo 3");
@@ -49,7 +46,6 @@ public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
         resultado = new PantallaResultado(controlador);
         estadoParty = new PantallaEstadoParty(controlador);
         tienda = new PantallaTienda(controlador.getControladorTienda());
-        tragamonedas = new PantallaTragamonedas(controlador.getControladorTienda());
 
         contenedor.add(inicio, "inicio");
         contenedor.add(seleccion, "seleccion");
@@ -57,7 +53,6 @@ public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
         contenedor.add(resultado, "resultado");
         contenedor.add(estadoParty, "estado");
         contenedor.add(tienda, "tienda");
-        contenedor.add(tragamonedas, "tragamonedas");
         setContentPane(contenedor);
 
         getLayeredPane().add(aviso, JLayeredPane.POPUP_LAYER);
@@ -99,17 +94,6 @@ public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
     public void mostrarTienda(TiendaDTO datos) {
         tienda.mostrar(datos);
         cartas.show(contenedor, "tienda");
-    }
-
-    @Override
-    public void mostrarMaquina(MaquinaDTO maquina) {
-        tragamonedas.mostrar(maquina);
-        cartas.show(contenedor, "tragamonedas");
-    }
-
-    @Override
-    public void mostrarTirada(TiradaDTO tirada, MaquinaDTO maquina) {
-        tragamonedas.animar(tirada, maquina);
     }
 
     @Override

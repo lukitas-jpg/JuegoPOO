@@ -36,9 +36,7 @@ activate CO
 note right of CO
   Las recompensas las define la ETAPA COMPLETA, no
   cada enemigo: EtapaDeCombate.crearCombate() se las
-  paso a Combate al crearlo. Si vinieran por enemigo,
-  el Nigromante seria una granja infinita de
-  experiencia, porque repone esqueletos.
+  paso a Combate al crearlo.
 end note
 create participant "res : ResultadoCombate" as RC
 CO -> RC : <<create>> (victoria, exp, oro, registro)

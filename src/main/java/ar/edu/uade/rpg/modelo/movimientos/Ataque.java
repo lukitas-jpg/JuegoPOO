@@ -26,10 +26,8 @@ public abstract class Ataque extends Movimiento {
         for (Combatiente objetivo : resolverObjetivos(usuario, objetivos)) {
             ResultadoDaño golpe = calculador.calcular(usuario, objetivo, potencia, tipoDaño);
 
-            resultado.sumarDaño(objetivo.recibirDaño(golpe.getDaño(), tipoDaño));
-            if (golpe.fueCritico()) {
-                resultado.marcarCritico();
-            }
+            int dañoNeto = objetivo.recibirDaño(golpe.getDaño(), tipoDaño);
+            resultado.registrarGolpe(objetivo, dañoNeto, golpe.fueCritico());
             resultado.agregarObjetivoAfectado(objetivo);
         }
         return resultado;

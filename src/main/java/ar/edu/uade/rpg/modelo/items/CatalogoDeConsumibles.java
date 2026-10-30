@@ -20,8 +20,8 @@ public final class CatalogoDeConsumibles {
 
     public static Consumible antidoto() {
         return new Consumible("Antidoto",
-                "Quita el Veneno y la Quemadura.",
-                15, Rareza.COMUN, new EfectoCurarEstado(List.of("Veneno", "Quemadura")), 6);
+                "Quita el Veneno.",
+                15, Rareza.COMUN, new EfectoCurarEstado(List.of("Veneno")), 6);
     }
 
     public static Consumible polvoDeRenacer() {
