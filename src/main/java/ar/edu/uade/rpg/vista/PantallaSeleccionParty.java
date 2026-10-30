@@ -22,9 +22,7 @@ import javax.swing.SwingConstants;
 import ar.edu.uade.rpg.controlador.ControladorJuego;
 import ar.edu.uade.rpg.dto.ClaseDTO;
 
-/** El jugador elige 3 de las 6 clases. No se pueden repetir. */
 final class PantallaSeleccionParty extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
 
     private final ControladorJuego controlador;
@@ -90,9 +88,7 @@ final class PantallaSeleccionParty extends PanelConFondo {
         }
     }
 
-    /** Una clase: dibujo, nombre, descripcion y numeros. Se elige con un click. */
     private final class CartaDeClase extends JPanel {
-
         private static final long serialVersionUID = 1L;
         private final int indice;
 

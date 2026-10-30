@@ -199,8 +199,6 @@ package "ar.edu.uade.rpg.modelo (diagramas 1 a 4)" {
   hide Combate members
 }
 
-' ---------------------------------------------------------------- relaciones
-
 App ..> Juego : crea
 App ..> ControladorJuego : crea
 App ..> VentanaPrincipal : crea
@@ -257,8 +255,6 @@ ConversorDTO ..> ItemDTO : arma
 ControladorCombate ..> EstadoCombateDTO : arma
 ControladorTienda ..> TiendaDTO : arma
 VistaDelJuego ..> EstadoCombateDTO
-
-' ---------------------------------------------------------------- notas
 
 note top of VistaDelJuego
   Dependencias en UNA direccion:

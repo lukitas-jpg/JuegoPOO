@@ -246,7 +246,6 @@ note right of MaquinaDeSlots
   de los personajes NO influye.
 end note
 
-
 note as N_TIENDA
   La Tienda y la MaquinaDeSlots NO manejan oro. Dicen
   cuanto cuesta cada cosa y entregan el objeto; la resta

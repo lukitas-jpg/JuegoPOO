@@ -24,21 +24,7 @@ import ar.edu.uade.rpg.modelo.efectos.Aturdimiento;
 import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
 
-/**
- * Pruebas de los 24 movimientos, de la formula de daño y de las dos familias
- * de habilidad.
- *
- * Donde interviene el azar se inyecta un Random con semilla fija, asi los
- * numeros son siempre los mismos y ningun test falla una vez cada tantas
- * corridas.
- */
 class MovimientosTest {
-
-    /**
-     * Combatiente minimo para tener contra que pegar sin depender de los
-     * enemigos, que todavia no estan escritos. Suerte en 0 para que nunca
-     * critique y el daño sea predecible.
-     */
     private static class Maniqui extends Combatiente {
         Maniqui(int vida, int defensa, int resistencia) {
             super("maniqui");
@@ -57,8 +43,6 @@ class MovimientosTest {
     }
 
     private final CalculadorDeDaño calculador = new CalculadorDeDaño(new Random(2024));
-
-    // ----------------------------------------------- carga de los movimientos
 
     @Test
     void lasSeisClasesArrancanConCuatroMovimientos() {
@@ -86,7 +70,7 @@ class MovimientosTest {
         assertFalse(movimientos.get(2).estaDesbloqueado(guerrero));
         assertFalse(movimientos.get(3).estaDesbloqueado(guerrero));
 
-        guerrero.ganarExperiencia(30 + 60 + 90); // hasta nivel 4
+        guerrero.ganarExperiencia(30 + 60 + 90);
         assertEquals(4, guerrero.getNivel());
         assertTrue(movimientos.get(2).estaDesbloqueado(guerrero));
         assertFalse(movimientos.get(3).estaDesbloqueado(guerrero));
@@ -141,12 +125,10 @@ class MovimientosTest {
         assertFalse(otro.getMovimientos().get(3).estaEnCooldown());
     }
 
-    // --------------------------------------------------------- formula de daño
-
     @Test
     void elDanioEscalaConElAtaqueDeQuienPega() {
-        Guerrero guerrero = new Guerrero("Lucas"); // 18 de ataque fisico
-        Mago mago = new Mago("Giovanni");          // 4 de ataque fisico
+        Guerrero guerrero = new Guerrero("Lucas");
+        Mago mago = new Mago("Giovanni");
 
         int conGuerrero = calculador.calcular(guerrero, new Maniqui(100, 10, 0), 10, TipoDaño.FISICO).getDaño();
         int conMago = calculador.calcular(mago, new Maniqui(100, 10, 0), 10, TipoDaño.FISICO).getDaño();
@@ -169,7 +151,7 @@ class MovimientosTest {
     @Test
     void defenderBajaALaMitadElDanioRecibido() {
         Guerrero atacante = new Guerrero("Lucas");
-        // Sin variacion no se puede comparar exacto, asi que se promedian muchos golpes.
+
         long normal = 0;
         long defendiendo = 0;
         for (int i = 0; i < 2000; i++) {
@@ -187,7 +169,7 @@ class MovimientosTest {
     @Test
     void elCriticoNoPasaDelTopeAunqueLaSuerteSiga() {
         Asesino asesino = new Asesino("Santiago");
-        asesino.ganarExperiencia(100000); // nivel 20
+        asesino.ganarExperiencia(100000);
         assertTrue(asesino.getSuerteEfectiva() > CalculadorDeDaño.PROBABILIDAD_CRITICA_MAXIMA);
 
         int criticos = 0;
@@ -201,11 +183,9 @@ class MovimientosTest {
         assertTrue(tasa > 45 && tasa < 55, "la tasa de critico deberia quedar en el tope, dio " + tasa);
     }
 
-    // ------------------------------------------------------------- habilidades
-
     @Test
     void laCuracionSumaElAtaqueMagicoDeQuienCura() {
-        Curador curador = new Curador("Santiago"); // 14 de ataque magico
+        Curador curador = new Curador("Santiago");
         Guerrero herido = new Guerrero("Lucas");
         herido.recibirDaño(100, TipoDaño.FISICO);
         assertEquals(20, herido.getVidaActual());
@@ -213,7 +193,7 @@ class MovimientosTest {
         Movimiento curacion = curador.getMovimientos().get(1);
         curacion.aplicar(curador, List.of(herido), calculador);
 
-        assertEquals(54, herido.getVidaActual()); // 20 + (20 base + 14 de ataque magico)
+        assertEquals(54, herido.getVidaActual());
     }
 
     @Test
@@ -235,7 +215,6 @@ class MovimientosTest {
         Tanque tanque = new Tanque("Maximo");
         Maniqui enemigo = new Maniqui(100, 10, 0);
 
-        // Muro de Hierro es UNO_MISMO: el objetivo que se le pase da igual.
         tanque.getMovimientos().get(1).aplicar(tanque, List.of(enemigo), calculador);
 
         assertEquals(1, tanque.getEfectosActivos().size());
@@ -256,7 +235,7 @@ class MovimientosTest {
     @Test
     void laResistenciaDelJefeBajaALaMitadElAturdimiento() {
         Arquero arquero = new Arquero("Santiago");
-        Movimiento andanada = arquero.getMovimientos().get(3); // 40% de acierto
+        Movimiento andanada = arquero.getMovimientos().get(3);
 
         int entraronComun = 0;
         int entraronJefe = 0;
@@ -287,7 +266,6 @@ class MovimientosTest {
                     new Maniqui(100, 10, 0), new Maniqui(100, 10, 0), new Maniqui(100, 10, 0));
             ResultadoAccion resultado = andanada.aplicar(arquero, seis, calculador);
 
-            // Si la tirada fuera una sola para todos, siempre entrarian 0 o 6.
             huboResultadoMixto = !resultado.getObjetivosAfectados().isEmpty()
                     && !resultado.getObjetivosFallados().isEmpty();
         }
@@ -305,7 +283,7 @@ class MovimientosTest {
     @Test
     void unAtaqueEnAreaGolpeaATodosLosObjetivosQueRecibe() {
         Guerrero guerrero = new Guerrero("Lucas");
-        guerrero.ganarExperiencia(100000); // para tener Torbellino desbloqueado
+        guerrero.ganarExperiencia(100000);
 
         Maniqui uno = new Maniqui(500, 10, 0);
         Maniqui dos = new Maniqui(500, 10, 0);

@@ -2,20 +2,7 @@ package ar.edu.uade.rpg.modelo.items;
 
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
-/**
- * Item de un solo uso. A diferencia de los equipables, se guarda en el
- * Inventario y se gasta.
- *
- * No hereda de nadie el efecto: lo TIENE. Eso permite que haya un solo tipo
- * Consumible y que la variedad salga de los datos, igual que pasa con los 24
- * movimientos y sus 4 clases.
- *
- * Cada uno sabe cuantas unidades se pueden llevar encima: esa regla es del
- * objeto, no del Inventario, que no tendria por que conocer los topes de cinco
- * items distintos.
- */
 public class Consumible extends Item {
-
     private final EfectoConsumible efecto;
     private final int topeEnInventario;
 

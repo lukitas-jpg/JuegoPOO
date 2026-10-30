@@ -41,11 +41,7 @@ import ar.edu.uade.rpg.modelo.partida.Party;
 import ar.edu.uade.rpg.modelo.partida.TipoEtapa;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
 
-/**
- * Pruebas del motor: orden de turnos, combate, etapas, partida y persistencia.
- */
 class MotorTest {
-
     private static final List<ClaseDePersonaje> TRES_CLASES =
             List.of(ClaseDePersonaje.GUERRERO, ClaseDePersonaje.MAGO, ClaseDePersonaje.CURADOR);
 
@@ -53,13 +49,11 @@ class MotorTest {
         return new Party(List.of(new Guerrero("G"), new Mago("M"), new Curador("C")));
     }
 
-    // ------------------------------------------------------- gestor de turnos
-
     @Test
     void elOrdenDeLaRondaVaDelMasRapidoAlMasLento() {
-        Tanque lento = new Tanque("T");      // velocidad 6
-        Guerrero medio = new Guerrero("G");  // velocidad 10
-        Mago rapido = new Mago("M");         // velocidad 11
+        Tanque lento = new Tanque("T");
+        Guerrero medio = new Guerrero("G");
+        Mago rapido = new Mago("M");
 
         GestorDeTurnos gestor = new GestorDeTurnos(
                 List.of(lento, medio, rapido), new Random(1));
@@ -80,8 +74,6 @@ class MotorTest {
         gestor.iniciarNuevaRonda();
         assertSame(mago, gestor.getOrdenPrevisto().get(0));
 
-        // Un buffo de velocidad enorme sobre el Tanque da vuelta el orden,
-        // pero recien en la ronda siguiente.
         tanque.aplicarEfecto(new ar.edu.uade.rpg.modelo.efectos.BuffEstadistica(
                 ar.edu.uade.rpg.modelo.movimientos.Estadistica.VELOCIDAD, 200, 3));
         assertSame(mago, gestor.getOrdenPrevisto().get(0), "la ronda en curso no cambia");
@@ -97,7 +89,7 @@ class MotorTest {
         GestorDeTurnos gestor = new GestorDeTurnos(List.of(guerrero, mago), new Random(1));
         gestor.iniciarNuevaRonda();
 
-        assertSame(mago, gestor.getSiguienteEnActuar()); // el Mago es mas rapido
+        assertSame(mago, gestor.getSiguienteEnActuar());
         mago.recibirDañoDirecto(mago.getVidaActual());
 
         assertSame(guerrero, gestor.getSiguienteEnActuar());
@@ -131,8 +123,6 @@ class MotorTest {
         assertEquals(1, gestor.getNumeroRonda());
     }
 
-    // ---------------------------------------------------------------- combate
-
     @Test
     void elCombateArrancaYRegistraLoQuePasa() {
         Combate combate = new Combate(party(), List.of(new Bruto()), 35, 35, new Random(1));
@@ -148,7 +138,6 @@ class MotorTest {
         Combate combate = new Combate(party(), List.of(new Nigromante()), 35, 35, new Random(1));
         combate.iniciar();
 
-        // El nigromante mas sus cinco esqueletos.
         assertEquals(6, combate.getEnemigosVivos().size());
     }
 
@@ -190,7 +179,6 @@ class MotorTest {
         Combate combate = new Combate(party, List.of(new Bruto()), 35, 35, new Random(7));
         combate.iniciar();
 
-        // Se avanza hasta que le toque al enemigo.
         int vueltas = 0;
         while (combate.esTurnoDelJugador() && vueltas++ < 10) {
             combate.ejecutarMovimiento(combate.getMovimientosDelTurno().get(0),
@@ -209,8 +197,6 @@ class MotorTest {
         assertTrue(vidaDespues < vidaAntes, "el enemigo deberia haber pegado");
     }
 
-    // ----------------------------------------------------------------- party
-
     @Test
     void laPartyRepartLaExperienciaYLosCaidosRecibenLaMitad() {
         Party party = party();
@@ -219,9 +205,8 @@ class MotorTest {
 
         party.repartirExperiencia(90);
 
-        // El vivo cobra 90: 30 para el nivel 2 y 60 para el 3.
         assertEquals(3, party.getMiembros().get(0).getNivel());
-        // El caido cobra 45: le alcanza para el nivel 2 y le sobran 15.
+
         assertEquals(2, caido.getNivel());
         assertEquals(15, caido.getExperienciaActual());
     }
@@ -261,8 +246,6 @@ class MotorTest {
         assertEquals(1, uno.getEfectosActivos().size());
         assertTrue(party.tieneAlgunEfectoPersistente());
     }
-
-    // ---------------------------------------------------------------- etapas
 
     @Test
     void lasEtapas4Y9Y14Y19SonDeTiendaYElRestoDeCombate() {
@@ -309,7 +292,7 @@ class MotorTest {
         assertEquals(35, primera.getOroBase());
 
         EtapaDeCombate minijefe = (EtapaDeCombate) generador.crearEtapa(10, TRES_CLASES);
-        assertEquals(250, minijefe.getExperienciaBase()); // (25 + 100) x 2
+        assertEquals(250, minijefe.getExperienciaBase());
     }
 
     @Test
@@ -336,8 +319,6 @@ class MotorTest {
         }
         assertTrue(alguienEscalado, "en la etapa 18 los enemigos deberian tener mucha mas vida");
     }
-
-    // --------------------------------------------------------------- partida
 
     @Test
     void laPartidaArrancaEnLaEtapaUnoYEnCurso() {
@@ -372,8 +353,6 @@ class MotorTest {
         assertTrue(partida.fuePerdida());
         assertFalse(partida.estaEnCurso());
     }
-
-    // ------------------------------------------------------------ el Juego
 
     @Test
     void iniciarUnaRunArmaLaPartyYLaEtapaUno() throws Exception {
@@ -418,8 +397,6 @@ class MotorTest {
         assertEquals(EstadoPartida.PERDIDA, juego.getEstadoPartida());
         assertFalse(juego.hayPartidaGuardada(), "una run perdida no se retoma");
     }
-
-    // ----------------------------------------------------------- persistencia
 
     @Test
     void guardarYCargarDevuelveLaPartidaConTodoAdentro() throws Exception {
@@ -471,8 +448,6 @@ class MotorTest {
         assertFalse(repositorio.existePartidaGuardada());
     }
 
-    // --------------------------------------------------- una run de punta a punta
-
     @Test
     void sePuedeJugarUnaRunEnteraDeLaEtapaUnoALaVeinte() throws Exception {
         Path temporal = Files.createTempDirectory("rpg");
@@ -496,10 +471,7 @@ class MotorTest {
 
         assertEquals(20, etapasVistas.size(), "deberia recorrer las 20 etapas");
         assertEquals(EstadoPartida.GANADA, juego.getEstadoPartida());
-        // 2390 es todo el oro que paga la run. De eso, 1940 es lo GASTABLE:
-        // los 450 de la etapa 20 caen despues de la ultima tienda y no se
-        // pueden usar para nada. Por eso los precios del catalogo se
-        // calibraron contra 1940 y no contra 2390.
+
         assertEquals(2390, juego.getPartida().getParty().getOro(),
                 "la run entera deberia pagar 2390 de oro");
         assertEquals(13, juego.getPartida().getParty().getMiembros().get(0).getNivel(),

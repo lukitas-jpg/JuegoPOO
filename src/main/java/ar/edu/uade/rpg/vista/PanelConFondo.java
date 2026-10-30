@@ -9,18 +9,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-/**
- * Un panel que dibuja una imagen de fondo cubriendo todo, sin deformarla, y
- * opcionalmente la oscurece para que el texto de arriba se lea.
- */
 class PanelConFondo extends JPanel {
-
     private static final long serialVersionUID = 1L;
 
     private BufferedImage fondo;
     private final int oscuridad;
 
-    /** oscuridad: 0 la deja como esta, 255 la tapa entera de negro. */
     PanelConFondo(LayoutManager layout, String claveDeFondo, int oscuridad) {
         super(layout);
         this.fondo = CargadorDeImagenes.imagen(claveDeFondo);

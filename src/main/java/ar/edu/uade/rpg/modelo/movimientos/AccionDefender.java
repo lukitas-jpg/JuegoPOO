@@ -2,17 +2,7 @@ package ar.edu.uade.rpg.modelo.movimientos;
 
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
-/**
- * Defender: el turno completo se gasta en cubrirse. Hasta el proximo turno
- * propio recibe la mitad del daño directo y recupera un 10% de su mana maximo.
- *
- * No es un Movimiento y por eso no esta en la lista de los 4: no tiene costo,
- * ni nivel de desbloqueo, ni objetivo, ni cooldown. Es una accion y nada mas,
- * que es exactamente lo que pide la consigna cuando dice que en cada turno se
- * puede "atacar, defender, usar habilidad o usar un item".
- */
 public class AccionDefender implements Accion {
-
     private final Combatiente autor;
 
     public AccionDefender(Combatiente autor) {

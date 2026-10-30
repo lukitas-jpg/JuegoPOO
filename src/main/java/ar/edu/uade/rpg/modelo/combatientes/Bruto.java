@@ -8,12 +8,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 
-/**
- * Ataque fisico alto y defensa baja. Remata al que esta mas herido, asi que
- * castiga dejar a alguien en rojo "para curarlo despues".
- */
 public final class Bruto extends Enemigo implements ObjetivoMasDebil {
-
     public Bruto() {
         super("Bruto");
         vidaMaxima = 70; vidaActual = 70;

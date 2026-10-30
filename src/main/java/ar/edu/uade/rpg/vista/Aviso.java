@@ -8,9 +8,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 
-/** El cartelito de VentanaPrincipal.avisar(). */
 final class Aviso extends JComponent {
-
     private static final long serialVersionUID = 1L;
 
     private String texto = "";

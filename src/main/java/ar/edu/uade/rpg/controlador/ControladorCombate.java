@@ -17,24 +17,11 @@ import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.modelo.partida.Party;
 
-/**
- * Controlador MVC de la pantalla de batalla.
- *
- * El combate no es un while que espera clicks: Swing se congelaria. Cada vez
- * que algo cambia, el controlador le manda el estado a la vista y espera.
- * - Si le toca al jugador, la vista muestra los botones y vuelve con lo que eligio.
- * - Si le toca a un enemigo (o al jugador aturdido), la vista espera un poco y
- *   llama a avanzarTurnoAutomatico(). Asi los ataques enemigos se ven de a uno.
- *
- * La pausa la pone la vista con un javax.swing.Timer: es cuestion de como se
- * ve, y asi este controlador no depende de Swing.
- */
 public class ControladorCombate {
-
     private final Juego juego;
     private VistaDelJuego vista;
     private Combate combate;
-    /** Lo que se le ofrecio a la vista para elegir; los indices que vuelven se refieren a esto. */
+
     private List<Combatiente> objetivosOfrecidos = new ArrayList<>();
     private List<Consumible> consumiblesOfrecidos = new ArrayList<>();
 
@@ -51,13 +38,6 @@ public class ControladorCombate {
         vista.mostrarBatalla(armarEstado());
     }
 
-    // ------------------------------------------------------ turnos automaticos
-
-    /**
-     * El turno de un enemigo, o el de un personaje aturdido que lo pierde. Si
-     * llega tarde (la pelea ya termino o le toca elegir al jugador), no hace
-     * nada: asi la etapa nunca se cierra dos veces.
-     */
     public void avanzarTurnoAutomatico() {
         if (combate == null || combate.estaFinalizado()) {
             return;
@@ -77,22 +57,17 @@ public class ControladorCombate {
         despuesDeActuar();
     }
 
-    // --------------------------------------------------------- turno del jugador
-
-    /** Los objetivos posibles del movimiento numero indice del que tiene el turno. */
     public List<CombatienteDTO> getObjetivosDeMovimiento(int indiceMovimiento) {
         objetivosOfrecidos = combate.getObjetivosPosibles(movimientoDelTurno(indiceMovimiento));
         return convertir(objetivosOfrecidos);
     }
 
-    /** Un movimiento que apunta a uno solo: el indice viene de getObjetivosDeMovimiento. */
     public void usarMovimiento(int indiceMovimiento, int indiceObjetivo) {
         Movimiento movimiento = movimientoDelTurno(indiceMovimiento);
         combate.ejecutarMovimiento(movimiento, List.of(objetivosOfrecidos.get(indiceObjetivo)));
         despuesDeActuar();
     }
 
-    /** Un movimiento sin eleccion: a todos los enemigos, a toda la party o a uno mismo. */
     public void usarMovimiento(int indiceMovimiento) {
         Movimiento movimiento = movimientoDelTurno(indiceMovimiento);
         combate.ejecutarMovimiento(movimiento, combate.getObjetivosPosibles(movimiento));
@@ -104,7 +79,6 @@ public class ControladorCombate {
         despuesDeActuar();
     }
 
-    /** Sobre quien se puede usar ese consumible del inventario. */
     public List<CombatienteDTO> getObjetivosDeConsumible(int indiceEnElInventario) {
         Party party = juego.getPartida().getParty();
         consumiblesOfrecidos = ConversorDTO.distintosDelInventario(party.getInventario());
@@ -112,14 +86,11 @@ public class ControladorCombate {
         return convertir(objetivosOfrecidos);
     }
 
-    /** Los dos indices se refieren a lo ultimo que devolvio getObjetivosDeConsumible. */
     public void usarConsumible(int indiceEnElInventario, int indiceObjetivo) {
         combate.usarConsumible(consumiblesOfrecidos.get(indiceEnElInventario),
                 objetivosOfrecidos.get(indiceObjetivo));
         despuesDeActuar();
     }
-
-    // ------------------------------------------------------------------ cierre
 
     private void despuesDeActuar() {
         if (combate.hayGanador()) {
@@ -143,12 +114,6 @@ public class ControladorCombate {
                 ConversorDTO.miembros(juego.getPartida().getParty())));
     }
 
-    // ------------------------------------------------------------------ armado
-
-    /**
-     * El movimiento numero indice del que tiene el turno, contando los 4 aunque
-     * alguno no este disponible: asi el indice coincide con el boton.
-     */
     private Movimiento movimientoDelTurno(int indice) {
         return combate.getSiguienteEnActuar().getMovimientos().get(indice);
     }

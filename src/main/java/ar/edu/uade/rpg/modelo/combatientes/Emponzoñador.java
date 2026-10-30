@@ -10,16 +10,7 @@ import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeEstado;
 
-/**
- * Busca al que todavia no envenenó y lo envenena. Cuando ya estan los tres,
- * pasa a morder.
- *
- * Es el enemigo que mas castiga encadenar etapas sin pasar por la tienda,
- * porque el veneno es uno de los dos efectos que se arrastran de una etapa a la
- * siguiente. Contra el, el Antidoto deja de ser un objeto de lujo.
- */
 public final class Emponzoñador extends Enemigo implements ObjetivoSinEfecto {
-
     private static final String EFECTO_BUSCADO = "Veneno";
 
     public Emponzoñador() {
@@ -50,7 +41,6 @@ public final class Emponzoñador extends Enemigo implements ObjetivoSinEfecto {
         return EFECTO_BUSCADO;
     }
 
-    /** Si ya estan todos envenenados, muerde a cualquiera. */
     @Override
     public Combatiente elegirDeRespaldo(List<Combatiente> vivos) {
         return vivos.isEmpty() ? null : vivos.get(random.nextInt(vivos.size()));

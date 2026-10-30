@@ -9,16 +9,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 
-/**
- * Lo invoca el Nigromante. Debil, un solo movimiento, y atado a la vida de
- * quien lo trajo: si cae el Nigromante, el esqueleto se desarma.
- *
- * Esa comprobacion la hace el esqueleto en su propio turno mirando a su
- * invocador, no el Combate avisandole. Asi nadie tiene que acordarse de
- * recorrer la lista buscando huerfanos cuando muere un enemigo.
- */
 public final class Esqueleto extends Enemigo implements ObjetivoAleatorio {
-
     private final Nigromante invocador;
 
     public Esqueleto(Nigromante invocador, Random random) {
@@ -42,18 +33,11 @@ public final class Esqueleto extends Enemigo implements ObjetivoAleatorio {
                 List.of(elegirObjetivo(filtrarVivos(party))), calculador);
     }
 
-    /** Sin el nigromante no hay magia que lo sostenga: se cae solo. */
     public void alMorirElInvocador() {
         recibirDañoDirecto(getVidaActual());
     }
 
-    /**
-     * Los invocados no escalan con la etapa. Si escalaran, a partir de la etapa
-     * 15 el Nigromante entraria con cinco enemigos de pleno nivel y la pelea
-     * seria imposible.
-     */
     @Override
     public void escalarParaEtapa(int numeroEtapa) {
-        // a proposito, no hace nada
     }
 }

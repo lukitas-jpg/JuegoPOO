@@ -20,19 +20,7 @@ import ar.edu.uade.rpg.dto.EstadoCombateDTO;
 import ar.edu.uade.rpg.dto.ItemDTO;
 import ar.edu.uade.rpg.dto.MovimientoDTO;
 
-/**
- * Pantalla de batalla (minima de la consigna).
- *
- * Arriba la etapa y la ronda; en el medio la party a la izquierda y los
- * enemigos a la derecha, sobre el fondo de la zona; abajo las acciones y el
- * registro.
- *
- * No calcula nada: muestra el EstadoCombateDTO y le devuelve indices al
- * controlador. Cuando no le toca al jugador, espera PAUSA_MS y pide el turno
- * siguiente, asi cada ataque enemigo se ve por separado.
- */
 final class PantallaBatalla extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
     private static final int PAUSA_MS = 800;
     private static final int LINEAS_DEL_REGISTRO = 40;
@@ -103,8 +91,6 @@ final class PantallaBatalla extends PanelConFondo {
         return abajo;
     }
 
-    // ------------------------------------------------------------ actualizar
-
     void mostrar(EstadoCombateDTO nuevo) {
         this.estado = nuevo;
         cambiarFondo(Fondos.paraEtapa(nuevo.numeroEtapa()));
@@ -131,8 +117,6 @@ final class PantallaBatalla extends PanelConFondo {
             aliados.add(espacio());
         }
 
-        // Con muchos enemigos (el Nigromante llega con cinco esqueletos) las
-        // tarjetas se ponen en vertical, se achican y van en mas columnas.
         int cantidad = estado.enemigos().size();
         TarjetaCombatiente.Formato formato = cantidad <= 3 ? TarjetaCombatiente.Formato.COMPLETA
                 : cantidad == 4 ? TarjetaCombatiente.Formato.VERTICAL
@@ -143,7 +127,7 @@ final class PantallaBatalla extends PanelConFondo {
         for (CombatienteDTO enemigo : estado.enemigos()) {
             enemigos.add(new TarjetaCombatiente(enemigo, formato));
         }
-        // Relleno para que pocas tarjetas no se estiren a todo el alto.
+
         for (int i = cantidad; i < 3; i++) {
             enemigos.add(espacio());
         }
@@ -156,12 +140,6 @@ final class PantallaBatalla extends PanelConFondo {
         registro.setCaretPosition(registro.getDocument().getLength());
     }
 
-    // --------------------------------------------------------------- menues
-
-    /**
-     * Los 4 movimientos en dos filas a la izquierda (los que no se pueden usar,
-     * apagados) y, en la columna de la derecha, Defender arriba de Objeto.
-     */
     private void mostrarMenuPrincipal() {
         indicacion.setText("Turno de " + estado.nombreTurnoActual() + ": elegí una acción");
         limpiarBotones();
@@ -191,7 +169,6 @@ final class PantallaBatalla extends PanelConFondo {
         objeto.setEnabled(!estado.inventario().isEmpty());
         objeto.addActionListener(e -> mostrarInventario());
 
-        // La grilla es de 3 columnas: dos ataques y despues el boton de la derecha.
         List<Boton> derecha = List.of(defender, objeto);
         for (int fila = 0; fila < 2; fila++) {
             for (int columna = 0; columna < 2; columna++) {
@@ -257,7 +234,6 @@ final class PantallaBatalla extends PanelConFondo {
         refrescarBotones();
     }
 
-    /** Que hacer con el objetivo elegido: usar un movimiento o un objeto sobre el. */
     private interface AlElegir {
         void elegido(int indiceObjetivo);
     }

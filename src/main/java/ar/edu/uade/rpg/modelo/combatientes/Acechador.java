@@ -8,17 +8,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 
-/**
- * El mas rapido: casi siempre abre la ronda. Pega tres veces por turno con
- * poco daño cada golpe y REELIGE objetivo en cada uno, asi que reparte el daño
- * por toda la party en vez de concentrarlo.
- *
- * Los tres golpes se resuelven con un solo movimiento de alcance OBJETIVO_UNICO
- * al que se le pasan tres objetivos: Ataque.aplicar() recorre la lista y
- * resuelve un golpe por cada uno. No hace falta ninguna clase nueva.
- */
 public final class Acechador extends Enemigo implements ObjetivoAleatorio {
-
     private final int cantidadGolpes = 3;
 
     public Acechador() {

@@ -9,9 +9,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 
-/** Barra de vida, maná o experiencia con el número adentro: "Vida 85 / 120". */
 final class Barra extends JComponent {
-
     private static final long serialVersionUID = 1L;
 
     private final String nombre;

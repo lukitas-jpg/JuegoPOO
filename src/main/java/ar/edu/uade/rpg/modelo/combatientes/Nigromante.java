@@ -10,20 +10,7 @@ import ar.edu.uade.rpg.modelo.movimientos.AccionInvocar;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueMagico;
 
-/**
- * Poca vida pero llena el campo de esqueletos. Entra con cinco antes de la
- * primera ronda y vuelve a completar el tope cada 3 rondas.
- *
- * El punto interesante del diseño esta en COMO entran esos esqueletos. El
- * Nigromante no conoce al Combate: los devuelve, en alIniciarCombate() y dentro
- * de una AccionInvocar, y es Combate quien decide incorporarlos. Si fuera al
- * reves, cada enemigo necesitaria una referencia al combate que lo esta
- * jugando y tendriamos una dependencia circular entre los dos paquetes.
- *
- * Matarlo es la jugada correcta: cuando cae, sus esqueletos se desarman solos.
- */
 public final class Nigromante extends Enemigo implements ObjetivoAleatorio {
-
     private final int rondasEntreInvocaciones = 3;
     private final int maximoEsqueletosVivos = 5;
     private int rondasDesdeUltimaInvocacion;
@@ -40,7 +27,6 @@ public final class Nigromante extends Enemigo implements ObjetivoAleatorio {
                 0, AlcanceMovimiento.OBJETIVO_UNICO, 1, false, 9));
     }
 
-    /** Entra al combate con el tope de esqueletos ya puesto. */
     @Override
     public List<Combatiente> alIniciarCombate() {
         super.alIniciarCombate();
@@ -68,7 +54,6 @@ public final class Nigromante extends Enemigo implements ObjetivoAleatorio {
                 && contarEsqueletosVivos() < maximoEsqueletosVivos;
     }
 
-    /** Crea los que falten para llegar al tope y los devuelve. */
     private List<Esqueleto> invocarHastaElTope() {
         List<Esqueleto> nuevos = new ArrayList<>();
         int faltan = maximoEsqueletosVivos - contarEsqueletosVivos();

@@ -22,15 +22,7 @@ import ar.edu.uade.rpg.modelo.items.Arma;
 import ar.edu.uade.rpg.modelo.items.Rareza;
 import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
 
-/**
- * Pruebas de lo que ya esta codeado del modelo: estadisticas base, daño,
- * curacion, mana, defender, progresion de nivel y equipo.
- *
- * No prueban movimientos ni efectos concretos porque esas clases todavia no
- * estan escritas.
- */
 class PersonajeTest {
-
     @Test
     void elGuerreroArrancaConLasEstadisticasDelDocumentoDeDiseño() {
         Guerrero guerrero = new Guerrero("Lucas");
@@ -53,7 +45,6 @@ class PersonajeTest {
         assertEquals(30, tanque.recibirDaño(30, TipoDaño.FISICO));
         assertEquals(120, tanque.getVidaActual());
 
-        // El exceso no se descuenta: devuelve solo lo que entro de verdad.
         assertEquals(120, tanque.recibirDaño(500, TipoDaño.FISICO));
         assertEquals(0, tanque.getVidaActual());
         assertFalse(tanque.estaVivo());
@@ -78,9 +69,8 @@ class PersonajeTest {
 
         assertTrue(mago.estaDefendiendo());
         assertEquals(50, mago.getPorcentajeDeDañoRecibido());
-        assertEquals(38, mago.getManaActual()); // 30 + 10% de 80
+        assertEquals(38, mago.getManaActual());
 
-        // La guardia dura hasta el turno propio siguiente.
         mago.iniciarTurno();
         assertFalse(mago.estaDefendiendo());
         assertEquals(100, mago.getPorcentajeDeDañoRecibido());
@@ -109,7 +99,7 @@ class PersonajeTest {
         assertEquals(43, guerrero.getManaMaximo());
         assertEquals(21, guerrero.getAtaqueFisicoEfectivo());
         assertEquals(14, guerrero.getDefensaFisicaEfectiva());
-        // El nivel 2 pide 60 (30 x 2) y no sobro nada del anterior.
+
         assertEquals(60, guerrero.getExperienciaParaSubir());
         assertEquals(0, guerrero.getExperienciaActual());
     }
@@ -118,7 +108,6 @@ class PersonajeTest {
     void unaSolaTandaDeExperienciaPuedeSubirVariosNiveles() {
         Arquero arquero = new Arquero("Santiago");
 
-        // 30 para el nivel 2 + 60 para el 3 + 10 que quedan sueltos.
         assertEquals(2, arquero.ganarExperiencia(100));
 
         assertEquals(3, arquero.getNivel());
@@ -169,7 +158,6 @@ class PersonajeTest {
         assertNull(guerrero.equipar(espada));
         assertEquals(23, guerrero.getAtaqueFisicoEfectivo());
 
-        // Al cambiar de arma se descuenta la vieja antes de sumar la nueva.
         assertSame(espada, guerrero.equipar(hacha));
         assertEquals(27, guerrero.getAtaqueFisicoEfectivo());
         assertSame(hacha, guerrero.getArmaEquipada());

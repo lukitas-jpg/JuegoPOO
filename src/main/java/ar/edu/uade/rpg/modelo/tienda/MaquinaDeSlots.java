@@ -3,23 +3,7 @@ package ar.edu.uade.rpg.modelo.tienda;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Tres rodillos, seis simbolos, sorteo uniforme e independiente: 216
- * resultados posibles.
- *
- * Aparece solo en las etapas 9 y 19, antes de la tienda, y se abandona al
- * pasar. La primera tirada de cada maquina es gratis.
- *
- * La SUERTE de los personajes NO interviene. Es azar puro, y esa es una
- * decision de diseño: si la suerte influyera, el Asesino convertiria la maquina
- * en una fuente de oro y dejaria de ser una apuesta.
- *
- * Retorno: 205/216 = 94.9%. La casa se queda con el 5%, pero igual arruina la
- * mitad de las partidas de quien no sabe parar: no es la ventaja de la casa lo
- * que funde, es la varianza.
- */
 public class MaquinaDeSlots {
-
     public static final int APUESTA = 50;
     private static final int CANTIDAD_DE_RODILLOS = 3;
 
@@ -37,7 +21,6 @@ public class MaquinaDeSlots {
         this.abandonada = false;
     }
 
-    /** Cuanto cuesta la proxima tirada: 0 si todavia queda la gratis. */
     public int getCostoDeLaProximaTirada() {
         return quedaTiradaGratis ? 0 : APUESTA;
     }
@@ -46,11 +29,6 @@ public class MaquinaDeSlots {
         return !abandonada && oroDisponible >= getCostoDeLaProximaTirada();
     }
 
-    /**
-     * Sortea los tres rodillos. No descuenta ni acredita oro: devuelve cuanto
-     * pago y quien lleva la cuenta hace la resta. La maquina no conoce la
-     * partida.
-     */
     public ResultadoTirada tirar() {
         boolean gratis = quedaTiradaGratis;
         quedaTiradaGratis = false;
@@ -65,11 +43,6 @@ public class MaquinaDeSlots {
         return new ResultadoTirada(salieron, multiplicador, multiplicador * APUESTA, gratis);
     }
 
-    /**
-     * La tabla de premios entera, en un solo lugar y sin ninguna estructura de
-     * datos: tres iguales miran que simbolo es, y si no, se busca si hay
-     * exactamente dos.
-     */
     public static int calcularMultiplicador(List<Simbolo> salieron) {
         Simbolo a = salieron.get(0);
         Simbolo b = salieron.get(1);
@@ -100,7 +73,6 @@ public class MaquinaDeSlots {
         };
     }
 
-    /** El jugador decide pasar a la tienda. No puede volver. */
     public void abandonar() {
         abandonada = true;
     }

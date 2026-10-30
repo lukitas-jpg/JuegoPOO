@@ -33,12 +33,7 @@ import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
 import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
-/**
- * Lo que Juego le ofrece a la capa de control: pelear, comprar, apostar y usar
- * objetos entre etapas. Y una run de punta a punta con peleas de verdad.
- */
 class JuegoTest {
-
     private static final List<ClaseDePersonaje> TRES_CLASES =
             List.of(ClaseDePersonaje.GUERRERO, ClaseDePersonaje.MAGO, ClaseDePersonaje.CURADOR);
 
@@ -51,7 +46,6 @@ class JuegoTest {
         return juego;
     }
 
-    /** Avanza sin pelear (cerrando cada etapa como ganada) hasta llegar a esa. */
     private Juego juegoEnLaEtapa(int numero) throws Exception {
         Juego juego = juegoNuevo(1);
         while (juego.getPartida().getEtapaActual() < numero) {
@@ -68,8 +62,6 @@ class JuegoTest {
     private Party party(Juego juego) {
         return juego.getPartida().getParty();
     }
-
-    // ----------------------------------------------------------- consumibles
 
     @Test
     void comprarUnConsumibleCobraYLoGuardaEnElInventario() throws Exception {
@@ -105,8 +97,6 @@ class JuegoTest {
         assertFalse(juego.comprarConsumible(0));
         assertEquals(oroAntes, party(juego).getOro());
     }
-
-    // ------------------------------------------------------------ equipables
 
     @Test
     void comprarUnEquipableCobraLoEquipaYVaciaElSlot() throws Exception {
@@ -163,8 +153,6 @@ class JuegoTest {
         throw new AssertionError("la tienda solo ofrece equipo de la party");
     }
 
-    // --------------------------------------------------------------- maquina
-
     @Test
     void laPrimeraTiradaEsGratisYLaSegundaCuestaLaApuesta() throws Exception {
         Juego juego = juegoEnLaEtapa(9);
@@ -194,8 +182,6 @@ class JuegoTest {
     void laTiendaDeLaEtapa4NoTieneMaquina() throws Exception {
         assertNull(juegoEnLaEtapa(4).getMaquinaDeSlots());
     }
-
-    // ------------------------------------------------------------ inventario
 
     @Test
     void unaPocionFueraDeCombateCuraYSeGasta() throws Exception {
@@ -240,7 +226,6 @@ class JuegoTest {
         combate.usarConsumible(polvo, caido);
         assertTrue(caido.estaVivo());
 
-        // Todos se defienden, asi nadie cae y se ve si el revivido recupera su turno.
         boolean actuo = false;
         for (int i = 0; i < 30 && !actuo; i++) {
             actuo = combate.getSiguienteEnActuar() == caido;
@@ -253,14 +238,6 @@ class JuegoTest {
         assertTrue(actuo, "el revivido tiene que volver a tener turno");
     }
 
-    // ------------------------------------------------------ run con peleas reales
-
-    /**
-     * La partida entera de MotorTest cierra las etapas a mano. Esta pelea de
-     * verdad cada combate, con un jugador simple: usa el movimiento mas fuerte
-     * que tenga disponible y en las tiendas compra pociones. Lo que se prueba es
-     * que todo termine: ninguna pelea se cuelga y la run llega a un final.
-     */
     @Test
     void unaRunConPeleasDeVerdadSiempreTermina() throws Exception {
         for (long semilla = 1; semilla <= 5; semilla++) {
@@ -280,7 +257,6 @@ class JuegoTest {
                     juego.finalizarEtapaDeCombate(combate.calcularResultado());
                 } else {
                     while (juego.comprarConsumible(0)) {
-                        // pociones hasta que no alcance o se llegue al tope
                     }
                     juego.finalizarEtapaDeTienda();
                 }

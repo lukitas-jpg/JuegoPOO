@@ -9,15 +9,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 
-/**
- * Defensa altisima y daño casi nulo. De vez en cuando pasa su turno para
- * cubrir a sus companeros, que reciben un 30% menos mientras dure.
- *
- * Es el enemigo que obliga a decidir a quien matar primero: mientras el
- * Guardian viva, todo lo demas aguanta mas.
- */
 public final class Guardian extends Enemigo implements ObjetivoAleatorio {
-
     private static final int PROBABILIDAD_DE_CUBRIR = 35;
 
     private final int reduccionOtorgada = 30;
@@ -36,7 +28,7 @@ public final class Guardian extends Enemigo implements ObjetivoAleatorio {
                                CalculadorDeDaño calculador) {
         if (random.nextInt(100) < PROBABILIDAD_DE_CUBRIR) {
             protegerAliados(aliados);
-            return null;   // el turno se fue en cubrir
+            return null;
         }
         return usar(getMovimientos().get(0),
                 List.of(elegirObjetivo(filtrarVivos(party))), calculador);

@@ -21,20 +21,9 @@ import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.modelo.partida.Party;
 
-/**
- * Arma los DTOs a partir de objetos del modelo. Lo usan los tres
- * controladores, por eso esta aparte (GRASP Pure Fabrication): asi cada
- * controlador se ocupa del flujo y no de copiar campos.
- *
- * Tambien decide el nombre de la imagen de cada cosa. Es el unico lugar que
- * conoce la convencion de nombres de src/main/resources/imagenes/.
- */
 final class ConversorDTO {
-
     private ConversorDTO() {
     }
-
-    // ------------------------------------------------------------ combatientes
 
     static CombatienteDTO personaje(Personaje personaje, boolean tieneElTurno) {
         return new CombatienteDTO(
@@ -81,8 +70,6 @@ final class ConversorDTO {
         return lista;
     }
 
-    // -------------------------------------------------------------- movimientos
-
     static MovimientoDTO movimiento(Movimiento movimiento, Combatiente usuario, boolean disponible) {
         return new MovimientoDTO(
                 movimiento.getNombre(),
@@ -103,8 +90,6 @@ final class ConversorDTO {
         return "Sin maná";
     }
 
-    // ------------------------------------------------------------------ objetos
-
     static ItemDTO consumible(Consumible consumible, int cantidad, boolean disponible) {
         return new ItemDTO(consumible.getNombre(), consumible.getDescripcion(),
                 imagenDe(consumible), imagenDe(consumible), consumible.getPrecio(),
@@ -121,7 +106,6 @@ final class ConversorDTO {
                 nombreDeArchivo(equipable.getRareza().name()), 0, 1, disponible);
     }
 
-    /** Ej: "+12 ataque fisico, +4 velocidad". */
     static String bonificaciones(Equipable equipable) {
         List<String> partes = new ArrayList<>();
         for (Map.Entry<Estadistica, Integer> bonificacion : equipable.getBonificaciones().entrySet()) {
@@ -131,10 +115,6 @@ final class ConversorDTO {
         return String.join(", ", partes);
     }
 
-    /**
-     * Una entrada por objeto distinto, en el orden en que se compraron. La
-     * posicion en esta lista es el indice que la vista devuelve.
-     */
     static List<ItemDTO> inventario(Inventario inventario) {
         List<ItemDTO> lista = new ArrayList<>();
         for (Consumible consumible : distintosDelInventario(inventario)) {
@@ -143,7 +123,6 @@ final class ConversorDTO {
         return lista;
     }
 
-    /** Una unidad de cada objeto distinto: la que se usa si el jugador lo elige. */
     static List<Consumible> distintosDelInventario(Inventario inventario) {
         List<Consumible> distintos = new ArrayList<>();
         List<String> vistos = new ArrayList<>();
@@ -156,8 +135,6 @@ final class ConversorDTO {
         return distintos;
     }
 
-    // -------------------------------------------------------------------- party
-
     static PartyDTO party(Juego juego) {
         Party party = juego.getPartida().getParty();
         return new PartyDTO(
@@ -168,26 +145,15 @@ final class ConversorDTO {
                 inventario(party.getInventario()));
     }
 
-    // ---------------------------------------------------------------- imagenes
-
-    /** EfectoCuracion -> consumibles/curacion */
     private static String imagenDe(Consumible consumible) {
         String clase = consumible.getEfecto().getClass().getSimpleName().replaceFirst("^Efecto", "");
         return "consumibles/" + nombreDeArchivo(clase);
     }
 
-    /**
-     * Los archivos van en minuscula y sin ñ, por seguridad dentro de un .jar:
-     * SeñorDeLasSombras -> seniordelassombras.
-     */
     static String nombreDeArchivo(String nombre) {
         return nombre.toLowerCase().replace("ñ", "ni");
     }
 
-    /**
-     * El dibujo propio de un objeto: su nombre en minuscula, sin tildes y con
-     * guiones bajos. "Espada de Acero Templado" -> espada_de_acero_templado.
-     */
     static String archivoDeObjeto(String nombre) {
         String sinTildes = Normalizer.normalize(nombreDeArchivo(nombre), Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");

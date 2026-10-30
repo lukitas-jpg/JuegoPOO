@@ -18,15 +18,7 @@ import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Simbolo;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
-/**
- * Controlador MVC de las etapas de tienda: la maquina de slots (etapas 9 y 19)
- * y la tienda.
- *
- * Si la etapa tiene maquina, se muestra primero. El jugador tira las veces que
- * quiera y despues pasa a la tienda, sin vuelta atras.
- */
 public class ControladorTienda {
-
     private final Juego juego;
     private final ControladorJuego controladorJuego;
     private VistaDelJuego vista;
@@ -49,8 +41,6 @@ public class ControladorTienda {
         }
     }
 
-    // ------------------------------------------------------------------ maquina
-
     public void tirar() {
         if (!juego.getMaquinaDeSlots().puedeTirar(juego.getPartida().getParty().getOro())) {
             vista.avisar("No alcanza el oro para tirar.");
@@ -72,9 +62,6 @@ public class ControladorTienda {
         vista.mostrarTienda(armarTienda());
     }
 
-    // ------------------------------------------------------------------- tienda
-
-    /** El indice es la posicion en la lista de consumibles de la tienda. */
     public void comprarConsumible(int indice) {
         if (!juego.comprarConsumible(indice)) {
             vista.avisar("No alcanza el oro o ya tenés el máximo de ese objeto.");
@@ -82,7 +69,6 @@ public class ControladorTienda {
         vista.mostrarTienda(armarTienda());
     }
 
-    /** El equipable va al unico miembro de la party que puede usarlo. */
     public void comprarEquipable(int indiceSlot) {
         Personaje destinatario = destinatarioDe(juego.getTienda().getSlot(indiceSlot));
         if (destinatario == null || !juego.puedeComprarEquipable(indiceSlot, destinatario)) {
@@ -100,13 +86,10 @@ public class ControladorTienda {
         vista.mostrarTienda(armarTienda());
     }
 
-    /** Cierra la etapa (avanza y guarda) y muestra la party. */
     public void salir() {
         juego.finalizarEtapaDeTienda();
         controladorJuego.mostrarEstadoDeLaParty();
     }
-
-    // ------------------------------------------------------------------- armado
 
     private MaquinaDTO armarMaquina() {
         MaquinaDeSlots maquina = juego.getMaquinaDeSlots();
@@ -158,10 +141,6 @@ public class ControladorTienda {
         return "slots/" + ConversorDTO.nombreDeArchivo(simbolo.name());
     }
 
-    /**
-     * Cada equipable es de una sola clase y la party no repite clases: hay un
-     * solo miembro que lo puede usar. La tienda solo ofrece equipo de la party.
-     */
     private Personaje destinatarioDe(Equipable equipable) {
         for (Personaje miembro : juego.getPartida().getParty().getMiembros()) {
             if (equipable.puedeEquiparlo(miembro)) {

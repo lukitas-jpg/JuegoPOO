@@ -13,18 +13,12 @@
     <description>Trabajo practico de Paradigma Orientado a Objetos (UADE)</description>
 
     <properties>
-        <!-- Java 17 como minimo: compila igual con JDK 17, 21 o superior -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mainClass>ar.edu.uade.rpg.App</mainClass>
     </properties>
 
-    <!--
-        El juego no usa ninguna libreria externa: Swing viene con el JDK.
-        JUnit esta en scope test, asi que se usa solo para correr los tests
-        y NO se empaqueta dentro de target/rpg.jar.
-    -->
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -43,30 +37,16 @@
                 <version>3.13.0</version>
                 <configuration>
                     <compilerArgs>
-                        <!--
-                            -Xlint:all menos serial. Se desactiva solo ese porque
-                            pide un serialVersionUID en CADA subclase serializable
-                            (serian unas 40) y ademas se queja de que los campos
-                            sean List o Map, que son interfaces y no declaran
-                            Serializable aunque ArrayList y EnumMap si lo
-                            implementen. Ensuciar 40 clases para callar un aviso
-                            que no indica ningun problema real no vale la pena.
-                            El serialVersionUID si esta en las raices del grafo
-                            que se guarda: Combatiente, Movimiento, EfectoEstado,
-                            Item, Inventario, Party y Partida.
-                        -->
                         <arg>-Xlint:all,-serial</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
-                <!-- Corre los tests de src/test/java en cada mvn package -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
             </plugin>
             <plugin>
-                <!-- Genera target/rpg.jar ejecutable con: java -jar target/rpg.jar -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>

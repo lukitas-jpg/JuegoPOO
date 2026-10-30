@@ -2,12 +2,7 @@ package ar.edu.uade.rpg.modelo.items;
 
 import java.io.Serializable;
 
-/**
- * Cualquier cosa que se pueda comprar en la tienda. De aca bajan los
- * Consumible (se gastan al usarlos) y los Equipable (arma y armadura).
- */
 public abstract class Item implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     protected String nombre;

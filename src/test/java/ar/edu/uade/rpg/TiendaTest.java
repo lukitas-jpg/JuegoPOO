@@ -31,18 +31,9 @@ import ar.edu.uade.rpg.modelo.tienda.ResultadoTirada;
 import ar.edu.uade.rpg.modelo.tienda.Simbolo;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
-/**
- * Pruebas del catalogo, el inventario, la tienda y la maquina de slots.
- *
- * El retorno de la maquina no se estima con tiradas al azar: se calcula
- * recorriendo los 216 resultados posibles, asi que el numero es exacto.
- */
 class TiendaTest {
-
     private static final List<ClaseDePersonaje> PARTY =
             List.of(ClaseDePersonaje.GUERRERO, ClaseDePersonaje.MAGO, ClaseDePersonaje.CURADOR);
-
-    // ------------------------------------------------------------- catalogos
 
     @Test
     void hay36EquipablesSeisPorClase() {
@@ -78,16 +69,14 @@ class TiendaTest {
                 "dos pociones distintas no pueden ser el mismo objeto");
     }
 
-    // ------------------------------------------------------------ consumibles
-
     @Test
     void laPocionCuraUnPorcentajeDeLaVidaMaxima() {
-        Guerrero guerrero = new Guerrero("Lucas"); // 120 de vida
+        Guerrero guerrero = new Guerrero("Lucas");
         guerrero.recibirDaño(100, TipoDaño.FISICO);
 
         CatalogoDeConsumibles.pocionDeVida().usarSobre(guerrero);
 
-        assertEquals(86, guerrero.getVidaActual()); // 20 + 55% de 120
+        assertEquals(86, guerrero.getVidaActual());
     }
 
     @Test
@@ -111,7 +100,7 @@ class TiendaTest {
         CatalogoDeConsumibles.polvoDeRenacer().usarSobre(caido);
 
         assertTrue(caido.estaVivo());
-        assertEquals(60, caido.getVidaActual()); // 50% de 120
+        assertEquals(60, caido.getVidaActual());
     }
 
     @Test
@@ -130,24 +119,22 @@ class TiendaTest {
 
     @Test
     void laPiedraDeAfilarSubeElAtaqueMasAltoDeCadaUno() {
-        Guerrero guerrero = new Guerrero("Lucas"); // fisico 18, magico 4
-        Mago mago = new Mago("Giovanni");           // fisico 4, magico 20
+        Guerrero guerrero = new Guerrero("Lucas");
+        Mago mago = new Mago("Giovanni");
 
         CatalogoDeConsumibles.piedraDeAfilar().usarSobre(guerrero);
         CatalogoDeConsumibles.piedraDeAfilar().usarSobre(mago);
 
-        assertEquals(23, guerrero.getAtaqueFisicoEfectivo()); // 18 x 1.30
-        assertEquals(4, guerrero.getAtaqueMagicoEfectivo());  // sin tocar
-        assertEquals(26, mago.getAtaqueMagicoEfectivo());     // 20 x 1.30
-        assertEquals(4, mago.getAtaqueFisicoEfectivo());      // sin tocar
+        assertEquals(23, guerrero.getAtaqueFisicoEfectivo());
+        assertEquals(4, guerrero.getAtaqueMagicoEfectivo());
+        assertEquals(26, mago.getAtaqueMagicoEfectivo());
+        assertEquals(4, mago.getAtaqueFisicoEfectivo());
     }
-
-    // ------------------------------------------------------------ inventario
 
     @Test
     void elInventarioRespetaElTopeDeCadaObjeto() {
         Inventario inventario = new Inventario();
-        Consumible referencia = CatalogoDeConsumibles.polvoDeRenacer(); // tope 3
+        Consumible referencia = CatalogoDeConsumibles.polvoDeRenacer();
 
         assertTrue(inventario.agregar(CatalogoDeConsumibles.polvoDeRenacer()));
         assertTrue(inventario.agregar(CatalogoDeConsumibles.polvoDeRenacer()));
@@ -195,8 +182,6 @@ class TiendaTest {
 
         assertEquals(1, inventario.contar("Polvo de Renacer"), "no se deberia haber gastado");
     }
-
-    // ---------------------------------------------------------------- tienda
 
     @Test
     void laTiendaSoloOfreceObjetosDeLasClasesDeLaParty() {
@@ -296,7 +281,7 @@ class TiendaTest {
     @Test
     void conElOroDeLaPrimeraTiendaNoSePuedeRerollearDiezVeces() {
         Tienda tienda = new Tienda(1, PARTY, new GeneradorDeStock(new Random(1)));
-        int oro = 135;   // lo que junta la party en las etapas 1, 2 y 3
+        int oro = 135;
 
         int rerolls = 0;
         while (tienda.puedeRerollear(oro)) {
@@ -323,8 +308,6 @@ class TiendaTest {
             assertEquals(5, tienda.getConsumiblesALaVenta().size());
         }
     }
-
-    // ------------------------------------------------------ maquina de slots
 
     @Test
     void elRetornoDeLaMaquinaEs205De216() {

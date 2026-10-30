@@ -13,39 +13,21 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-/**
- * Carga las imagenes de src/main/resources/imagenes/ y las guarda en memoria
- * para no leer el mismo archivo dos veces.
- *
- * Si una imagen no existe devuelve un cuadrado de color con la inicial, en vez
- * de romper la pantalla. Asi el juego anda aunque falte algun dibujo.
- */
 final class CargadorDeImagenes {
-
     private static final Map<String, BufferedImage> CACHE = new HashMap<>();
 
     private CargadorDeImagenes() {
     }
 
-    /** Ej: imagen("enemigos/bruto") carga /imagenes/enemigos/bruto.png */
     static BufferedImage imagen(String clave) {
         return CACHE.computeIfAbsent(clave, CargadorDeImagenes::cargar);
     }
 
-    /**
-     * La imagen de clave si existe; si no, la de respaldo. La usan los
-     * equipables: cada uno puede tener su dibujo, y si falta se usa el
-     * generico de su rareza.
-     */
     static BufferedImage imagen(String clave, String respaldo) {
         boolean existe = CargadorDeImagenes.class.getResource("/imagenes/" + clave + ".png") != null;
         return imagen(existe ? clave : respaldo);
     }
 
-    /**
-     * La misma imagen agrandada o achicada, sin suavizar: el pixel art se ve
-     * con bordes nitidos en vez de borroso.
-     */
     static BufferedImage escalada(String clave, double factor) {
         BufferedImage original = imagen(clave);
         int ancho = Math.max(1, (int) Math.round(original.getWidth() * factor));
@@ -71,7 +53,6 @@ final class CargadorDeImagenes {
                 }
             }
         } catch (IOException e) {
-            // cae al reemplazo de abajo
         }
         return reemplazo(clave);
     }

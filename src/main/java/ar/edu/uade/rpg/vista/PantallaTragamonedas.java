@@ -22,18 +22,10 @@ import ar.edu.uade.rpg.controlador.ControladorTienda;
 import ar.edu.uade.rpg.dto.MaquinaDTO;
 import ar.edu.uade.rpg.dto.TiradaDTO;
 
-/**
- * La maquina de slots de las etapas 9 y 19. Aparece antes de la tienda.
- *
- * El resultado ya viene decidido por el modelo: la pantalla solo hace girar
- * los rodillos un rato con un Timer y los va frenando, de a uno, sobre los
- * simbolos que salieron.
- */
 final class PantallaTragamonedas extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
     private static final int CUADRO_MS = 70;
-    /** En que cuadro de la animacion frena cada rodillo. */
+
     private static final int[] FRENA_EN = {14, 22, 30};
 
     private final ControladorTienda controlador;
@@ -91,7 +83,6 @@ final class PantallaTragamonedas extends PanelConFondo {
         actualizarBotones(datos);
     }
 
-    /** El controlador ya tiro: aca solo se anima y se muestra lo que salio. */
     void animar(TiradaDTO tirada, MaquinaDTO despues) {
         this.tiradaEnCurso = tirada;
         this.despuesDeLaTirada = despues;
@@ -129,11 +120,9 @@ final class PantallaTragamonedas extends PanelConFondo {
         pasar.setEnabled(true);
     }
 
-    /** La imagen de la maquina con los tres simbolos encima, en las ventanas de los rodillos. */
     private static final class DibujoDeLaMaquina extends JComponent {
-
         private static final long serialVersionUID = 1L;
-        /** 1.5 deja cada pixel del dibujo en 3 pixeles de pantalla: sigue nitido. */
+
         private static final double ESCALA = 1.5;
         private static final int[] X_DE_LOS_RODILLOS = {56, 152, 248};
         private static final int Y_DE_LOS_RODILLOS = 118;

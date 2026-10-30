@@ -9,9 +9,7 @@ import javax.swing.JPanel;
 
 import ar.edu.uade.rpg.controlador.ControladorJuego;
 
-/** Pantalla inicial (minima de la consigna): nueva partida o seguir la guardada. */
 final class PantallaInicio extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
 
     private final Boton cargar = new Boton("Continuar partida");

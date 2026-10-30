@@ -410,7 +410,6 @@ note right of RepositorioPartidas
   otra implementación de esta interfaz.
 end note
 
-
 note as N_MOTOR
   Lo que se GUARDA es solo la Partida. De ahi cuelgan la
   Party, los tres personajes con su nivel, su equipo y

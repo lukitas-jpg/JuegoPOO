@@ -22,20 +22,7 @@ import ar.edu.uade.rpg.modelo.tienda.GeneradorDeStock;
 import ar.edu.uade.rpg.modelo.tienda.MaquinaDeSlots;
 import ar.edu.uade.rpg.modelo.tienda.Tienda;
 
-/**
- * Arma la etapa numero N. Es una Pure Fabrication: concentra todo el azar de la
- * progresion en un solo lugar.
- *
- * Las etapas 4, 9, 14 y 19 son de tienda; la 10 es el minijefe y la 20 el jefe
- * final. La maquina de slots solo esta en la 9 y en la 19.
- *
- * Los enemigos se eligen al azar de un pool que se va abriendo, y sus
- * estadisticas se escalan segun lo lejos que este la etapa. El Esqueleto deja de
- * aparecer suelto desde la 11 porque a esa altura es un estorbo sin amenaza:
- * desde ahi solo lo trae el Nigromante.
- */
 public class GeneradorDeEtapas {
-
     private static final int[] ETAPAS_DE_TIENDA = {4, 9, 14, 19};
     private static final int[] ETAPAS_CON_MAQUINA = {9, 19};
     private static final int ETAPA_DEL_MINIJEFE = 10;
@@ -58,8 +45,6 @@ public class GeneradorDeEtapas {
                 ? crearEtapaDeTienda(numero, clasesDeLaParty)
                 : crearEtapaDeCombate(numero);
     }
-
-    // ------------------------------------------------------------ que etapa
 
     public static boolean esEtapaDeTienda(int numero) {
         for (int etapa : ETAPAS_DE_TIENDA) {
@@ -89,7 +74,6 @@ public class GeneradorDeEtapas {
         return TipoEtapa.NORMAL;
     }
 
-    /** Que numero de tienda es: la de la etapa 4 es la 1, la de la 19 es la 4. */
     public static int getNumeroDeTienda(int numeroDeEtapa) {
         for (int i = 0; i < ETAPAS_DE_TIENDA.length; i++) {
             if (ETAPAS_DE_TIENDA[i] == numeroDeEtapa) {
@@ -98,8 +82,6 @@ public class GeneradorDeEtapas {
         }
         throw new IllegalArgumentException("La etapa " + numeroDeEtapa + " no es de tienda");
     }
-
-    // ------------------------------------------------------------ construir
 
     private EtapaDeTienda crearEtapaDeTienda(int numero, List<ClaseDePersonaje> clases) {
         Tienda tienda = new Tienda(getNumeroDeTienda(numero), clases, generadorDeStock);
@@ -134,17 +116,6 @@ public class GeneradorDeEtapas {
         return enemigos;
     }
 
-    /**
-     * El pool se va abriendo: cada tramo suma enemigos nuevos.
-     *
-     * El Esqueleto solo aparece suelto en las tres primeras etapas. Desde la 11
-     * es un estorbo sin amenaza y deja de salir solo; a partir de ahi lo trae
-     * unicamente el Nigromante.
-     *
-     * El Nigromante entra recien en la 15 porque llega con cinco esqueletos y
-     * multiplica los enemigos en pantalla: antes de que la party tenga sus
-     * definitivas, es injusto.
-     */
     private List<Supplier<Enemigo>> getPool(int numero) {
         List<Supplier<Enemigo>> pool = new ArrayList<>();
         if (numero <= 3) {

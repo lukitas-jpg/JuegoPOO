@@ -2,17 +2,7 @@ package ar.edu.uade.rpg.modelo.items;
 
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
-/**
- * Levanta a un caido con un porcentaje de su vida. Es la unica forma de
- * deshacer una muerte, y por eso el objeto que lo lleva es el mas caro del
- * catalogo.
- *
- * Es el espejo exacto de EfectoCuracion: aquel solo funciona sobre alguien
- * vivo y este solo sobre alguien muerto. Las dos reglas viven en
- * puedeAplicarseA() y en ningun lado mas.
- */
 public class EfectoRevivir implements EfectoConsumible {
-
     private final int porcentajeDeVida;
 
     public EfectoRevivir(int porcentajeDeVida) {

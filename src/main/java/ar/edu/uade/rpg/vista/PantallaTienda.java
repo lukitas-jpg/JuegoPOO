@@ -17,15 +17,7 @@ import ar.edu.uade.rpg.dto.EquipableEnVentaDTO;
 import ar.edu.uade.rpg.dto.ItemDTO;
 import ar.edu.uade.rpg.dto.TiendaDTO;
 
-/**
- * La tienda: a la izquierda los 5 consumibles de siempre, a la derecha los 3
- * slots de equipo y el reroll.
- *
- * Cada equipo dice para quien es y, si ese personaje ya tiene algo puesto en
- * ese lugar, avisa que se va a descartar.
- */
 final class PantallaTienda extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
 
     private final ControladorTienda controlador;
@@ -121,7 +113,7 @@ final class PantallaTienda extends PanelConFondo {
             return tarjeta;
         }
         ItemDTO item = slot.item();
-        // Su dibujo propio si existe, si no el generico de su rareza; siempre a 68x68.
+
         tarjeta.add(new JLabel(new ImageIcon(CargadorDeImagenes.redimensionar(
                 CargadorDeImagenes.imagen(item.imagen(), item.imagenDeRespaldo()), 68, 68))), BorderLayout.WEST);
 
@@ -160,9 +152,7 @@ final class PantallaTienda extends PanelConFondo {
         return panel;
     }
 
-    /** Fondo oscuro con borde, para cada fila de la tienda. */
     private static final class Recuadro extends JPanel {
-
         private static final long serialVersionUID = 1L;
 
         Recuadro(BorderLayout layout) {

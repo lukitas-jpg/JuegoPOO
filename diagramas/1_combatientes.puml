@@ -6,7 +6,6 @@ skinparam nodesep 24
 skinparam ranksep 48
 hide empty members
 
-' ================= RAIZ =================
 abstract class Combatiente {
   # nombre : String
   # vidaMaxima : int
@@ -75,7 +74,6 @@ class EfectoEstado <<(A,#d4a0a0) abstracta>>
 class Arma
 class Armadura
 
-' ================= RAMA JUGABLE =================
 abstract class Personaje {
   + {static} EXPERIENCIA_BASE_POR_NIVEL : int = 30
   + {static} NIVEL_MAXIMO : int = 20
@@ -111,7 +109,6 @@ hide Curador members
 hide Asesino members
 hide Tanque members
 
-' ================= RAMA ENEMIGA =================
 abstract class Enemigo {
   + {static} CRECIMIENTO_AGUANTE : int = 14
   + {static} CRECIMIENTO_ATAQUE : int = 10
@@ -191,7 +188,6 @@ class SeñorDeLasSombras {
   - cambiarDeFase() : void
 }
 
-' ================= INTERFACES DE APUNTADO =================
 interface ObjetivoMasDebil {
   + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
 }
@@ -208,7 +204,6 @@ interface ObjetivoSinEfecto {
   + elegirObjetivo(candidatos : List<Combatiente>) : Combatiente
 }
 
-' ================= HERENCIA =================
 Combatiente <|-- Personaje
 Combatiente <|-- Enemigo
 
@@ -231,7 +226,6 @@ Enemigo <|-- Esqueleto
 Enemigo <|-- Emponzoñador
 Enemigo <|-- SeñorDeLasSombras
 
-' ================= REALIZACION =================
 Bruto              ..|> ObjetivoMasDebil
 Acolito            ..|> ObjetivoMasDebil
 SeñorDeLasSombras  ..|> ObjetivoMasDebil
@@ -244,7 +238,6 @@ Nigromante         ..|> ObjetivoAleatorio
 Esqueleto          ..|> ObjetivoAleatorio
 Emponzoñador       ..|> ObjetivoSinEfecto
 
-' ================= COMPOSICION Y ASOCIACION =================
 Combatiente "1" *--> "1..*" Movimiento : movimientos
 Combatiente "1" *--> "0..*" EfectoEstado : efectosActivos
 Combatiente ..> TipoDaño : usa
@@ -253,7 +246,6 @@ Personaje "1" --> "0..1" Arma : arma
 Personaje "1" --> "0..1" Armadura : armadura
 Nigromante "1" o-- "0..5" Esqueleto : invoca
 
-' ================= DISPOSICION =================
 Movimiento   -[hidden]right- EfectoEstado
 EfectoEstado -[hidden]right- Arma
 Arma         -[hidden]right- Armadura
@@ -267,7 +259,6 @@ Curador  -[hidden]right- Asesino
 Asesino  -[hidden]right- Tanque
 Guerrero -[hidden]down- Curador
 
-' enemigos en tres filas de cuatro, para que el diagrama no se corte
 Bruto     -[hidden]right- Acolito
 Acolito   -[hidden]right- Berserker
 Berserker -[hidden]right- Verdugo
@@ -383,7 +374,6 @@ note bottom of ObjetivoAleatorio
   El SeñorDeLasSombras implementa dos y desambigua
   según su fase.
 end note
-
 
 note as N_ESCALADO
   El escalado por etapa tiene DOS ritmos: la vida, el

@@ -22,20 +22,10 @@ import javax.swing.SwingConstants;
 import ar.edu.uade.rpg.dto.CombatienteDTO;
 import ar.edu.uade.rpg.dto.EfectoDTO;
 
-/**
- * Un personaje o un enemigo: su dibujo, sus barras y sus efectos. La usan la
- * batalla, el estado de la party, el resultado y la tienda.
- *
- * Los dibujos van a su tamaño real (todos tienen la misma escala de pixel), asi
- * el jefe se ve mas grande que un esqueleto. Cuando hay muchos enemigos las
- * tarjetas se ponen en vertical y, si hace falta, el dibujo va a la mitad.
- */
 final class TarjetaCombatiente extends JPanel {
-
     private static final long serialVersionUID = 1L;
     private static final int TAMAÑO_ICONO = 34;
 
-    /** COMPLETA: dibujo a la izquierda y todas las barras. VERTICAL y CHICA: dibujo arriba y solo la vida. */
     enum Formato { COMPLETA, VERTICAL, CHICA }
 
     private final boolean tieneElTurno;
@@ -72,7 +62,6 @@ final class TarjetaCombatiente extends JPanel {
         }
         datos.add(efectos(combatiente, compacta));
 
-        // Envuelto para que las barras tengan su alto natural y no se estiren.
         JPanel centrado = new JPanel(new GridBagLayout());
         centrado.setOpaque(false);
         GridBagConstraints relleno = new GridBagConstraints();
@@ -145,7 +134,6 @@ final class TarjetaCombatiente extends JPanel {
         return espacio;
     }
 
-    /** Fondo oscuro semitransparente; borde dorado si es su turno. */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();

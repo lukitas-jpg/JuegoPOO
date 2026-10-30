@@ -16,20 +16,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
 import ar.edu.uade.rpg.modelo.partida.Party;
 
-/**
- * El motor de una pelea. Coordina: no calcula daño (eso es CalculadorDeDaño),
- * no ordena turnos (eso es GestorDeTurnos) y no decide que hace cada enemigo
- * (eso es Enemigo.elegirAccion). Junta las piezas y lleva el registro.
- *
- * No pregunta nunca de que tipo es nadie para decidir que hacer: le pide una
- * Accion a quien tenga el turno y la ejecuta. El jugador arma la suya desde la
- * pantalla y el enemigo la arma solo; Combate no los distingue.
- *
- * Vive en el MODELO: no tiene un solo metodo que muestre, pinte o reciba
- * clicks.
- */
 public class Combate {
-
     private final Party party;
     private final List<Enemigo> enemigos = new ArrayList<>();
     private final GestorDeTurnos gestor;
@@ -38,9 +25,9 @@ public class Combate {
     private final int experienciaDeLaEtapa;
     private final int oroDeLaEtapa;
     private boolean finalizado;
-    /** Si al que tiene el turno ya se le aviso que arranca (iniciarTurno). */
+
     private boolean turnoPreparado;
-    /** Quien tiene el turno ahora. Se guarda porque puede caer en su propia accion. */
+
     private Combatiente actorDelTurno;
 
     public Combate(Party party, List<Enemigo> enemigos,
@@ -63,21 +50,12 @@ public class Combate {
         this.gestor = new GestorDeTurnos(todos, random);
     }
 
-    /**
-     * Prepara la pelea y arranca la primera ronda. Aca es donde el Nigromante
-     * mete sus cinco esqueletos antes de que nadie actue.
-     */
     public void iniciar() {
         notificarInicioDeCombate();
         gestor.iniciarNuevaRonda();
         registro.add("Comienza el combate.");
     }
 
-    /**
-     * Le avisa a cada uno que empieza el combate. Los que devuelven invocados
-     * los suman al campo. Nadie llama a Combate desde afuera: la informacion
-     * sube y la decision la toma el combate.
-     */
     private void notificarInicioDeCombate() {
         List<Combatiente> presentes = new ArrayList<>(gestor.getParticipantes());
         for (Combatiente presente : presentes) {
@@ -88,14 +66,6 @@ public class Combate {
         }
     }
 
-    // ---------------------------------------------------------------- turnos
-
-    /**
-     * Quien tiene el turno. La primera vez que se pregunta por un turno nuevo
-     * se le avisa que arranca (iniciarTurno: baja la guardia y los cooldowns).
-     * Se hace una sola vez por turno aunque se pregunte muchas veces, y vale
-     * tambien para el primero de cada ronda. Devuelve null si la pelea termino.
-     */
     public Combatiente getSiguienteEnActuar() {
         if (hayGanador()) {
             return null;
@@ -113,13 +83,11 @@ public class Combate {
         return siguiente;
     }
 
-    /** False si el que tiene el turno esta aturdido: ese turno se pierde. */
     public boolean puedeActuarElSiguiente() {
         Combatiente siguiente = getSiguienteEnActuar();
         return siguiente != null && siguiente.puedeActuar();
     }
 
-    /** El que tiene el turno no puede actuar. Vale igual para personajes y enemigos. */
     public void perderTurno() {
         registro.add(getSiguienteEnActuar().getNombre() + " esta aturdido y pierde el turno.");
         avanzarTurno();
@@ -130,7 +98,6 @@ public class Combate {
         return getSiguienteEnActuar() instanceof Personaje;
     }
 
-    /** Los movimientos que la pantalla tiene que mostrar habilitados. */
     public List<Movimiento> getMovimientosDelTurno() {
         Combatiente actor = getSiguienteEnActuar();
         List<Movimiento> disponibles = new ArrayList<>();
@@ -159,40 +126,27 @@ public class Combate {
         return movimiento.getObjetivosPosibles(aliados, contrarios);
     }
 
-    // -------------------------------------------------------------- acciones
-
-    /**
-     * Creator: el combate arma la Accion porque es quien tiene los datos (quien
-     * actua, que movimiento y sobre que objetivos).
-     */
     public ResultadoAccion ejecutarMovimiento(Movimiento movimiento, List<Combatiente> objetivos) {
         Combatiente actor = getSiguienteEnActuar();
         return ejecutarAccion(new AccionUsarMovimiento(actor, movimiento, objetivos, calculador));
     }
 
-    /** El que tiene el turno se pone en guardia. */
     public ResultadoAccion defender() {
         return ejecutarAccion(new AccionDefender(getSiguienteEnActuar()));
     }
 
-    /**
-     * El que tiene el turno usa un consumible del inventario de la party sobre
-     * un aliado. Gasta el turno igual que atacar.
-     */
     public ResultadoAccion usarConsumible(Consumible consumible, Combatiente objetivo) {
         Combatiente actor = getSiguienteEnActuar();
         boolean estabaCaido = !objetivo.estaVivo();
         ResultadoAccion resultado = ejecutarAccion(
                 new AccionUsarConsumible(actor, consumible, objetivo, party.getInventario()));
         if (estabaCaido && objetivo.estaVivo()) {
-            // Un revivido vuelve a la pelea: actua desde la ronda siguiente.
             agregarCombatiente(objetivo);
             registro.add(objetivo.getNombre() + " vuelve al combate.");
         }
         return resultado;
     }
 
-    /** Sobre quien se puede usar: el Polvo de Renacer solo sobre caidos, el resto sobre vivos. */
     public List<Combatiente> getObjetivosDeConsumible(Consumible consumible) {
         List<Combatiente> objetivos = new ArrayList<>();
         for (Personaje miembro : party.getMiembros()) {
@@ -203,11 +157,6 @@ public class Combate {
         return objetivos;
     }
 
-    /**
-     * El unico camino por el que pasa todo lo que se hace en un turno. Primero
-     * se asegura de que el turno este abierto, asi el cierre (avanzarTurno) se
-     * le aplica a quien corresponde aunque la Accion se haya armado afuera.
-     */
     public ResultadoAccion ejecutarAccion(Accion accion) {
         getSiguienteEnActuar();
         ResultadoAccion resultado = accion.ejecutar();
@@ -219,7 +168,6 @@ public class Combate {
         return resultado;
     }
 
-    /** El turno de un enemigo: el se decide solo. */
     public ResultadoAccion ejecutarTurnoDeEnemigo() {
         Combatiente actor = getSiguienteEnActuar();
         if (!(actor instanceof Enemigo enemigo)) {
@@ -232,7 +180,6 @@ public class Combate {
         Accion accion = enemigo.elegirAccion(
                 new ArrayList<>(party.getMiembrosVivos()), getAliadosVivosDe(enemigo), calculador);
         if (accion == null) {
-            // Cubrir aliados o desarmarse tambien gasta el turno.
             registro.add(enemigo.getNombre() + " no ataca este turno.");
             avanzarTurno();
             retirarCaidos();
@@ -241,12 +188,6 @@ public class Combate {
         return ejecutarAccion(accion);
     }
 
-    /**
-     * Cierra el turno del que actuaba y pasa al siguiente. El cierre procesa
-     * sus efectos: el veneno pega y el aturdimiento se descuenta recien cuando
-     * ya hizo perder el turno. Se consume el turno ANTES de retirar a los
-     * caidos, asi el indice de la ronda no se corre (ver GestorDeTurnos.retirar).
-     */
     private void avanzarTurno() {
         if (actorDelTurno != null) {
             actorDelTurno.procesarEfectosDeTurno();
@@ -277,16 +218,10 @@ public class Combate {
         }
     }
 
-    // ------------------------------------------------------------- resultado
-
     public boolean hayGanador() {
         return party.estaDerrotada() || getEnemigosVivos().isEmpty();
     }
 
-    /**
-     * La recompensa la define la ETAPA, no los enemigos. Si viniera por
-     * enemigo, el Nigromante seria una fuente infinita de experiencia y oro.
-     */
     public ResultadoCombate calcularResultado() {
         finalizado = true;
         boolean victoria = !party.estaDerrotada();
@@ -297,7 +232,6 @@ public class Combate {
                 registro);
     }
 
-    /** Los companeros vivos de un enemigo: los necesita el Guardian y el Acolito. */
     private List<Enemigo> getAliadosVivosDe(Enemigo enemigo) {
         List<Enemigo> aliados = new ArrayList<>();
         for (Enemigo otro : enemigos) {

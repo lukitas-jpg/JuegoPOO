@@ -25,18 +25,7 @@ import ar.edu.uade.rpg.modelo.movimientos.AccionDefender;
 import ar.edu.uade.rpg.modelo.movimientos.Movimiento;
 import ar.edu.uade.rpg.modelo.partida.Party;
 
-/**
- * El ciclo de un turno dentro de Combate: cuando arranca, cuando cierra y que
- * pasa con los efectos y cooldowns en el medio.
- *
- * Estos tests existen por tres errores que tenia el motor y que ningun test
- * agarraba, porque la partida de punta a punta de MotorTest no juega peleas:
- * el primero de cada ronda nunca procesaba sus efectos, un aturdimiento de 1
- * turno no hacia nada y si caia alguien que ya habia actuado, el siguiente
- * perdia el turno.
- */
 class TurnosTest {
-
     private Combate combateContraUnBruto() {
         Party party = new Party(List.of(new Guerrero("Lucas"), new Mago("Giovanni")));
         List<Enemigo> enemigos = new ArrayList<>(List.of(new Bruto()));
@@ -45,7 +34,6 @@ class TurnosTest {
         return combate;
     }
 
-    /** Todos se defienden: nadie se lastima y los turnos pasan solos. */
     private void jugarHastaElTurnoDe(Combate combate, Combatiente buscado) {
         for (int i = 0; i < 20; i++) {
             Combatiente actual = combate.getSiguienteEnActuar();
@@ -124,8 +112,6 @@ class TurnosTest {
         Combatiente primero = combate.getSiguienteEnActuar();
         cerrarElTurnoActual(combate);
 
-        // El primero ya actuo. Se lo envenena y, SIN pedir el turno siguiente,
-        // se ejecuta una accion armada afuera: el cierre no le toca a el.
         primero.aplicarEfecto(new Veneno(6, 3));
         int vidaAntes = primero.getVidaActual();
         combate.ejecutarAccion(new AccionDefender(primero));
@@ -145,7 +131,6 @@ class TurnosTest {
         gestor.consumirTurno();
         assertSame(orden.get(1), gestor.getSiguienteEnActuar());
 
-        // Cae el que ya actuo y se lo saca de la ronda.
         orden.get(0).recibirDaño(10_000, TipoDaño.FISICO);
         gestor.retirar(orden.get(0));
 

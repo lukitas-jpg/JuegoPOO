@@ -19,15 +19,7 @@ import ar.edu.uade.rpg.dto.ResultadoDTO;
 import ar.edu.uade.rpg.dto.TiendaDTO;
 import ar.edu.uade.rpg.dto.TiradaDTO;
 
-/**
- * La unica ventana del juego. Cada pantalla es una "carta" de un CardLayout y
- * se muestra una por vez.
- *
- * Implementa VistaDelJuego: es lo unico que los controladores conocen de la
- * vista. No importa nada del modelo.
- */
 public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
-
     private static final long serialVersionUID = 1L;
     private static final int DURACION_DEL_AVISO_MS = 2600;
 
@@ -120,7 +112,6 @@ public final class VentanaPrincipal extends JFrame implements VistaDelJuego {
         tragamonedas.animar(tirada, maquina);
     }
 
-    /** Un cartel abajo al centro que se va solo, sin ventanas que haya que cerrar. */
     @Override
     public void avisar(String mensaje) {
         aviso.setTexto(mensaje);

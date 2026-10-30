@@ -2,13 +2,7 @@ package ar.edu.uade.rpg.modelo.efectos;
 
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 
-/**
- * Cura una cantidad fija al final de cada turno del afectado. Es el
- * espejo del Veneno. Ningun movimiento de las seis clases lo aplica: queda
- * para los consumibles de la tienda.
- */
 public class Regeneracion extends EfectoEstado {
-
     private final int curacionPorTurno;
 
     public Regeneracion(int curacionPorTurno, int duracionEnTurnos) {
@@ -18,7 +12,6 @@ public class Regeneracion extends EfectoEstado {
 
     @Override
     public void alAplicarse(Combatiente objetivo) {
-        // Cura recien en el turno siguiente.
     }
 
     @Override
@@ -28,7 +21,6 @@ public class Regeneracion extends EfectoEstado {
 
     @Override
     public void alExpirar(Combatiente objetivo) {
-        // Se va sin dejar rastro.
     }
 
     @Override

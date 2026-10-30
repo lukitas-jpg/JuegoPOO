@@ -36,24 +36,17 @@ import ar.edu.uade.rpg.modelo.efectos.Veneno;
 import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.ResultadoAccion;
 
-/**
- * Pruebas de los 11 enemigos, de las cuatro interfaces de apuntado y del
- * escalado por etapa.
- */
 class EnemigosTest {
-
     private final CalculadorDeDaño calculador = new CalculadorDeDaño(new Random(77));
 
     private List<Combatiente> party() {
         return new ArrayList<>(List.of(new Guerrero("G"), new Mago("M"), new Tanque("T")));
     }
 
-    // -------------------------------------------------- interfaces de apuntado
-
     @Test
     void elBrutoApuntaAlMasHerido() {
         List<Combatiente> party = party();
-        party.get(1).recibirDaño(50, TipoDaño.MAGICO); // el Mago queda en 30
+        party.get(1).recibirDaño(50, TipoDaño.MAGICO);
 
         Accion accion = new Bruto().elegirAccion(party, List.of(), calculador);
         ResultadoAccion resultado = accion.ejecutar();
@@ -63,12 +56,12 @@ class EnemigosTest {
 
     @Test
     void elBerserkerApuntaAlQueMasPega() {
-        List<Combatiente> party = party(); // Guerrero 18+4, Mago 4+20, Tanque 12+3
+        List<Combatiente> party = party();
 
         ResultadoAccion resultado = new Berserker()
                 .elegirAccion(party, List.of(), calculador).ejecutar();
 
-        assertSame(party.get(1), resultado.getObjetivosAfectados().get(0)); // el Mago suma 24
+        assertSame(party.get(1), resultado.getObjetivosAfectados().get(0));
     }
 
     @Test
@@ -119,7 +112,6 @@ class EnemigosTest {
         Hechicero hechicero = new Hechicero();
         List<Combatiente> party = party();
 
-        // 60 de mana a 12 por Onda Oscura: cinco usos y se seca.
         for (int uso = 0; uso < 5; uso++) {
             hechicero.elegirAccion(party, List.of(), calculador).ejecutar();
         }
@@ -128,8 +120,6 @@ class EnemigosTest {
         ResultadoAccion resultado = hechicero.elegirAccion(party, List.of(), calculador).ejecutar();
         assertEquals(1, resultado.getObjetivosAfectados().size());
     }
-
-    // ------------------------------------------------------ conductas propias
 
     @Test
     void elAcechadorPegaTresVecesEnUnTurno() {
@@ -160,7 +150,6 @@ class EnemigosTest {
         Proteccion proteccion = new Proteccion(30, 1);
         protegido.aplicarEfecto(proteccion);
 
-        // 100 de daño con 30% de reduccion deberian entrar 70.
         assertEquals(70, protegido.recibirDaño(100, TipoDaño.FISICO));
     }
 
@@ -187,7 +176,7 @@ class EnemigosTest {
     @Test
     void elAcolitoCuraAlCompaneroMasHerido() {
         Bruto herido = new Bruto();
-        herido.recibirDañoDirecto(50); // queda en 20 de 70
+        herido.recibirDañoDirecto(50);
         Bruto sano = new Bruto();
         Acolito acolito = new Acolito();
 
@@ -209,8 +198,6 @@ class EnemigosTest {
         assertTrue(resultado.getDañoTotal() > 0);
     }
 
-    // ------------------------------------------------------------- nigromante
-
     @Test
     void elNigromanteEntraAlCombateConCincoEsqueletos() {
         Nigromante nigromante = new Nigromante();
@@ -225,12 +212,11 @@ class EnemigosTest {
     void elNigromanteReponeLosEsqueletosCadaTresRondas() {
         Nigromante nigromante = new Nigromante();
         List<Combatiente> primeros = nigromante.alIniciarCombate();
-        primeros.get(0).recibirDañoDirecto(100); // matamos uno
+        primeros.get(0).recibirDañoDirecto(100);
 
-        // Dos rondas no alcanzan.
         nigromante.elegirAccion(party(), List.of(), calculador);
         nigromante.elegirAccion(party(), List.of(), calculador);
-        // La tercera si.
+
         Accion tercera = nigromante.elegirAccion(party(), List.of(), calculador);
 
         ResultadoAccion resultado = tercera.ejecutar();
@@ -252,18 +238,14 @@ class EnemigosTest {
         assertFalse(esqueleto.estaVivo());
     }
 
-    // ---------------------------------------------------------------- jefes
-
     @Test
     void elVerdugoAlternaEntreElAturdimientoYElHachazo() {
         Verdugo verdugo = new Verdugo();
         List<Combatiente> party = party();
 
-        // El primer turno usa la Mirada, que entra en cooldown.
         verdugo.elegirAccion(party, List.of(), calculador).ejecutar();
         assertTrue(verdugo.getMovimientos().get(1).estaEnCooldown());
 
-        // Mientras este en cooldown, pega.
         ResultadoAccion segundo = verdugo.elegirAccion(party, List.of(), calculador).ejecutar();
         assertTrue(segundo.getDañoTotal() > 0);
     }
@@ -273,16 +255,14 @@ class EnemigosTest {
         SeñorDeLasSombras jefe = new SeñorDeLasSombras();
         assertEquals(1, jefe.getFase());
 
-        // Fase 1: un solo objetivo.
         ResultadoAccion enFase1 = jefe.elegirAccion(party(), List.of(), calculador).ejecutar();
         assertEquals(1, enFase1.getObjetivosAfectados().size());
 
-        jefe.recibirDañoDirecto(300); // queda en 200 de 500
+        jefe.recibirDañoDirecto(300);
         ResultadoAccion enFase2 = jefe.elegirAccion(party(), List.of(), calculador).ejecutar();
 
         assertEquals(2, jefe.getFase());
-        // En fase 2 apunta a los tres, con Marea de Sombras o con Llamas Sombrias.
-        // Con las Llamas, los que zafan del 40% cuentan como fallados, no como afectados.
+
         int alcanzados = enFase2.getObjetivosAfectados().size() + enFase2.getObjetivosFallados().size();
         assertEquals(3, alcanzados, "en fase 2 apunta a los tres");
     }
@@ -291,14 +271,14 @@ class EnemigosTest {
     void elSenorApuntaAlMasDebilEnFaseUnoYAlMasPeligrosoEnFaseDos() {
         SeñorDeLasSombras jefe = new SeñorDeLasSombras();
         List<Combatiente> party = party();
-        party.get(2).recibirDaño(100, TipoDaño.FISICO); // el Tanque queda mas herido
+        party.get(2).recibirDaño(100, TipoDaño.FISICO);
 
         assertSame(party.get(2), jefe.elegirObjetivo(party));
 
         jefe.recibirDañoDirecto(300);
-        jefe.elegirAccion(party, List.of(), calculador); // dispara el cambio de fase
+        jefe.elegirAccion(party, List.of(), calculador);
         assertEquals(2, jefe.getFase());
-        assertSame(party.get(1), jefe.elegirObjetivo(party)); // el Mago es el que mas pega
+        assertSame(party.get(1), jefe.elegirObjetivo(party));
     }
 
     @Test
@@ -308,15 +288,12 @@ class EnemigosTest {
         assertEquals(0, new Bruto().getResistenciaAEstados());
     }
 
-    // -------------------------------------------------------------- escalado
-
     @Test
     void elEscaladoSubeElAguanteMasRapidoQueElAtaque() {
         Bruto enEtapa1 = new Bruto();
         Bruto enEtapa11 = new Bruto();
         enEtapa11.escalarParaEtapa(11);
 
-        // aguante: 100 + 14 x 10 = 240%  |  ataque: 100 + 10 x 10 = 200%
         assertEquals(enEtapa1.getVidaMaxima() * 240 / 100, enEtapa11.getVidaMaxima());
         assertEquals(enEtapa1.getAtaqueFisicoEfectivo() * 200 / 100,
                 enEtapa11.getAtaqueFisicoEfectivo());
@@ -367,8 +344,6 @@ class EnemigosTest {
         assertEquals(bruto.getVidaMaxima(), bruto.getVidaActual());
     }
 
-    // ------------------------------------------------- estadisticas de partida
-
     @Test
     void losOnceEnemigosArrancanVivosYConAlMenosUnMovimiento() {
         List<Enemigo> todos = List.of(new Bruto(), new Guardian(), new Acechador(),
@@ -384,7 +359,6 @@ class EnemigosTest {
 
     @Test
     void ningunEnemigoSubeDeNivel() {
-        // Enemigo no extiende Personaje: no tiene ganarExperiencia ni equipo.
         assertFalse(Personaje.class.isAssignableFrom(Bruto.class));
         assertTrue(Enemigo.class.isAssignableFrom(Bruto.class));
     }

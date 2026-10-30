@@ -12,21 +12,8 @@ import ar.edu.uade.rpg.modelo.movimientos.AtaqueFisico;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueMagico;
 import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeEstado;
 
-/**
- * JEFE FINAL de la etapa 20. Pelea en dos fases: al bajar del 50% de vida
- * cambia de movimientos y de forma de apuntar.
- *
- * Fase 1: fisico a objetivo unico, apunta al mas debil para ir sacando gente.
- * Fase 2: magia en area sobre los tres y quemaduras, apunta al mas peligroso.
- *
- * Es el unico que implementa DOS interfaces de apuntado, y Java obliga a
- * desambiguar porque las dos traen un elegirObjetivo() con implementacion. Se
- * resuelve sobrescribiendolo y llamando explicitamente a una o a la otra con
- * Interfaz.super, que es exactamente para lo que existe esa sintaxis.
- */
 public final class SeñorDeLasSombras extends Enemigo
         implements ObjetivoMasDebil, ObjetivoMasPeligroso {
-
     public static final int RESISTENCIA_DE_JEFE = 50;
 
     private static final int FASE_INICIAL = 1;
@@ -66,10 +53,6 @@ public final class SeñorDeLasSombras extends Enemigo
         return usar(getMovimientos().get(movimiento), vivos, calculador);
     }
 
-    /**
-     * Desambigua la herencia multiple de interfaces: en la fase 1 usa la version
-     * de ObjetivoMasDebil y en la 2 la de ObjetivoMasPeligroso.
-     */
     @Override
     public Combatiente elegirObjetivo(List<Combatiente> candidatos) {
         return fase == FASE_INICIAL
@@ -90,9 +73,7 @@ public final class SeñorDeLasSombras extends Enemigo
         return fase;
     }
 
-    /** Los jefes no escalan: estos numeros ya son los de su etapa. */
     @Override
     public void escalarParaEtapa(int numeroEtapa) {
-        // a proposito, no hace nada
     }
 }

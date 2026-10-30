@@ -15,13 +15,7 @@ import ar.edu.uade.rpg.dto.CombatienteDTO;
 import ar.edu.uade.rpg.dto.ItemDTO;
 import ar.edu.uade.rpg.dto.PartyDTO;
 
-/**
- * Estado de la party entre etapas (minima de la consigna): nivel, experiencia,
- * vida, mana, equipo, oro e inventario. Desde aca se usan los objetos fuera de
- * combate y se sigue a la proxima etapa.
- */
 final class PantallaEstadoParty extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
 
     private final ControladorJuego controlador;
@@ -120,7 +114,6 @@ final class PantallaEstadoParty extends PanelConFondo {
         return fila;
     }
 
-    /** Reemplaza el boton "Usar" por un boton por cada miembro sobre el que sirve. */
     private void elegirObjetivo(JPanel fila, ItemDTO item, int indice) {
         List<CombatienteDTO> objetivos = controlador.getObjetivosDeConsumible(indice);
         fila.remove(fila.getComponentCount() - 1);

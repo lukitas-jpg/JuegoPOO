@@ -9,13 +9,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.JButton;
 
-/**
- * Boton con el estilo del juego: oscuro con borde dorado. Deshabilitado se ve
- * apagado. Se dibuja a mano porque el boton de Swing por defecto no deja
- * cambiar bien los colores en todos los sistemas.
- */
 final class Boton extends JButton {
-
     private static final long serialVersionUID = 1L;
 
     Boton(String texto) {

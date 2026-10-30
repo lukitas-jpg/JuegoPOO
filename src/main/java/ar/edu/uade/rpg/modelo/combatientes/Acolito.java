@@ -10,17 +10,9 @@ import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueMagico;
 import ar.edu.uade.rpg.modelo.movimientos.HabilidadDeCuracion;
 
-/**
- * El Curador del otro bando: cura al companero mas herido en vez de atacar.
- *
- * Implementa la MISMA interfaz que el Bruto, ObjetivoMasDebil, pero le pasa
- * sus aliados en vez de la party. El metodo default no sabe ni le importa de
- * que lado estan los candidatos: una interfaz, dos usos opuestos.
- */
 public final class Acolito extends Enemigo implements ObjetivoMasDebil {
-
     private static final int COSTO_PLEGARIA = 10;
-    private static final int UMBRAL_PARA_CURAR = 70;   // % de vida
+    private static final int UMBRAL_PARA_CURAR = 70;
 
     public Acolito() {
         super("Acolito");

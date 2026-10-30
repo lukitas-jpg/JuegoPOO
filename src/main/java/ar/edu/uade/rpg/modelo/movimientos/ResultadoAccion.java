@@ -6,19 +6,7 @@ import java.util.List;
 import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.efectos.EfectoEstado;
 
-/**
- * Lo que dejo una accion: cuanto daño hizo, a quienes alcanzo, con quienes
- * fallo y que efectos aplico.
- *
- * No tiene logica propia: existe para que la informacion viaje desde el modelo
- * hacia afuera sin que nadie tenga que espiar el estado interno del combate.
- *
- * combatientesInvocados es el que resuelve las invocaciones del Nigromante:
- * el enemigo no conoce al Combate, asi que devuelve los esqueletos aca y es
- * Combate quien los incorpora.
- */
 public class ResultadoAccion {
-
     private String descripcion;
     private int dañoTotal;
     private boolean fueCritico;
@@ -33,8 +21,6 @@ public class ResultadoAccion {
         this.dañoTotal = 0;
         this.fueCritico = false;
     }
-
-    // ------------------------------------------- se arma mientras se resuelve
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
@@ -63,8 +49,6 @@ public class ResultadoAccion {
     public void agregarCombatienteInvocado(Combatiente invocado) {
         combatientesInvocados.add(invocado);
     }
-
-    // ------------------------------------------------------------- consultas
 
     public String getDescripcion() {
         return descripcion;

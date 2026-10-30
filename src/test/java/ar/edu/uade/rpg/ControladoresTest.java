@@ -27,16 +27,7 @@ import ar.edu.uade.rpg.modelo.partida.GeneradorDeEtapas;
 import ar.edu.uade.rpg.modelo.partida.Juego;
 import ar.edu.uade.rpg.persistencia.RepositorioPartidasArchivo;
 
-/**
- * Los controladores probados sin Swing: una vista falsa anota que pantalla se
- * le pidio y con que datos, y el test "hace click" como lo haria un jugador.
- *
- * Es posible porque los controladores dependen de la interfaz VistaDelJuego y
- * no de la ventana.
- */
 class ControladoresTest {
-
-    /** Guarda lo ultimo que se le pidio mostrar. */
     private static final class VistaFalsa implements VistaDelJuego {
         String pantalla = "";
         final List<String> recorrido = new ArrayList<>();
@@ -157,17 +148,12 @@ class ControladoresTest {
         }
         int etapaDespuesDeGanar = vista.resultado.numeroEtapa();
 
-        // El Timer de la pantalla dispara de nuevo despues de que termino la pelea.
         controlador.getControladorCombate().avanzarTurnoAutomatico();
         controlador.continuar();
 
         assertEquals(etapaDespuesDeGanar + 1, vista.party.proximaEtapa(), "la etapa se cerro una sola vez");
     }
 
-    /**
-     * Partidas enteras desde los controladores: pelear, cobrar, ver la party,
-     * tirar en la maquina, comprar y usar pociones, hasta volver al inicio.
-     */
     @Test
     void unaRunEnteraSeJuegaDesdeLosControladores() throws Exception {
         boolean pasoPorUnaTienda = false;
@@ -188,15 +174,12 @@ class ControladoresTest {
         assertTrue(pasoPorUnaTienda, "alguna de las runs deberia llegar a la etapa 4");
     }
 
-    // ---------------------------------------------------------- el "jugador"
-
     private void avanzarHastaElTurnoDelJugador() {
         while (vista.pantalla.equals("batalla") && !vista.batalla.turnoDelJugador()) {
             controlador.getControladorCombate().avanzarTurnoAutomatico();
         }
     }
 
-    /** Un click, segun la pantalla en la que este. */
     private void jugarUnPaso() {
         switch (vista.pantalla) {
             case "batalla" -> jugarEnLaBatalla();

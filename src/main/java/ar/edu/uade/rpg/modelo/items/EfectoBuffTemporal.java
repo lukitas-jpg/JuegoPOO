@@ -4,16 +4,7 @@ import ar.edu.uade.rpg.modelo.combatientes.Combatiente;
 import ar.edu.uade.rpg.modelo.efectos.BuffEstadistica;
 import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
 
-/**
- * Sube un porcentaje el ataque durante unos turnos, reutilizando el mismo
- * BuffEstadistica que usan Grito de Guerra y Bendicion.
- *
- * Mejora el ataque mas alto del personaje, fisico o magico. Asi un solo objeto
- * sirve para los seis: la Piedra de Afilar le sube el fisico al Guerrero y el
- * magico al Mago, sin preguntar de que clase es ninguno.
- */
 public class EfectoBuffTemporal implements EfectoConsumible {
-
     private final int porcentaje;
     private final int duracionEnTurnos;
 

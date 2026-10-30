@@ -1,5 +1,3 @@
-# Configuracion comun de editor para todo el grupo
-# (IntelliJ, Eclipse con plugin y VS Code la respetan)
 root = true
 
 [*]
@@ -12,6 +10,3 @@ indent_size = 4
 
 [*.{yml,yaml}]
 indent_size = 2
-
-[*.md]
-trim_trailing_whitespace = false

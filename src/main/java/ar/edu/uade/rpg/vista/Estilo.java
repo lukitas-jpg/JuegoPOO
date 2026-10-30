@@ -5,9 +5,7 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 
-/** Colores y letras de todas las pantallas, en un solo lugar. */
 final class Estilo {
-
     static final Color FONDO = new Color(24, 22, 30);
     static final Color PANEL = new Color(18, 16, 24, 215);
     static final Color PANEL_CLARO = new Color(44, 40, 54, 230);
@@ -37,7 +35,6 @@ final class Estilo {
         return etiqueta;
     }
 
-    /** El color de cada rareza, para el nombre de los objetos. */
     static Color colorDeRareza(String rareza) {
         return switch (rareza) {
             case "raro" -> new Color(90, 150, 240);

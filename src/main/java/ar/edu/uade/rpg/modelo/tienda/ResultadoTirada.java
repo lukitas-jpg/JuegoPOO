@@ -2,15 +2,7 @@ package ar.edu.uade.rpg.modelo.tienda;
 
 import java.util.List;
 
-/**
- * Lo que dejo una tirada de la maquina: los tres simbolos que salieron, el
- * multiplicador que pagaron y el oro resultante.
- *
- * Viajan los tres simbolos y no solo el premio porque la pantalla tiene que
- * mostrar los rodillos. Es inmutable: una tirada ya tirada no cambia.
- */
 public class ResultadoTirada {
-
     private final List<Simbolo> simbolos;
     private final int multiplicador;
     private final int oroGanado;

@@ -8,28 +8,13 @@ import ar.edu.uade.rpg.modelo.combatientes.ClaseDePersonaje;
 import ar.edu.uade.rpg.modelo.combatientes.TipoDaño;
 import ar.edu.uade.rpg.modelo.movimientos.Estadistica;
 
-/**
- * Los 36 equipables: un arma y una armadura para cada una de las 6 clases, en
- * las 3 rarezas. La armadura es siempre un set completo, no se divide en
- * partes.
- *
- * COMUN no aparece: quedo reservada para los consumibles. Los equipables van de
- * RARO para arriba.
- *
- * Cada llamada construye objetos NUEVOS. Dos Guerreros en partidas distintas no
- * pueden compartir la misma instancia de espada, porque las bonificaciones se
- * suman y se restan sobre el personaje que la tenga puesta.
- */
 public final class CatalogoDeEquipables {
-
     private CatalogoDeEquipables() {
     }
 
-    /** Los 36, recien construidos. */
     public static List<Equipable> catalogoCompleto() {
         List<Equipable> lista = new ArrayList<>();
 
-        // Guerrero
         lista.add(new Arma("Espada de Acero Templado", "Arma de Guerrero.",
                 60, Rareza.RARO, ClaseDePersonaje.GUERRERO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 5)));
@@ -40,7 +25,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.GUERRERO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 24)));
 
-        // Mago
         lista.add(new Arma("Baculo de Roble Runico", "Arma de Mago.",
                 60, Rareza.RARO, ClaseDePersonaje.MAGO, TipoDaño.MAGICO,
                 Map.of(Estadistica.ATAQUE_MAGICO, 6)));
@@ -51,7 +35,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.MAGO, TipoDaño.MAGICO,
                 Map.of(Estadistica.ATAQUE_MAGICO, 28)));
 
-        // Arquero
         lista.add(new Arma("Arco Corto de Tejo", "Arma de Arquero.",
                 60, Rareza.RARO, ClaseDePersonaje.ARQUERO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 4, Estadistica.VELOCIDAD, 2)));
@@ -62,7 +45,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.ARQUERO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 20, Estadistica.VELOCIDAD, 8)));
 
-        // Curador
         lista.add(new Arma("Cetro de Plata Bendecida", "Arma de Curador.",
                 60, Rareza.RARO, ClaseDePersonaje.CURADOR, TipoDaño.MAGICO,
                 Map.of(Estadistica.ATAQUE_MAGICO, 5, Estadistica.DEFENSA_MAGICA, 2)));
@@ -73,7 +55,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.CURADOR, TipoDaño.MAGICO,
                 Map.of(Estadistica.ATAQUE_MAGICO, 24, Estadistica.DEFENSA_MAGICA, 8)));
 
-        // Asesino
         lista.add(new Arma("Daga de Hoja Negra", "Arma de Asesino.",
                 60, Rareza.RARO, ClaseDePersonaje.ASESINO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 5, Estadistica.SUERTE, 3)));
@@ -84,7 +65,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.ASESINO, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 22, Estadistica.SUERTE, 10)));
 
-        // Tanque
         lista.add(new Arma("Maza de Hierro Macizo", "Arma de Tanque.",
                 60, Rareza.RARO, ClaseDePersonaje.TANQUE, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 4, Estadistica.DEFENSA_FISICA, 3)));
@@ -95,7 +75,6 @@ public final class CatalogoDeEquipables {
                 430, Rareza.LEGENDARIO, ClaseDePersonaje.TANQUE, TipoDaño.FISICO,
                 Map.of(Estadistica.ATAQUE_FISICO, 18, Estadistica.DEFENSA_FISICA, 14)));
 
-        // Guerrero
         lista.add(new Armadura("Cota de Malla Reforzada", "Armadura de Guerrero.",
                 70, Rareza.RARO, ClaseDePersonaje.GUERRERO,
                 Map.of(Estadistica.VIDA, 20, Estadistica.DEFENSA_FISICA, 4)));
@@ -106,7 +85,6 @@ public final class CatalogoDeEquipables {
                 470, Rareza.LEGENDARIO, ClaseDePersonaje.GUERRERO,
                 Map.of(Estadistica.VIDA, 100, Estadistica.DEFENSA_FISICA, 20, Estadistica.DEFENSA_MAGICA, 8)));
 
-        // Mago
         lista.add(new Armadura("Tunica de Hilo Runico", "Armadura de Mago.",
                 70, Rareza.RARO, ClaseDePersonaje.MAGO,
                 Map.of(Estadistica.VIDA, 14, Estadistica.DEFENSA_MAGICA, 6, Estadistica.MANA, 10)));
@@ -117,7 +95,6 @@ public final class CatalogoDeEquipables {
                 470, Rareza.LEGENDARIO, ClaseDePersonaje.MAGO,
                 Map.of(Estadistica.VIDA, 70, Estadistica.DEFENSA_MAGICA, 26, Estadistica.MANA, 50)));
 
-        // Arquero
         lista.add(new Armadura("Jubon de Cuero Endurecido", "Armadura de Arquero.",
                 70, Rareza.RARO, ClaseDePersonaje.ARQUERO,
                 Map.of(Estadistica.VIDA, 16, Estadistica.DEFENSA_FISICA, 4, Estadistica.VELOCIDAD, 2)));
@@ -128,7 +105,6 @@ public final class CatalogoDeEquipables {
                 470, Rareza.LEGENDARIO, ClaseDePersonaje.ARQUERO,
                 Map.of(Estadistica.VIDA, 80, Estadistica.DEFENSA_FISICA, 18, Estadistica.VELOCIDAD, 8)));
 
-        // Curador
         lista.add(new Armadura("Habito de Lino Sagrado", "Armadura de Curador.",
                 70, Rareza.RARO, ClaseDePersonaje.CURADOR,
                 Map.of(Estadistica.VIDA, 16, Estadistica.DEFENSA_MAGICA, 5, Estadistica.MANA, 12)));
@@ -139,7 +115,6 @@ public final class CatalogoDeEquipables {
                 470, Rareza.LEGENDARIO, ClaseDePersonaje.CURADOR,
                 Map.of(Estadistica.VIDA, 80, Estadistica.DEFENSA_MAGICA, 22, Estadistica.MANA, 55)));
 
-        // Asesino
         lista.add(new Armadura("Traje de Contrabandista", "Armadura de Asesino.",
                 70, Rareza.RARO, ClaseDePersonaje.ASESINO,
                 Map.of(Estadistica.VIDA, 14, Estadistica.DEFENSA_FISICA, 4, Estadistica.SUERTE, 2)));
@@ -150,7 +125,6 @@ public final class CatalogoDeEquipables {
                 470, Rareza.LEGENDARIO, ClaseDePersonaje.ASESINO,
                 Map.of(Estadistica.VIDA, 70, Estadistica.DEFENSA_FISICA, 18, Estadistica.SUERTE, 8)));
 
-        // Tanque
         lista.add(new Armadura("Armadura de Escamas Pesada", "Armadura de Tanque.",
                 70, Rareza.RARO, ClaseDePersonaje.TANQUE,
                 Map.of(Estadistica.VIDA, 26, Estadistica.DEFENSA_FISICA, 6)));
@@ -164,7 +138,6 @@ public final class CatalogoDeEquipables {
         return lista;
     }
 
-    /** Lo que puede salir en una tienda: filtrado por clase y por rareza. */
     public static List<Equipable> filtrar(List<ClaseDePersonaje> clases, Rareza rareza) {
         List<Equipable> filtrados = new ArrayList<>();
         for (Equipable equipable : catalogoCompleto()) {

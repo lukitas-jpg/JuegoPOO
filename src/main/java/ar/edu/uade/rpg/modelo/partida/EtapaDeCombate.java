@@ -6,18 +6,7 @@ import java.util.List;
 import ar.edu.uade.rpg.modelo.combate.Combate;
 import ar.edu.uade.rpg.modelo.combatientes.Enemigo;
 
-/**
- * Una etapa de pelea. Tiene los enemigos y paga la recompensa.
- *
- * La recompensa es de la ETAPA y no de cada enemigo, y las dos son el mismo
- * numero: 25 + 10 x nº de etapa, el doble en el minijefe y en el jefe final.
- * Una sola formula para la experiencia y para el oro.
- *
- * Creator: es esta clase la que crea el Combate, porque es la que tiene los
- * enemigos.
- */
 public class EtapaDeCombate extends Etapa {
-
     private static final int RECOMPENSA_BASE = 25;
     private static final int RECOMPENSA_POR_ETAPA = 10;
 

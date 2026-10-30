@@ -13,12 +13,7 @@ import ar.edu.uade.rpg.controlador.ControladorJuego;
 import ar.edu.uade.rpg.dto.CombatienteDTO;
 import ar.edu.uade.rpg.dto.ResultadoDTO;
 
-/**
- * Pantalla de resultado (minima de la consigna): como termino la pelea, que se
- * gano y como quedo la party. Tambien muestra la victoria final y la derrota.
- */
 final class PantallaResultado extends PanelConFondo {
-
     private static final long serialVersionUID = 1L;
 
     private final JLabel titulo = Estilo.texto("", Estilo.TITULO.deriveFont(44f), Estilo.DORADO);

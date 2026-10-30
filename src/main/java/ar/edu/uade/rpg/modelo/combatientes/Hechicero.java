@@ -7,16 +7,7 @@ import ar.edu.uade.rpg.modelo.movimientos.Accion;
 import ar.edu.uade.rpg.modelo.movimientos.AlcanceMovimiento;
 import ar.edu.uade.rpg.modelo.movimientos.AtaqueMagico;
 
-/**
- * Daño magico sobre TODA la party a la vez. Es el unico enemigo que no
- * implementa ninguna interfaz de apuntado, y no por olvido: su ataque alcanza a
- * los tres, asi que no hay ningun objetivo que elegir.
- *
- * Es tambien el unico, junto al Acolito, que gasta mana. Cuando se queda seco
- * pasa a un ataque simple, asi que conviene aguantarlo en vez de apurarse.
- */
 public final class Hechicero extends Enemigo {
-
     private static final int COSTO_ONDA = 12;
 
     public Hechicero() {
