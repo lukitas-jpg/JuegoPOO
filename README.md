@@ -23,16 +23,22 @@ El proyecto usa **Maven** para compilar. Los tres IDEs lo reconocen solos, no ha
    - **IntelliJ:** *File → Open* y elegir la carpeta (detecta el `pom.xml`).
    - **Eclipse:** *File → Import → Maven → Existing Maven Projects*.
    - **VS Code:** *File → Open Folder*.
-3. Ejecutar `mvn test`. Tienen que pasar todos.
+3. Ejecutar `mvn test`. Tienen que pasar todos. En Eclipse: clic derecho sobre
+   `src/test/java` → *Run As → JUnit Test* (sobre `src/main/java` no encuentra ninguno).
 4. Para jugar, ejecutar `ar.edu.uade.rpg.App`.
 
 Desde la terminal, con Maven instalado:
+
 ```
 mvn package
 java -jar target/rpg.jar
 ```
 
 ## Estructura
+
+Eclipse muestra los paquetes en una lista plana (`ar.edu.uade.rpg.modelo.combate`,
+`ar.edu.uade.rpg.modelo.efectos`...). Son las mismas carpetas de abajo. Para verlas como
+árbol: en el Package Explorer, menú de los tres puntos → *Package Presentation → Hierarchical*.
 
 ```
 src/main/java/ar/edu/uade/rpg/
@@ -51,7 +57,7 @@ src/main/java/ar/edu/uade/rpg/
 ├── vista/                Diagrama 5: la ventana Swing y sus 6 pantallas
 └── persistencia/         RepositorioPartidas y su implementación en archivo
 
-src/main/resources/imagenes/   Las 89 imágenes del juego (ver su LEEME.md)
+src/main/resources/imagenes/   Las 72 imágenes del juego (ver su LEEME.md)
 src/test/java/            Tests con JUnit 5 (se corren con mvn package)
 diagramas/                Diagramas UML (.puml, .png y .svg)
 herramientas/             Script que dibuja los equipables propios (opcional, Python)
